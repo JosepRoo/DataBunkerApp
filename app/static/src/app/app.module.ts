@@ -1,29 +1,78 @@
+import * as $ from 'jquery';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CommonModule, LocationStrategy, HashLocationStrategy } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { HttpModule } from '@angular/http';
+import { Routes, RouterModule } from '@angular/router';
+
+import { FullComponent } from './layouts/full/full.component';
+import { BlankComponent } from './layouts/blank/blank.component';
+
+import { NavigationComponent } from './shared/header-navigation/navigation.component';
+import { SidebarComponent } from './shared/sidebar/sidebar.component';
+import { BreadcrumbComponent } from './shared/breadcrumb/breadcrumb.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
+import { PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
+import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
+
+import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import 'hammerjs';
-import { RouterModule, Routes } from '@angular/router';
+import { SpinnerComponent } from './shared/spinner.component';
+
+// Components
+import { MessagesComponent } from './messages/messages.component';
+
+// Services
+import { MessageService } from './services/messages.service';
+import { UserService } from './services/user.service';
+import { CompanyService } from './services/company.service';
+import { ChannelService } from './services/channels.service';
+import { LogInComponent } from './log-in/log-in.component';
 
 
-const appRoutes: Routes = [
-    {
-        path      : '**',
-        //comonent: [YourImportedComponentClass]
-    },
-
-];
+const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
+  suppressScrollX: true,
+  wheelSpeed: 2,
+  wheelPropagation: true,
+};
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    SpinnerComponent,
+    FullComponent,
+    BlankComponent,
+    NavigationComponent,
+    BreadcrumbComponent,
+    SidebarComponent,
+    MessagesComponent,
+    LogInComponent
   ],
   imports: [
+    CommonModule,
     BrowserModule,
     BrowserAnimationsModule,
-
+    FormsModule,
+    HttpModule,
+    NgbModule.forRoot(),
+    PerfectScrollbarModule,
+    AppRoutingModule
   ],
-  providers: [],
+  providers: [
+      CompanyService,
+      UserService,
+      MessageService,
+      ChannelService,
+      {
+      provide: PERFECT_SCROLLBAR_CONFIG,
+      useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
+    },{
+    provide: LocationStrategy,
+    useClass: HashLocationStrategy
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

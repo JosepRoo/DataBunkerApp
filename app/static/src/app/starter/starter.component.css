@@ -1,0 +1,18 @@
+div.card-header {
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+}
+
+div.card-footer {
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+}
+
+div.card-body {
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+}
+
+div.form-group {
+  margin-bottom: 10px !important;
+}
