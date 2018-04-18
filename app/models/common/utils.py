@@ -1,4 +1,4 @@
-class AutoVivification(dict):
+class Tree(dict):
     """Implementation of perl's autovivification feature."""
     def __getitem__(self, item):
         try:
