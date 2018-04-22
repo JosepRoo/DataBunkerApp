@@ -39,7 +39,7 @@ class User(object):
     @staticmethod
     def login_valid(email, password):
         user = User.get_by_email(email)
-        if user is not None and Utils.check_hashed_password(user.password, password) and Utils.email_is_valid(email):
+        if user is not None and Utils.check_hashed_password(password, user.password) and Utils.email_is_valid(email):
             User.login(email)
             return True
         raise UserErrors.InvalidLogin("Email or Password wrong")

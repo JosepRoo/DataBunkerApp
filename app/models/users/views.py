@@ -4,14 +4,13 @@ from app.models.users.errors import UserError
 user_blueprint = Blueprint('users', __name__)
 
 
-@user_blueprint.route('/login', methods=["POST"])
+@user_blueprint.route('/login', methods=['POST'])
 def login_user():
     email = request.form['email']
     password = request.form['password']
     if User.login_valid(email, password):
-        User.login()
-        return jsonify({'msg_response':"Login Successful"})
-    return jsonify({'msg_response':"Login Failed"})
+        return jsonify({'msg_response': "Login Successful"})
+    return jsonify({'msg_response': "Login Failed"})
 
 
 @user_blueprint.route('/get_user/<string:user_id>', methods=['GET'])
