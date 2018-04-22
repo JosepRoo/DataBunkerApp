@@ -9,5 +9,5 @@ class Response(object):
         return {'success': self.success,
                 'records': self.records,
                 'data': self.data,
-                'msgResponse': self.msgResponse
+                'msg_response': self.msg_response
                 }
