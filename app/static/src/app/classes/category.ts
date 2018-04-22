@@ -1,24 +1,24 @@
-import { Product } from './product';
+import { Brand } from './brand';
 
 // model for Category Class
 export class Category {
 
   public name: string;
   public id: number;
-  public products: Product[];
+  public brands: Brand[];
 
-  constructor(id: number, name:string, products){
+  constructor(id: number, name:string, brands){
     var self = this;
     self.name = name;
     self.id = id;
-    self.products = [];
-    products.forEach(function(product){
-      self.products.push(new Product(product.id, product.name));
+    self.brands = [];
+    brands.forEach(function(brand){
+      self.brands.push(new Brand(brand.id, brand.name, brand.products));
     });
   };
 
   public deleteChildren(){
-    this.products = null;
+    this.brands = null;
   }
 
 }

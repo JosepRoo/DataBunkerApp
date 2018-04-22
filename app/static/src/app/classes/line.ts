@@ -10,22 +10,24 @@ export class Line {
   public brand: Brand;
   public category: Category;
   public product: Product;
+  public color: string;
+  public data: object;
 
   constructor(){}
 
   public deleteChannel() {
     this.channel = null;
-    this.deleteBrand();
+    this.deleteCategory();
   }
 
   public deleteBrand() {
     this.brand = null;
-    this.deleteCategory();
+    this.deleteProduct();
   }
 
   public deleteCategory() {
     this.category = null;
-    this.deleteProduct();
+    this.deleteBrand();
   }
 
   public deleteProduct() {

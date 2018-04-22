@@ -1,0 +1,42 @@
+<div class="row">
+  <div class="col col-6">
+    <div class="card">
+      <div class="card-header">
+        <h3>Nombre: <b>{{product.name}}<ngb-rating class="pull-right" max="1" [(rate)]="product.rate"></ngb-rating></b></h3>
+      </div>
+      <div class="card-body">
+        <div class="row justify-content-between">
+          <div class="col-12 col-md-6">
+            <p>
+              Precio Actual: <b>{{product.price | currency}}</b>
+            </p>
+            <p>
+              Precio Anterior: <b>{{product.previousPrice | currency}}</b>
+            </p>
+            <p>
+              Primer Registro: <b>{{product.createdDate | date}}</b>
+            </p>
+          </div>
+          <div class="col-12 col-md-4">
+            <img class="img-fluid"  src="https://cdn4.iconfinder.com/data/icons/gray-toolbar-7/512/cube-512.png"/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col col-3">
+    <div class="card">
+      <div class="card-header">
+        Tasa de Cambio
+      </div>
+      <div class="card-body">
+        <div class="row justify-content-between">
+          <div class="col-12 col-md-12 text-center">
+            <p class="card-text tasa text-center" *ngIf="product.scope >= 0"><i class="mdi mdi-arrow-up-bold-circle up-color"></i><b class="up-color">{{product.scope | percent}}</b></p>
+            <p class="card-text tasa text-center" *ngIf="product.scope < 0"><i class="mdi mdi-arrow-up-bold-circle down-color"></i><b class="down-color">{{product.scope | percent}}</b></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

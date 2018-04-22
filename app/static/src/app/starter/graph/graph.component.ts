@@ -119,8 +119,8 @@ export class GraphComponent {
         },
         "export": {
         	"enabled": true,
-
-         }
+          "divId": "exportdiv"
+        }
     });
   }
 

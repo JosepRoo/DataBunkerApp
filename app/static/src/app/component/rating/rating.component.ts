@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {FormControl, Validators} from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 
 @Component({
 	selector: 'ngbd-rating',
@@ -13,7 +13,7 @@ import {FormControl, Validators} from '@angular/forms';
       color: #1e90ff;
     }
     .heart {
-      position: relative;  
+      position: relative;
       display: inline-block;
       font-size: 3rem;
       color: #d3d3d3;
@@ -28,8 +28,8 @@ import {FormControl, Validators} from '@angular/forms';
       color: red;
     }
   `]
-}) 
-  
+})
+
 export class NgbdratingBasic{
   	currentRate = 8;
     currentRate2 = 2;
@@ -46,4 +46,4 @@ export class NgbdratingBasic{
       this.ctrl.disable();
     }
   }
-} 
+}

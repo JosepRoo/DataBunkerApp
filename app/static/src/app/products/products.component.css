@@ -1,0 +1,34 @@
+.star {
+  font-size: 1.5rem;
+  color: #5693e2;
+}
+.filled {
+  color: #5693e2;
+}
+.heart {
+  position: relative;
+  display: inline-block;
+  font-size: 3rem;
+  color: #d3d3d3;
+}
+.full {
+  color: red;
+}
+.half {
+  position: absolute;
+  display: inline-block;
+  overflow: hidden;
+  color: red;
+}
+
+.up-color {
+  color: rgb(25, 186, 109);
+}
+
+.down-color {
+  color: rgb(213, 31, 69);
+}
+
+.btn-own {
+  color:white !important;
+}
