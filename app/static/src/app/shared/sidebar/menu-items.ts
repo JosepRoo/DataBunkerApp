@@ -5,7 +5,10 @@ export const ROUTES: RouteInfo[] = [
         path: '', title: 'Principal', icon: '', class: 'nav-small-cap', label: '', labelClass: '', extralink: true, submenu: []
     },
     {
-        path: '/starter', title: 'Comparador', icon: 'mdi mdi-gauge', class: '', label: '', labelClass: '', extralink: false, submenu: []
+        path: '/comparador', title: 'Comparador', icon: 'mdi mdi-gauge', class: '', label: '', labelClass: '', extralink: false, submenu: []
+    },
+    {
+        path: '/products', title: 'Productos', icon: 'mdi mdi-wallet-travel', class: '', label: '', labelClass: '', extralink: false, submenu: []
     },
     {
         path: '', title: 'UI Components', icon: '', class: 'nav-small-cap', label: '', labelClass: '', extralink: true, submenu: []

@@ -19,11 +19,11 @@ export class ChannelService {
     	{
     		name: 'Amazon',
     		id: 1,
-    		brands: [
+    		categories: [
     			{
     				name: 'RayBan',
     				id: 1,
-    				categories: [
+    				brands: [
     					{
     						name: "Sunglasses",
     						id: 1,
@@ -83,7 +83,7 @@ export class ChannelService {
     			{
     				name: 'Polo',
     				id: 1,
-    				categories: [
+    				brands: [
     					{
     						name: "Accesories",
     						id: 1,
@@ -144,7 +144,7 @@ export class ChannelService {
     	}
     ];
     json.forEach(function(channel){
-      channels.push(new Channel(channel.id, channel.name, channel.brands))
+      channels.push(new Channel(channel.id, channel.name, channel.categories))
     })
     return channels;
   }

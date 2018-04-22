@@ -31,6 +31,12 @@ import { UserService } from './services/user.service';
 import { CompanyService } from './services/company.service';
 import { ChannelService } from './services/channels.service';
 import { LogInComponent } from './log-in/log-in.component';
+import { ColorGeneratorService } from './services/colorGenerator.service';
+import { ProductsComponent } from './products/products.component';
+import { MyFilterPipe } from './products/favoritePipe';
+import { ProductDetailComponent } from './product-detail/product-detail.component';
+import { RecoverPasswoordComponent } from './recover-passwoord/recover-passwoord.component';
+
 
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
@@ -49,7 +55,11 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     BreadcrumbComponent,
     SidebarComponent,
     MessagesComponent,
-    LogInComponent
+    LogInComponent,
+    ProductsComponent,
+    MyFilterPipe,
+    ProductDetailComponent,
+    RecoverPasswoordComponent
   ],
   imports: [
     CommonModule,
@@ -66,6 +76,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
       UserService,
       MessageService,
       ChannelService,
+      ColorGeneratorService,
       {
       provide: PERFECT_SCROLLBAR_CONFIG,
       useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG

@@ -1,56 +1,89 @@
-<form>
-  <div class="card">
-    <div class="card-header">
-      Nueva Busqueda
-    </div>
-    <div class="card-body">
-      <div class="row">
-        <div class="col">
-          <div class="form-group">
-            <label for="lineChannel">Canal</label>
-            <select class="form-control" (change)="line.deleteBrand()" [(ngModel)]="line.channel" name="channel" required>
-              <option [ngValue]="null"></option>
-              <option [ngValue]="option" *ngFor="let option of channels">{{option.name}}</option>
-            </select>
+<div class="row">
+  <div class="col-md-7">
+    <form>
+      <div class="card">
+        <div class="card-header">
+          <i class="mdi mdi-file-find"></i> Nueva Busqueda
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="lineChannel">Canal</label>
+                <select class="form-control" (change)="line.deleteBrand(); " [(ngModel)]="line.channel" name="channel" required>
+                  <option [ngValue]="null"></option>
+                  <option [ngValue]="option" *ngFor="let option of channels">{{option.name}}</option>
+                </select>
+              </div>
+            </div>
+            <div class="col" *ngIf="line.channel">
+              <div class="form-group">
+                <label for="lineCategory">Categoria</label>
+                <select class="form-control" (change)="line.deleteBrand()" [(ngModel)]="line.category" name="category">
+                  <option [ngValue]="null"></option>
+                  <option [ngValue]="option" *ngFor="let option of line.channel.categories">{{option.name}}</option>
+                </select>
+              </div>
+            </div>
+            <div class="col" *ngIf="line.category">
+              <div class="form-group form-sm">
+                <label for="lineBrand">Marca</label>
+                <select class="form-control" (change)="line.deleteProduct()" [(ngModel)]="line.brand" name="brand">
+                  <option [ngValue]="null"></option>
+                  <option [ngValue]="option" *ngFor="let option of line.category.brands">{{option.name}}</option>
+                </select>
+              </div>
+            </div>
+            <div class="col" *ngIf="line.brand">
+              <div class="form-group">
+                <label for="lineProduct">Producto</label>
+                <select class="form-control" [(ngModel)]="line.product" name="producto">
+                  <option [ngValue]="null"></option>
+                  <option [ngValue]="option" *ngFor="let option of line.brand.products">{{option.name}}</option>
+                </select>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="col" *ngIf="line.channel">
-          <div class="form-group form-sm">
-            <label for="lineBrand">Marca</label>
-            <select class="form-control" (change)="line.deleteCategory()" [(ngModel)]="line.brand" name="brand">
-              <option [ngValue]="null"></option>
-              <option [ngValue]="option" *ngFor="let option of line.channel.brands">{{option.name}}</option>
-            </select>
-          </div>
-        </div>
-        <div class="col" *ngIf="line.brand">
-          <div class="form-group">
-            <label for="lineCategory">Categoria</label>
-            <select class="form-control" (change)="line.deleteProduct()" [(ngModel)]="line.category" name="category">
-              <option [ngValue]="null"></option>
-              <option [ngValue]="option" *ngFor="let option of line.brand.categories">{{option.name}}</option>
-            </select>
-          </div>
-        </div>
-        <div class="col" *ngIf="line.category">
-          <div class="form-group">
-            <label for="lineProduct">Producto</label>
-            <select class="form-control" [(ngModel)]="line.product" name="producto">
-              <option [ngValue]="null"></option>
-              <option [ngValue]="option" *ngFor="let option of line.category.products">{{option.name}}</option>
-            </select>
+        <div class="card-footer">
+          <div class="row justify-content-end">
+            <div class="col-md-3 col-sm-12">
+              <button [disabled]="!line.channel" class="btn btn-block btn-primary btn-sm" (click)="addLine()">Agregar</button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="card-footer">
-      <div class="row justify-content-end">
-        <div class="col-md-3 col-sm-12">
-          <button class="btn btn-block btn-primary btn-sm" (click)="addLine()">Agregar</button>
+    </form>
+  </div>
+  <div class="col-md-5">
+    <div class="card">
+      <div class="card-header">
+        <i class="mdi mdi-format-list-bulleted-type"></i> Busquedas
+      </div>
+      <div class="card-body">
+        <div class="row" *ngIf="!lines.length">
+          <div class="col-md-12">
+            <label>No has realizado ninguna consulta</label>
+          </div>
+        </div>
+        <div class="row" *ngFor="let line of lines">
+          <div class="col">
+            <div class="card">
+              <div class="col" [ngStyle]="{'color': line.color}">
+                <p><i class="mdi mdi-music-note-whole"></i> {{line.channel.name}} <span *ngIf="line.brand"><i class="mdi mdi-arrow-right-bold">
+                </i> {{line.brand.name}}</span><span *ngIf="line.category"> <i class="mdi mdi-arrow-right-bold"></i> {{line.category.name}}</span><span *ngIf="line.product">
+                  <i class="mdi mdi-arrow-right-bold"></i> {{line.product.name}}</span><a (click)="removeLine(line)" style="cursor: pointer !important;" class="pull-right"><i style="color:rgb(241, 96, 96)" class="mdi mdi-delete-forever"></i></a></p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</form>
+</div>
 
-<app-graph></app-graph>
+<div class="row" *ngIf="lines && lines.length">
+  <div class="col-md-12">
+    <app-graph></app-graph>
+  </div>
+</div>
