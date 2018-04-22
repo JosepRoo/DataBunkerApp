@@ -4,12 +4,12 @@ from app.common.database import Database
 import uuid
 from app.models.users.constants import COLLECTION
 from app.common.utils import Utils
-#from app.models.recoveries.recovery import Recovery
+from app.models.recoveries.recovery import Recovery
 import app.models.users.errors as UserErrors
 
 
 class User(object):
-    def __init__(self, email, name, password=None, _id=None, privileges = None):
+    def __init__(self, email, name, password=None, _id=None, privileges=None):
         self.email = email
         self.password = password
         self.name = name
@@ -44,7 +44,6 @@ class User(object):
             return True
         raise UserErrors.InvalidLogin("Email or Password wrong")
 
-
     @classmethod
     def register(cls, email, password, name):
         user = User.get_by_email(email)
@@ -75,25 +74,33 @@ class User(object):
                 'password': self.password,
                 'name': self.name,
                 'privileges': self.privileges
-        }
+                }
 
     def save_to_mongo(self):
         Database.insert('users', self.json())
-    '''
+
     def send_recovery_message(self):
         recovery = Recovery(user_email=self.email)
         recovery.save_to_mongo()
         return requests.post(
             "https://api.mailgun.net/v3/sandbox6b23254da94c47f2b75358b425dd997a.mailgun.org/messages",
-            auth=("api", "key-f96e4370f78e79e03e3dd6b9abe2ce10"), #cambiar a eniroment var en produccion
-            data={"from": "Databunker <postmaster@sandbox6b23254da94c47f2b75358b425dd997a.mailgun.org>", #cambiar a eniroment var en produccion
+            auth=("api", "key-f96e4370f78e79e03e3dd6b9abe2ce10"),  # cambiar a eniroment var en produccion
+            data={"from": "Databunker <postmaster@sandbox6b23254da94c47f2b75358b425dd997a.mailgun.org>",
+                  # cambiar a eniroment var en produccion
                   "to": "{} <{}>".format(self.name, self.email),
                   "subject": "Recuperacion de contraseña",
-                  "text": "para reestablecer la contrasenia de clic en el siguiente link: databunker.com/recuperarconstrasenia/{}".format(recovery._id)})
-    '''
+                  "text": "para reestablecer la contrasenia de clic en el siguiente link: databunker.com/recuperarconstrasenia/{}".format(
+                      recovery._id)})
 
     def set_password(self, password):
         self.password = Utils.hash_password(password)
 
     def update_user(self):
         Database.update(COLLECTION, {self._id}, self.json())
+
+    @staticmethod
+    def recover_password(recovery_id, email, password):
+        Recovery.recover_password(recovery_id, email, password)
+        user = User.get_by_email(email)
+        user.set_password(password)
+        user.update_user()
