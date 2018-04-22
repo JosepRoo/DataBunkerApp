@@ -12,7 +12,7 @@ def create_app(config_name):
     from .default import default as default_blueprint
     from app.models.users.views import user_blueprint
     app.register_blueprint(default_blueprint)
-    app.register_blueprint(user_blueprint, prefix='/users')
+    app.register_blueprint(user_blueprint, url_prefix='/users')
 
     Database.initialize()
     return app
