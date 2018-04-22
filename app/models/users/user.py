@@ -4,15 +4,16 @@ from app.common.database import Database
 import uuid
 from app.models.users.constants import COLLECTION
 from app.common.utils import Utils
-from app.models.recoveries.recovery import Recovery
+#from app.models.recoveries.recovery import Recovery
 import app.models.users.errors as UserErrors
 
+
 class User(object):
-    def __init__(self, email, name, password=None, _id=None):
+    def __init__(self, email, name, password=None, _id=None, privileges = None):
         self.email = email
         self.password = password
         self.name = name
-        self.privileges = []
+        self.privileges = privileges if privileges is not None else []
         self._id = uuid.uuid4().hex if _id is None else _id
 
     @classmethod
@@ -73,7 +74,7 @@ class User(object):
 
     def save_to_mongo(self):
         Database.insert('users', self.json())
-
+    '''
     def send_recovery_message(self):
         recovery = Recovery(user_email=self.email)
         recovery.save_to_mongo()
@@ -84,6 +85,7 @@ class User(object):
                   "to": "{} <{}>".format(self.name, self.email),
                   "subject": "Recuperacion de contraseña",
                   "text": "para reestablecer la contrasenia de clic en el siguiente link: databunker.com/recuperarconstrasenia/{}".format(recovery._id)})
+    '''
 
     def set_password(self, password):
         self.password = Utils.hash_password(password)
