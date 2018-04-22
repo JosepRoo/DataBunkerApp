@@ -5,7 +5,7 @@ import uuid
 from app.models.users.constants import COLLECTION
 from app.common.utils import Utils
 from app.models.recoveries.recovery import Recovery
-
+import app.models.users.errors as UserErrors
 
 class User(object):
     def __init__(self, email, name, password=None, _id=None):
@@ -36,9 +36,11 @@ class User(object):
     @staticmethod
     def login_valid(email, password):
         user = User.get_by_email(email)
-        if user is not None:
+        if user is not None and Utils.check_hashed_password(user.password, password) and Utils.email_is_valid(email):
             User.login(email)
-            return Utils.check_hashed_password(user.password, password)
+            return True
+        raise UserErrors.InvalidLogin("Email or Password wrong")
+
 
     @classmethod
     def register(cls, email, password, name):

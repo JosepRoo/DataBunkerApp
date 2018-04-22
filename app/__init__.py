@@ -1,8 +1,7 @@
 from flask import Flask
-from config import config
-from flask_bootstrap import Bootstrap
 
-bootstrap = Bootstrap()
+from app.common.database import Database
+from config import config
 
 
 def create_app(config_name):
@@ -13,7 +12,5 @@ def create_app(config_name):
     from .default import default as default_blueprint
     app.register_blueprint(default_blueprint)
 
-    # Initialize any extensions we are using
-    bootstrap.init_app(app)
-
+    Database.initialize()
     return app
