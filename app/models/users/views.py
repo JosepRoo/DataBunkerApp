@@ -1,6 +1,4 @@
-from flask import request, Blueprint, jsonify, session
-
-from app.common.response import Response
+from flask import request, Blueprint, jsonify
 from app.models.users.user import User
 from app.models.users.errors import UserError
 user_blueprint = Blueprint('users', __name__)
@@ -12,8 +10,8 @@ def login_user():
     password = request.form['password']
     if User.login_valid(email, password):
         User.login()
-        return jsonify(Response(success=True, msg_response="Login Successful").json())
-    return jsonify(Response(success=False, msg_response="Login Failed").json())
+        return jsonify({'msg_response':"Login Successful"})
+    return jsonify({'msg_response':"Login Failed"})
 
 
 @user_blueprint.route('/get_user/<string:user_id>', methods=['GET'])

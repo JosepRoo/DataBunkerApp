@@ -71,7 +71,8 @@ class User(object):
         return {'email': self.email,
                 '_id': self._id,
                 'password': self.password,
-                'name': self.name
+                'name': self.name,
+                'privileges': self.privileges
         }
 
     def save_to_mongo(self):
