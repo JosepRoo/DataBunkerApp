@@ -27,6 +27,8 @@ class User(object):
         data = Database.find_one(COLLECTION, {"_id": _id})
         if data is not None:
             return cls(**data)
+        else:
+            raise UserErrors.UserError("id does not exists")
 
     @classmethod
     def get_by_ids(cls, ids):

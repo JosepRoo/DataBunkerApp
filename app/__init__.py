@@ -1,7 +1,7 @@
 from flask import Flask
-
 from app.common.database import Database
 from config import config
+from app.models.users.errors import UserError
 
 
 def create_app(config_name):
