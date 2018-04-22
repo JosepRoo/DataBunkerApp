@@ -14,7 +14,7 @@ def login_user():
         email = json['email']
         password = json['password']
         if User.login_valid(email, password):
-            return jsonify({'msg_response': "Login Successful"})
+            return jsonify({'msg_response': "Inicio de sesión exitoso"})
     except UserError as e:
             return jsonify({'msg_response': e.message})
 
@@ -37,7 +37,7 @@ def register_user():
         password = request.form['password']
         name = request.form['name']
         User.register(email, password, name)
-        return jsonify('msg_response', "Register of user {} was successful!".format(email))
+        return jsonify('msg_response', "Registro de usuario {} exitoso".format(email))
     except UserError as e:
         return jsonify({'msg_response': e.message})
 

@@ -28,7 +28,7 @@ class User(object):
         if data is not None:
             return cls(**data)
         else:
-            raise UserErrors.UserError("id does not exists")
+            raise UserErrors.UserError("id no existe")
 
     @classmethod
     def get_by_ids(cls, ids):
@@ -42,7 +42,7 @@ class User(object):
         if user is not None and Utils.check_hashed_password(password, user.password) and Utils.email_is_valid(email):
             User.login(email, user._id)
             return True
-        raise UserErrors.InvalidLogin("Email or Password wrong")
+        raise UserErrors.InvalidLogin("Email o Contraseña incorrectos")
 
     @classmethod
     def register(cls, email, password, name):
@@ -53,7 +53,7 @@ class User(object):
             session['email'] = email
             session['_id'] = new_user._id
             return True
-        raise UserErrors.UserAlreadyRegisteredError("User already registered")
+        raise UserErrors.UserAlreadyRegisteredError("El Usuario ya existe")
 
     @staticmethod
     def login(user_email, user_id):
