@@ -40,7 +40,7 @@ class User(object):
     def login_valid(email, password):
         user = User.get_by_email(email)
         if user is not None and Utils.check_hashed_password(password, user.password) and Utils.email_is_valid(email):
-            User.login(email)
+            User.login(email, user._id)
             return True
         raise UserErrors.InvalidLogin("Email or Password wrong")
 
@@ -54,15 +54,17 @@ class User(object):
             session['email'] = email
             session['_id'] = new_user._id
             return True
-        return False
+        raise UserErrors.UserAlreadyRegisteredError("User already registered")
 
     @staticmethod
-    def login(user_email):
+    def login(user_email, user_id):
         session['email'] = user_email
+        session['_id'] = user_id
 
     @staticmethod
     def logout():
         session['email'] = None
+        session['_id'] = None
 
     def get_id(self):
         return self._id
