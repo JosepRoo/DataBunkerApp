@@ -10,7 +10,9 @@ def create_app(config_name):
 
     # Register our blueprints
     from .default import default as default_blueprint
+    from app.models.users.views import user_blueprint
     app.register_blueprint(default_blueprint)
+    app.register_blueprint(user_blueprint, prefix='/users')
 
     Database.initialize()
     return app
