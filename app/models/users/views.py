@@ -22,7 +22,7 @@ def get_user(user_id):
         user_data_json.pop("password")
         return jsonify(user_data_json)
     except UserError as e:
-        return e.message
+        return jsonify({'msg_response': e.message})
 
 
 '''
