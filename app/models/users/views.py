@@ -32,6 +32,7 @@ def register_user():
         password = request.form['password']
         name = request.form['name']
         User.register(email, password, name)
+        return jsonify('msg_response', "Register of user {} was successful!".format(email))
     except UserError as e:
         return jsonify({'msg_response': e.message})
 
