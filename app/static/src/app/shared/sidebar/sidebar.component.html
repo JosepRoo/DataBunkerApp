@@ -1,14 +1,15 @@
 <!-- User profile -->
 <div class="user-profile">
     <!-- User profile image -->
-    <div class="profile-img"> <img class="img-fluid rounded-circle" src="assets/images/companies/{{user.company.photo}}" alt="Company" />
+    <div class="profile-img">
+      <!-- <img class="img-fluid rounded-circle" src="assets/images/companies/{{user.company.photo}}" alt="Company" /> -->
         <!-- this is blinking heartbit-->
         <!-- <div class="notify setpos"> <span class="heartbit"></span> <span class="point"></span> </div> -->
     </div>
     <!-- User profile text-->
     <div class="profile-text">
-        <h5>{{user.name}}</h5>
-        <label>{{user.company.name}}</label>
+        <h5>{{user?.name}}</h5>
+        <!-- <label>{{user.company.name}}</label> -->
         <br />
 
         <a ngbDropdownToggle ngbDropdown href="javascript:void(0)" class="u-dropdown"><i class="mdi mdi-settings"></i>

@@ -2,19 +2,19 @@
   <div class="card card-container">
       <img class="img-fluid" src="././assets/images/logoLargo.png" />
       <p id="profile-name" class="profile-name-card"></p>
-      <form class="form-signin">
-          <span id="reauth-email" class="reauth-email"></span>
-          <input type="email" id="inputEmail" class="form-control" placeholder="Correo" required autofocus>
-          <input type="password" id="inputPassword" class="form-control" placeholder="Contraseña" required>
-          <!-- <div id="remember" class="checkbox">
-              <label>
-                  <input type="checkbox" value="remember-me"> Remember me
-              </label>
-          </div> -->
-          <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit">Iniciar Sesión</button>
+      <div class="alert alert-danger" *ngIf="!logIn.valid && !first">
+        <label *ngIf="logIn.controls.email.errors?.email">Correo Invalido</label>
+      </div>
+      <div class="alert alert-danger" *ngIf="res?.success == false">
+        <label>{{res?.msg_response}}</label>
+      </div>
+      <form [formGroup]="logIn" (submit)="onSubmit($event)" class="form-signin">
+          <input type="email" formControlName="email" class="form-control" placeholder="Correo"/>
+          <input type="password" formControlName="password" id="inputPassword" placeholder="Contraseña" class="form-control"/>
+          <button class="btn btn-lg btn-primary btn-block btn-signin" [disabled]="logIn.controls.email.hasError('required') || logIn.controls.password.hasError('required')" type="submit">Iniciar Sesión</button>
       </form><!-- /form -->
       <a  [routerLink]="['/screen/recoverPassword']" class="forgot-password">
-          Olvide mi Contraseña
+          Olvide mi contraseña
       </a>
   </div><!-- /card-container -->
 </div><!-- /container -->

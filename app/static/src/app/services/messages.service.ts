@@ -16,7 +16,7 @@ export class MessageService {
             if (event instanceof NavigationStart) {
                 if (this.keepAfterRouteChange) {
                     // only keep for a single route change
-                    this.keepAfterRouteChange = false;
+                    this.keepAfterRouteChange = true;
                 } else {
                     // clear alert messages
                     this.clear();

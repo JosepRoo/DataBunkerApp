@@ -5,5 +5,5 @@
 
 export const environment = {
   production: false,
-  url: ''
+  url: 'http://206.189.75.77/'
 };
