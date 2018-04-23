@@ -39,7 +39,6 @@ class User(object):
     @staticmethod
     def login_valid(email, password):
         user = User.get_by_email(email)
-        print(user.password)
         if user is not None and Utils.check_hashed_password(password, user.password) and Utils.email_is_valid(email):
             User.login(email, user._id)
             return True
