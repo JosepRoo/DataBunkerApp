@@ -3,6 +3,7 @@ import { NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import { ROUTES } from './menu-items';
 import { RouteInfo } from "./sidebar.metadata";
 import { Router, ActivatedRoute } from "@angular/router";
+import { Observable } from 'rxjs';
 
 //import models
 import { User } from "../../classes/user";
@@ -16,7 +17,7 @@ declare var $: any;
 })
 export class SidebarComponent implements OnInit {
 
-    user: User = new User();
+    user: User;
     showMenu: string = '';
     showSubMenu: string = '';
     public sidebarnavItems: any[];
@@ -39,10 +40,8 @@ export class SidebarComponent implements OnInit {
     }
 
     constructor(private modalService: NgbModal, private router: Router,
-        private route: ActivatedRoute, private userService: UserService) {
-          this.user = userService.getUser();
-    }
-    // End open close
+        private route: ActivatedRoute, private userService: UserService) {}
+
     ngOnInit() {
         this.sidebarnavItems = ROUTES.filter(sidebarnavItem => sidebarnavItem);
         $(function () {
@@ -59,5 +58,7 @@ export class SidebarComponent implements OnInit {
 
         });
 
+        this.userService.getUser('b7faddc73eca4461bbfcca2f3939b483')
+          .subscribe(user => this.user = user);
     }
 }

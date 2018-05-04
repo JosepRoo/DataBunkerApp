@@ -2,6 +2,10 @@
 import { Company } from "../classes/company";
 
 export class User {
+    _id: string;
     name: string;
-    company: Company;
+    email: string;
+    password: string;
+    privileges: any;
+    // company: Company;
 }
