@@ -1,9 +1,9 @@
 class Response(object):
-    def __init__(self, success=False, msg_response=None):
+    def __init__(self, success=False, message=None):
         self.success = success
-        self.msg_response = msg_response
+        self.message = message
 
     def json(self):
         return {'success': self.success,
-                'msg_response': self.msg_response
+                'message': self.message
                 }

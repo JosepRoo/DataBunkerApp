@@ -4,7 +4,7 @@ from app.common.database import Database
 
 
 class Recovery(object):
-    def __init__(self, user_email, _id):
+    def __init__(self, user_email, _id=None):
         self.user_email = user_email
         self._id = uuid.uuid4().hex if _id is None else _id
 

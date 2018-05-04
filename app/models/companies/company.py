@@ -1,7 +1,10 @@
 from app.common.database import Database
 import uuid
+
+from app.models.companies.errors import CompanyAlreadyExists
 from app.models.users.user import User
-from app.models.users.constants import COLLECTION
+from app.models.companies.constants import COLLECTION
+
 
 class Company(object):
     def __init__(self, name, _id=None):
@@ -9,55 +12,49 @@ class Company(object):
         self.users = []
         self._id = uuid.uuid4().hex if _id is None else _id
 
-    def add_delete_user(self, user_id, operation):
-        if operation == "add":
-            self.users.append(user_id)
-        elif operation == "remove":
-            self.users.remove(user_id)
-        modified_count = Database.update(COLLECTION, {'_id': self._id}, self.json())
-        if modified_count == 1:
-            return True #Response(success=True, msg_response='registro modificado con exito').json()
-        return False #Response(success=False, msg_response='Registro no modificado').json()
-
-    def get_users(self, user_id=None, user_email=None):
-        if user_id is not None and user_id in self.users:
-            users = User.get_by_id(user_id)
-            if users is None:
-                return False #Response(success=False, msg_response="Usuario no asignado a esta compania o id incorrecto").json()
-        elif user_email is not None:
-            users = User.get_by_email(user_email)
-            if users is None or users.get_id() not in self.users:
-                return False #Response(success=False,msg_response="Usuario no asignado a esta compania o email incorrecto")
-        else:
-            users = User.get_by_ids(self.users)
-            users.json()
-        return users
+    def get_users(self):
+        users = User.get_by_enterprise_id(self._id)
+        if users:
+            self.users = users
+        return self
 
     @classmethod
     def get_company_by_id(cls, _id):
         data = Database.find_one("companies", {"_id": _id})
-        if data is not None:
+        if data:
             return cls(**data)
 
-    def add_delete_privilege(self, privilege_id, operation):
-        if operation == "add":
-            self.users.append(privilege_id)
-        elif operation == "remove":
-            self.users.remove(privilege_id)
-        modified_count = Database.update({'_id': self._id}, self.json())
-        return modified_count
+    @classmethod
+    def get_company_by_name(cls, name):
+        data = Database.find_one("companies", {"name": name})
+        if data:
+            return cls(**data)
 
-    '''
-    def get_users(self, user_id=None):
-        if user_id is not None:
-            users = Database.find('users', {"$in:": self.users})
-            return [User(user['_id'], user['email'], user['name']) for user in users]
-    '''
+    @classmethod
+    def register(cls, kwargs):
+        name = kwargs['name']
+        company = Company.get_company_by_name(name)
+        if company:
+            raise CompanyAlreadyExists("Company with name {} already exists".format(name))
+        new_company = cls(**kwargs)
+        new_company.save_to_mongo()
+        return new_company
+
+    def delete_company(self):
+        Database.remove(COLLECTION, {'_id': self._id})
 
     def save_to_mongo(self):
-        Database.insert('companies', self.json())
+        Database.insert('companies', self.json_Mongo())
 
     def json(self):
         return {'name': self.name,
-                'users': self.users,
+                'users': [user.json() for user in self.users],
                 '_id': self._id}
+
+    def json_Mongo(self):
+        return {'name': self.name,
+                '_id': self._id}
+
+    @classmethod
+    def get_all_companies(cls):
+        return [cls(**company) for company in Database.find(COLLECTION, {})]

@@ -6,15 +6,17 @@ from app.models.users.constants import COLLECTION
 from app.common.utils import Utils
 from app.models.recoveries.recovery import Recovery
 import app.models.users.errors as UserErrors
+import ast
 
 
 class User(object):
-    def __init__(self, email, name, password=None, _id=None, privileges=None):
+    def __init__(self, email, name, password=None, _id=None, enterprise_id=None, privileges=None):
         self.email = email
         self.password = password
         self.name = name
-        self.privileges = privileges if privileges is not None else []
+        self.privileges = eval(privileges) if privileges else []
         self._id = uuid.uuid4().hex if _id is None else _id
+        self.enterprise_id = enterprise_id
 
     @classmethod
     def get_by_email(cls, email):
@@ -31,8 +33,8 @@ class User(object):
             raise UserErrors.UserError("id no existe")
 
     @classmethod
-    def get_by_ids(cls, ids):
-        data = Database.find(COLLECTION, {"$in:": ids})
+    def get_by_enterprise_id(cls, enterprise_id):
+        data = Database.find(COLLECTION, {"enterprise_id": enterprise_id})
         if data is not None:
             return [cls(**user) for user in data]
 
@@ -45,14 +47,15 @@ class User(object):
         raise UserErrors.InvalidLogin("Email o Contraseña incorrectos")
 
     @classmethod
-    def register(cls, email, password, name):
+    def register(cls, kwargs):
+        email = kwargs['email']
         user = User.get_by_email(email)
         if user is None:
-            new_user = cls(email, name, Utils.hash_password(password))
+            print(kwargs['enterprise_id'])
+            new_user = cls(**kwargs)
             new_user.save_to_mongo()
-            session['email'] = email
-            session['_id'] = new_user._id
-            return True
+            User.login(new_user.email, new_user._id)
+            return new_user
         raise UserErrors.UserAlreadyRegisteredError("El Usuario ya existe")
 
     @staticmethod
@@ -68,16 +71,25 @@ class User(object):
     def get_id(self):
         return self._id
 
-    def json(self):
+    def json_mongo(self):
         return {'email': self.email,
                 '_id': self._id,
                 'password': self.password,
                 'name': self.name,
-                'privileges': self.privileges
+                'privileges': self.privileges,
+                'enterprise_id': self.enterprise_id
+                }
+
+    def json(self):
+        return {'email': self.email,
+                '_id': self._id,
+                'name': self.name,
+                'privileges': self.privileges,
+                'enterprise_id': self.enterprise_id
                 }
 
     def save_to_mongo(self):
-        Database.insert('users', self.json())
+        Database.insert('users', self.json_mongo())
 
     def send_recovery_message(self):
         recovery = Recovery(user_email=self.email)
@@ -96,7 +108,10 @@ class User(object):
         self.password = Utils.hash_password(password)
 
     def update_user(self):
-        Database.update(COLLECTION, {self._id}, self.json())
+        Database.update(COLLECTION, {'_id': self._id}, self.json_mongo())
+
+    def delete_user(self):
+        Database.remove(COLLECTION, {'_id': self._id})
 
     @staticmethod
     def recover_password(recovery_id, email, password):
@@ -104,3 +119,10 @@ class User(object):
         user = User.get_by_email(email)
         user.set_password(password)
         user.update_user()
+
+    '''
+    @user_blueprint.before_request
+    def before_request():
+        if session.get('email') is None:
+            return jsonify(Response(msg_response="Not Logged in").json())
+    '''

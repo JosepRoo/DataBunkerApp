@@ -22,7 +22,7 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'secret_key_here'
+    SECRET_KEY = os.environ.get('SECRET_KEY') or '%D4t4BuNk3R%'
 
 
 class TestingConfig(Config):

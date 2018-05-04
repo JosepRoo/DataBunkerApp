@@ -1,11 +1,15 @@
 from flask import Flask
+from flask_restful import Api
+
 from app.common.database import Database
+from app.resources.company import Company
+from app.resources.user import UserStatus, User
 from config import config
-from app.models.users.errors import UserError
 
 
 def create_app(config_name):
     app = Flask(__name__)
+    api = Api(app)
     app.config.from_object(config[config_name])
 
     @app.after_request
@@ -19,9 +23,11 @@ def create_app(config_name):
     def init_db():
         Database.initialize()
 
+    api.add_resource(UserStatus, '/userstatus')
+    api.add_resource(User, '/user/<string:email>', '/user')
+    api.add_resource(Company, '/company', '/company/<string:_id>')
+
     # Register our blueprints
     from .default import default as default_blueprint
-    from app.models.users.views import user_blueprint
     app.register_blueprint(default_blueprint)
-    app.register_blueprint(user_blueprint, url_prefix='/users')
     return app
