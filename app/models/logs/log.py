@@ -1,7 +1,5 @@
 import datetime
 
-from app import Database
-
 
 class Log:
     def __init__(self, value, date, created_date=None):
