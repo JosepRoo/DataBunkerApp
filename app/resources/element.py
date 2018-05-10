@@ -21,8 +21,33 @@ class Element(Resource):
         try:
             element_class = globals()[element_type_title]
             if element_id:
-                return {"element": element_class.get_element(element_id).json()}
-            return {"elements": [element.json() for element in element_class.get_elements()]}
+                return element_class.get_element(element_id).json(
+                    ("sub_elements", "parentElementId")) if element_type != "product" else element_class.get_element(
+                    element_id).json("parentElementId")
+            return [element.json(("sub_elements", "parentElementId")) if element_type != "product" else element.json(
+                "parentElementId") for element in
+                    element_class.get_elements()]
 
         except ElementErrors as e:
-            return Response(e.message)
+            return Response(e.message), 404
+
+
+class SubElement(Resource):
+    def get(self, element_type, element_id):
+        element_type_title = element_type.title()
+        child_class = None
+        if element_type_title == "Channel":
+            child_class = globals()["Category"]
+        elif element_type_title == "Category":
+            child_class = globals()["Brand"]
+        elif element_type_title == "Brand":
+            child_class = globals()["Product"]
+        try:
+            element_class = globals()[element_type_title]
+            return [sub_element.json(("sub_elements", "parentElementId"))
+                    if element_type != "product"
+                    else sub_element.json("parentElementId") for sub_element in
+                    element_class.get_sub_elements(element_id,child_class)]
+
+        except ElementErrors as e:
+            return Response(e.message), 404

@@ -7,26 +7,20 @@ from app.models.brands.constants import COLLECTION as BRAND_COLLECTION
 from app.models.categories.constants import COLLECTION as CATEGORY_COLLECTION
 from app.models.channels.constants import COLLECTION as CHANNEL_COLLECTION
 
-
 # clase base de todos los elementos (canales,categorias,marcas,productos y logs)
 class Element(BaseModel):
     def __init__(self, name, sub_elements=None, _id=None):
         self.name = name
-        self.sub_elements = sub_elements if sub_elements else []  # cuando guade el objeto excluir sub_elements
+        self.sub_elements = sub_elements if sub_elements else []
         BaseModel.__init__(self, _id)
 
     @classmethod
-    def get_sub_elements(cls, _id):
+    def get_sub_elements(cls, _id, child_class):
         child_collection = Element.get_collection_by_name(cls.__name__, is_child=True)
-        return [cls(**sub_element) for sub_element in Database.find(child_collection, {'parentElementId': _id})]
+        return [child_class(**sub_element) for sub_element in Database.find(child_collection, {'parentElementId': _id})]
 
     def get_average(self):
-        class_name = self.__class__.__name__
-        if class_name != "Product":
-            return Utils.mean(
-                [element.get_average() for element in self.get_sub_elements(self.get_collection(), self._id)])
-        else:
-            return Utils.mean([log.price for log in self.get_sub_elements()])
+        pass
 
     @classmethod
     def get_elements(cls):
@@ -94,5 +88,12 @@ class Element(BaseModel):
     def get_by_name(cls, name):
         collection = Element.get_collection_by_name(cls.__name__)
         element = Database.find_one(collection, {"name": name})
+        if element:
+            return cls(**element)
+
+    @classmethod
+    def get_by_id(cls, _id,collection=None):
+        collection = Element.get_collection_by_name(cls.__name__)
+        element = Database.find_one(collection, {"_id": _id})
         if element:
             return cls(**element)
