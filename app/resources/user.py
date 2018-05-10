@@ -69,9 +69,9 @@ class User(Resource):
     def get(self, email=None):
         _id = session['_id'] if session.get('_id', None) else None
         if email:
-            return UserModel.get_by_email(email).json(), 200
+            return UserModel.get_by_email(email).json(exclude='password'), 200
         if _id:
-            return UserModel.get_by_id(_id).json(), 200
+            return UserModel.get_by_id(_id).json(exclude='password'), 200
         return Response(message='Not Logged In or Data not given').json(), 400
 
     def put(self, email=None):
@@ -81,7 +81,7 @@ class User(Resource):
         if data.get('privileges', None):
             user.privileges = data['privileges']
         user.update_user()
-        return user.json()
+        return user.json(exclude='password')
 
     def post(self, email=None):
         data = User.parser.parse_args()

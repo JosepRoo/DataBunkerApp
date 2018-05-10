@@ -1,0 +1,3 @@
+
+class Privilege:
+    pass

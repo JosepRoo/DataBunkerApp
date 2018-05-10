@@ -3,6 +3,7 @@ from flask_restful import Api
 
 from app.common.database import Database
 from app.resources.company import Company
+from app.resources.element import Element
 from app.resources.user import UserStatus, User
 from config import config
 
@@ -26,6 +27,7 @@ def create_app(config_name):
     api.add_resource(UserStatus, '/userstatus')
     api.add_resource(User, '/user/<string:email>', '/user')
     api.add_resource(Company, '/company', '/company/<string:_id>')
+    api.add_resource(Element, '/elements/<string:element_type>','/elements/<string:element_type>/<string:element_id>')
 
     # Register our blueprints
     from .default import default as default_blueprint

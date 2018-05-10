@@ -1,16 +1,15 @@
 from app.common.database import Database
-import uuid
-
+from app.models.basemodel import BaseModel
 from app.models.companies.errors import CompanyAlreadyExists
 from app.models.users.user import User
 from app.models.companies.constants import COLLECTION
 
 
-class Company(object):
+class Company(BaseModel):
     def __init__(self, name, _id=None):
+        BaseModel.__init__(self,_id)
         self.name = name
         self.users = []
-        self._id = uuid.uuid4().hex if _id is None else _id
 
     def get_users(self):
         users = User.get_by_enterprise_id(self._id)

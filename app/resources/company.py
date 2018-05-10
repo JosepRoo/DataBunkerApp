@@ -15,7 +15,7 @@ class Company(Resource):
 
     def get(self, _id=None):
         if _id:
-            return CompanyModel.get_company_by_id(_id).get_users().json(), 200
+            return {"company" : CompanyModel.get_company_by_id(_id).get_users().json()}, 200
         return {"companies": [company.get_users().json() for company in CompanyModel.get_all_companies()]}, 200
 
     def post(self, _id=None):

@@ -1,9 +1,7 @@
 from passlib.hash import pbkdf2_sha512
 import re
 
-__author__ = 'jslvtr'
-
-
+#utility class used thorughout other classes to perform common functions that dont fit in any other class
 class Utils(object):
 
     @staticmethod
@@ -30,3 +28,14 @@ class Utils(object):
         :return: True if passwords match, False otherwise
         """
         return pbkdf2_sha512.verify(password, hashed_password)
+
+    @staticmethod
+    def mean(arr):
+        """
+        Calculates the mean value from a list or tuple
+        :param arr: [1,2,4,5]
+        :return 6
+        """
+        if arr:
+            return sum(arr)/len(arr)
+        return 0.0

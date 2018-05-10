@@ -1,21 +1,22 @@
 import requests
 from flask import session
+
+
 from app.common.database import Database
-import uuid
+from app.models.basemodel import BaseModel
 from app.models.users.constants import COLLECTION
 from app.common.utils import Utils
 from app.models.recoveries.recovery import Recovery
 import app.models.users.errors as UserErrors
-import ast
 
 
-class User(object):
+class User(BaseModel):
     def __init__(self, email, name, password=None, _id=None, enterprise_id=None, privileges=None):
+        BaseModel.__init__(self,_id)
         self.email = email
         self.password = password
         self.name = name
         self.privileges = eval(privileges) if privileges else []
-        self._id = uuid.uuid4().hex if _id is None else _id
         self.enterprise_id = enterprise_id
 
     @classmethod
@@ -51,7 +52,6 @@ class User(object):
         email = kwargs['email']
         user = User.get_by_email(email)
         if user is None:
-            print(kwargs['enterprise_id'])
             new_user = cls(**kwargs)
             new_user.save_to_mongo()
             User.login(new_user.email, new_user._id)
@@ -71,26 +71,6 @@ class User(object):
     def get_id(self):
         return self._id
 
-    def json_mongo(self):
-        return {'email': self.email,
-                '_id': self._id,
-                'password': self.password,
-                'name': self.name,
-                'privileges': self.privileges,
-                'enterprise_id': self.enterprise_id
-                }
-
-    def json(self):
-        return {'email': self.email,
-                '_id': self._id,
-                'name': self.name,
-                'privileges': self.privileges,
-                'enterprise_id': self.enterprise_id
-                }
-
-    def save_to_mongo(self):
-        Database.insert('users', self.json_mongo())
-
     def send_recovery_message(self):
         recovery = Recovery(user_email=self.email)
         recovery.save_to_mongo()
@@ -108,17 +88,17 @@ class User(object):
         self.password = Utils.hash_password(password)
 
     def update_user(self):
-        Database.update(COLLECTION, {'_id': self._id}, self.json_mongo())
+        self.update_mongo(COLLECTION)
 
     def delete_user(self):
-        Database.remove(COLLECTION, {'_id': self._id})
+        self.delete_from_mongo(COLLECTION)
 
     @staticmethod
     def recover_password(recovery_id, email, password):
         Recovery.recover_password(recovery_id, email, password)
         user = User.get_by_email(email)
         user.set_password(password)
-        user.update_user()
+        user.update_mongo(collection=COLLECTION)
 
     '''
     @user_blueprint.before_request
