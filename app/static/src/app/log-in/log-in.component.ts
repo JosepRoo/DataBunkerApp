@@ -17,6 +17,7 @@ export class LogInComponent implements OnInit {
   logIn: FormGroup;
   first = true;
   res: any;
+  error: boolean = false;
 
   constructor(private _formBuilder: FormBuilder, private userService: UserService, private router: Router, private location: Location ) { }
 
@@ -29,6 +30,7 @@ export class LogInComponent implements OnInit {
 
   onSubmit(event:Event) {
     event.preventDefault();
+    this.error = false;
     this.res = null;
     this.first = false;
     if (this.logIn.valid) {
@@ -38,7 +40,11 @@ export class LogInComponent implements OnInit {
           this.location.replaceState('/'); // clears browser history so they can't navigate with back button
           this.router.navigate(['/']);
         }
-      });
+      }, (err) => {
+        if (err === 'Unauthorized'){
+          this.error = true;
+        }
+    });
     } else {
       console.log("Error in form");
     }

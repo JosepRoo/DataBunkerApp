@@ -11,7 +11,8 @@ export class Line {
   public category: Category;
   public product: Product;
   public color: string;
-  public data: object;
+  public data: any;
+  public name: string;
 
   constructor(){}
 

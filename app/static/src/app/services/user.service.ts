@@ -8,6 +8,7 @@ import { of } from 'rxjs/observable/of';
 import { catchError, map, tap } from 'rxjs/operators';
 import { HttpHeaders } from '@angular/common/http';
 import * as shajs from 'sha.js';
+import 'rxjs/add/operator/catch';
 
 // import models
 import { User } from "../classes/user";
@@ -19,7 +20,7 @@ import { MessageService } from "../services/messages.service";
 @Injectable()
 export class UserService {
 
-  private userUrl: string = environment.url+'users/';
+  private userUrl: string = environment.url+'userstatus';
   private headers = new HttpHeaders({ 'Content-Type': 'application/json'});
 
   constructor(private companyService: CompanyService, private http: HttpClient, private msgService: MessageService) {
@@ -49,10 +50,16 @@ export class UserService {
 
   logIn(data): Observable<any> {
     data.password = shajs('sha256').update(data.password).digest('hex');
-    return this.http.post(this.userUrl+'login', JSON.stringify(data), {headers: this.headers}).pipe(
-      tap(_ => this.checkError(_)),
-      catchError(this.handleError<Object>(`login data=${data}`))
-    );
+    return this.http.post(this.userUrl, JSON.stringify(data), {headers: this.headers})
+      .map(res => {
+            return res;
+      })
+      .catch(e => {
+          if (e.status === 401) {
+              return Observable.throw('Unauthorized');
+          }
+          // do any other checking for statuses here
+      });
   }
 
   checkError(res) {

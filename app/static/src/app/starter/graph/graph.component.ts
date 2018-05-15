@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
-import { AmChartsService, AmChart } from "@amcharts/amcharts3-angular"
+import { Component, Input } from '@angular/core';
+import { AmChartsService, AmChart } from "@amcharts/amcharts3-angular";
+import { Line } from '../../classes/line';
+
 
 @Component({
   selector: 'app-graph',
@@ -9,6 +11,8 @@ import { AmChartsService, AmChart } from "@amcharts/amcharts3-angular"
 export class GraphComponent {
 
   private chart: AmChart;
+  @Input() lines: Line[];
+  @Input() data: any[];
 
   constructor(private AmCharts: AmChartsService) {
 
@@ -46,7 +50,20 @@ export class GraphComponent {
   }
 
   ngAfterViewInit() {
-    var chartData = this.generateChartData();
+    var chartData = this.data;
+    var chartValues = [];
+    for(var i = 0; i<this.lines.length; i++){
+      var data = {
+        "valueAxis": "v"+String(i+1),
+        "lineColor": this.lines[i].color,
+        "bullet": "round",
+        "bulletBorderThickness": 1,
+        "hideBulletsCount": 30,
+        "title": this.lines[i],
+        "valueField": "average",
+      }
+      chartValues.push(data);
+    }
     this.chart = this.AmCharts.makeChart("chartdiv", {
         "type": "serial",
         "theme": "none",
@@ -79,34 +96,7 @@ export class GraphComponent {
         //     "position": "left"
         // }
       ],
-        "graphs": [{
-            "valueAxis": "v1",
-            "lineColor": "#009efb",
-            "bullet": "round",
-            "bulletBorderThickness": 1,
-            "hideBulletsCount": 30,
-            "title": "Producto 1",
-            "valueField": "visits",
-    		"fillAlphas": 0
-        }, {
-            "valueAxis": "v2",
-            "lineColor": "rgb(101, 186, 105)",
-            "bullet": "square",
-            "bulletBorderThickness": 1,
-            "hideBulletsCount": 30,
-            "title": "Producto 2",
-            "valueField": "hits",
-    		"fillAlphas": 0
-        }, {
-            "valueAxis": "v3",
-            "lineColor": "#5c4ac7",
-            "bullet": "triangleUp",
-            "bulletBorderThickness": 1,
-            "hideBulletsCount": 30,
-            "title": "Producto 3",
-            "valueField": "views",
-    		"fillAlphas": 0
-        }],
+        "graphs": chartValues,
         "chartScrollbar": {},
         "chartCursor": {
             "cursorPosition": "mouse"

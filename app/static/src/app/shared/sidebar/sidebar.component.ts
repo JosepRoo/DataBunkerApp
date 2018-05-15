@@ -58,7 +58,7 @@ export class SidebarComponent implements OnInit {
 
         });
 
-        this.userService.getUser('b7faddc73eca4461bbfcca2f3939b483')
-          .subscribe(user => this.user = user);
+        // this.userService.getUser('b7faddc73eca4461bbfcca2f3939b483')
+        //   .subscribe(user => this.user = user);
     }
 }

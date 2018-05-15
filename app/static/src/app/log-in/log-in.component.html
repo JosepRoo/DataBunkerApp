@@ -5,6 +5,9 @@
       <div class="alert alert-danger" *ngIf="!logIn.valid && !first">
         <label *ngIf="logIn.controls.email.errors?.email">Correo Invalido</label>
       </div>
+      <div class="alert alert-danger" *ngIf="error">
+        <label>Correo o contraseña incorrectos</label>
+      </div>
       <div class="alert alert-danger" *ngIf="res?.success == false">
         <label>{{res?.msg_response}}</label>
       </div>

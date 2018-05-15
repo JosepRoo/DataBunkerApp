@@ -3,15 +3,7 @@
 export class Product {
 
   public name: string;
-  public id: number;
-
-  constructor(id: number, name: string ){
-    this.id = id;
-    this.name = name;
-  };
-
-  public deleteChildren(){
-    console.log("No more children");
-  }
+  public _id: string;
+  public sub_elements: any[] | null;
 
 }

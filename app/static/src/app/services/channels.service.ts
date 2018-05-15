@@ -1,152 +1,97 @@
 import { Injectable } from '@angular/core';
-
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
-
 import { Channel } from '../classes/channel';
-
+import { Product } from '../classes/product';
+import { Category } from '../classes/category';
+import { Brand } from '../classes/brand';
 import { catchError, map, tap } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { HttpHeaders } from '@angular/common/http';
+import { environment } from '../../environments/environment';
+import 'rxjs/add/operator/catch';
+
+// services
+import { MessageService } from "../services/messages.service";
 
 @Injectable()
 export class ChannelService {
 
 
-  private channelUrl = 'api/channel';
+  private channelUrl = environment.url+'elements/channel';
+  private subElementsUrl = environment.url+'subelements/';
+  private dataUrl = environment.url+'elementvalue/';
+  private headers = new HttpHeaders({ 'Content-Type': 'application/json'});
 
-  getChannels(): Channel[] {
-    let channels: Channel[] = [];
-    let json = [
-    	{
-    		name: 'Amazon',
-    		id: 1,
-    		categories: [
-    			{
-    				name: 'RayBan',
-    				id: 1,
-    				brands: [
-    					{
-    						name: "Sunglasses",
-    						id: 1,
-    						products: [
-    							{
-    								name: "Aviator",
-    								id: 1
-    							},
-    							{
-    								name: "Longth",
-    								id: 2
-    							},
-    							{
-    								name: "Sepia",
-    								id: 3
-    							}
-    						]
-    					},
-    					{
-    						name: "Glasses",
-    						id: 1,
-    						products: [
-    							{
-    								name: "Aviator",
-    								id: 1
-    							},
-    							{
-    								name: "Longth",
-    								id: 2
-    							},
-    							{
-    								name: "Sepia",
-    								id: 3
-    							}
-    						]
-    					},
-    					{
-    						name: "Clothes",
-    						id: 1,
-    						products: [
-    							{
-    								name: "T-Shirt",
-    								id: 1
-    							},
-    							{
-    								name: "Pants",
-    								id: 2
-    							},
-    							{
-    								name: "Jeans",
-    								id: 3
-    							}
-    						]
-    					}
-    				]
-    			},
-    			{
-    				name: 'Polo',
-    				id: 1,
-    				brands: [
-    					{
-    						name: "Accesories",
-    						id: 1,
-    						products: [
-    							{
-    								name: "Belt",
-    								id: 1
-    							},
-    							{
-    								name: "Sunglasses",
-    								id: 2
-    							},
-    							{
-    								name: "Wallets",
-    								id: 3
-    							}
-    						]
-    					},
-    					{
-    						name: "Shirts",
-    						id: 1,
-    						products: [
-    							{
-    								name: "Polo",
-    								id: 1
-    							},
-    							{
-    								name: "Turtle",
-    								id: 2
-    							},
-    							{
-    								name: "Formal",
-    								id: 3
-    							}
-    						]
-    					},
-    					{
-    						name: "Jeans",
-    						id: 1,
-    						products: [
-    							{
-    								name: "Short",
-    								id: 1
-    							},
-    							{
-    								name: "Long",
-    								id: 2
-    							},
-    							{
-    								name: "Retro",
-    								id: 3
-    							}
-    						]
-    					}
-    				]
-    			}
-    		]
-    	}
-    ];
-    json.forEach(function(channel){
-      channels.push(new Channel(channel.id, channel.name, channel.categories))
-    })
-    return channels;
+  constructor(private http: HttpClient, private msgService: MessageService) {
+    // this.user.company = companyService.getCompany();
   }
+
+  getChannels(): Observable<Channel[]> {
+    return this.http.get<Channel>(this.channelUrl,  {headers: this.headers})
+      .map(res => {
+            return res;
+      })
+      .catch(e => {
+          if (e.status === 401) {
+              return Observable.throw('Unauthorized');
+          }
+          // do any other checking for statuses here
+      });
+  }
+
+  getChannelSubElemenets(channelId): Observable<Category[]> {
+    return this.http.get<Channel>(this.subElementsUrl+"channel/"+channelId,  {headers: this.headers})
+      .map(res => {
+            return res;
+      })
+      .catch(e => {
+          if (e.status === 401) {
+              return Observable.throw('Unauthorized');
+          }
+          // do any other checking for statuses here
+      });
+  }
+
+  getCategorySubElemenets(categoryId): Observable<Brand[]> {
+    return this.http.get<Channel>(this.subElementsUrl+"category/"+categoryId,  {headers: this.headers})
+      .map(res => {
+            return res;
+      })
+      .catch(e => {
+          if (e.status === 401) {
+              return Observable.throw('Unauthorized');
+          }
+          // do any other checking for statuses here
+      });
+  }
+
+  getBrandSubElemenets(brandId): Observable<Product[]> {
+    return this.http.get<Product>(this.subElementsUrl+"brand/"+brandId,  {headers: this.headers})
+      .map(res => {
+            return res;
+      })
+      .catch(e => {
+          if (e.status === 401) {
+              return Observable.throw('Unauthorized');
+          }
+          // do any other checking for statuses here
+      });
+  }
+
+  getData(type, id, startDate, endDate){
+    return this.http.get<any>(this.dataUrl+type+'/'+id+'/'+startDate+'/'+endDate,  {headers: this.headers})
+      .map(res => {
+            return res;
+      })
+      .catch(e => {
+          if (e.status === 401) {
+              return Observable.throw('Unauthorized');
+          }
+          // do any other checking for statuses here
+      });
+  }
+
+
 
 }
