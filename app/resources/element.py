@@ -1,11 +1,11 @@
-from flask_restful import Resource
+from flask_restful import Resource, reqparse
 
 from app.common.response import Response
-from app.models.channels.channels import Channel
-from app.models.categories.category import Category
 from app.models.brands.brand import Brand
-from app.models.products.product import Product
+from app.models.categories.category import Category
+from app.models.channels.channels import Channel
 from app.models.elements.errors import ElementErrors
+from app.models.products.product import Product
 
 
 class Element(Resource):
@@ -47,7 +47,22 @@ class SubElement(Resource):
             return [sub_element.json(("sub_elements", "parentElementId"))
                     if element_type != "product"
                     else sub_element.json("parentElementId") for sub_element in
-                    element_class.get_sub_elements(element_id,child_class)]
+                    element_class.get_sub_elements(element_id, child_class)]
 
         except ElementErrors as e:
             return Response(e.message), 404
+
+
+class ElementValue(Resource):
+    def get(self, element_type, element_id, begin_date, end_date):
+        res = None
+        if element_type == "channel":
+            res = Channel.get_average(element_id, begin_date, end_date)
+        elif element_type == "category":
+            res = Category.get_average(element_id, begin_date, end_date)
+        elif element_type == "brand":
+            res = Brand.get_average(element_id, begin_date, end_date)
+        elif element_type == "product":
+            res = Product.get_average(element_id, begin_date, end_date)
+
+        return res

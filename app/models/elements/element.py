@@ -1,11 +1,11 @@
 from app.common.database import Database
-from app.common.utils import Utils
 from app.models.basemodel import BaseModel
 from app.models.elements.errors import ElementNotFound
 from app.models.products.constants import COLLECTION as PRODUCT_COLLECTION
 from app.models.brands.constants import COLLECTION as BRAND_COLLECTION
 from app.models.categories.constants import COLLECTION as CATEGORY_COLLECTION
 from app.models.channels.constants import COLLECTION as CHANNEL_COLLECTION
+
 
 # clase base de todos los elementos (canales,categorias,marcas,productos y logs)
 class Element(BaseModel):
@@ -19,7 +19,8 @@ class Element(BaseModel):
         child_collection = Element.get_collection_by_name(cls.__name__, is_child=True)
         return [child_class(**sub_element) for sub_element in Database.find(child_collection, {'parentElementId': _id})]
 
-    def get_average(self):
+    @staticmethod
+    def get_average(element_id, begin_date, end_date):
         pass
 
     @classmethod
@@ -34,9 +35,6 @@ class Element(BaseModel):
         if element:
             return element
         raise ElementNotFound("El elemento con el id y tipo dado no fue encontrado")
-
-    def set_sub_elements(self):
-        self.sub_elements = self.__class__.get_sub_elements(True)
 
     def get_collection(self, is_child=False):
         class_name = self.__class__.__name__
@@ -88,6 +86,13 @@ class Element(BaseModel):
     def get_by_name(cls, name):
         collection = Element.get_collection_by_name(cls.__name__)
         element = Database.find_one(collection, {"name": name})
+        if element:
+            return cls(**element)
+
+    @classmethod
+    def get_by_name_and_parent_id(cls, name,parent_element_id):
+        collection = Element.get_collection_by_name(cls.__name__)
+        element = Database.find_one(collection, {"name": name,"parentElementId":parent_element_id})
         if element:
             return cls(**element)
 

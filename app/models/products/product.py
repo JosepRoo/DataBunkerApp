@@ -1,3 +1,5 @@
+import datetime
+
 from app import Database
 from app.models.elements.element import Element
 from app.models.logs.log import Log
@@ -21,3 +23,24 @@ class Product(Element):
         if list(filter(lambda x: x.date == new_date, self.sub_elements)):
             return True
         return False
+
+    @staticmethod
+    def get_average(element_id, begin_date, end_date):
+        first_date = datetime.datetime.strptime(begin_date, "%Y-%m-%d")
+        last_date = datetime.datetime.strptime(end_date, "%Y-%m-%d")
+
+        expressions = list()
+        expressions.append({'$match': {'_id': element_id}})
+        expressions.append({'$unwind': '$sub_elements'})
+        expressions.append(
+            {'$project': {'sub_elements.date': 1, 'sub_elements.value': 1,
+                          'day': {'$dayOfMonth': '$sub_elements.date'},
+                          'month': {'$month': '$sub_elements.date'}}})
+        expressions.append({'$match': {'sub_elements.date': {'$gte': first_date, '$lte': last_date}}})
+        expressions.append({'$group': {'_id': '$sub_elements.date',
+                                       'average': {'$avg': '$sub_elements.value'}}})
+
+        result = list(Database.aggregate(COLLECTION, expressions))
+        for element in result:
+            element["_id"] = element["_id"].strftime("%Y/%m/%d")
+        return result

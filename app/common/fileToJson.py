@@ -1,4 +1,5 @@
 import csv
+import datetime
 
 from app.common.tree import Tree
 
@@ -21,11 +22,12 @@ class FileToJSON:
             next(fileReader, None)
             tree = Tree()
             for row in fileReader:
-                if row[5] == '' or not row[5]:
-                    row[5] = 'Sin Marca'
-                if row[8] == '' or not row[8]:
+                if row[6].strip() == '' or not row[6].strip():
+                    row[6] = 'Sin Marca'
+                if row[8].strip() == '' or not row[8].strip() or row[5].strip() == '' or not row[5].strip():
                     continue
-                tree[row[1]][row[2]][row[6]][row[5]+"||"+row[8]] = {"date": row[3], "value": float(row[7].strip("$"))}
+                tree[row[1]][row[2]][row[6]][row[5] + "||" + row[8]] = {
+                    "date": row[3], "value": float(row[7].strip("$"))}
             return tree
 
     @staticmethod

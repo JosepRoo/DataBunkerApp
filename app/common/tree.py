@@ -30,13 +30,13 @@ class Tree(dict):
                 channel_exists.save_to_mongo(Channel.get_collection_by_name(channel_exists.__class__.__name__),
                                              "sub_elements")
             for category in self[channel]:
-                category_exists = Category.get_by_name(category)
+                category_exists = Category.get_by_name_and_parent_id(category, channel_exists._id)
                 if not category_exists:
                     category_exists = Category(category, channel_exists._id)
                     category_exists.save_to_mongo(Category.get_collection_by_name(category_exists.__class__.__name__),
                                                   "sub_elements")
                 for brand in self[channel][category]:
-                    brand_exists = Brand.get_by_name(brand)
+                    brand_exists = Brand.get_by_name_and_parent_id(brand,category_exists._id)
                     if not brand_exists:
                         brand_exists = Brand(brand, category_exists._id)
                         brand_exists.save_to_mongo(Brand.get_collection_by_name(brand_exists.__class__.__name__),

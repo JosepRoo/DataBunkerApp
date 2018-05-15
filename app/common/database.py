@@ -33,3 +33,6 @@ class Database(object):
     def remove(collection, query):
         return Database.DATABASE[collection].remove(query)
 
+    @staticmethod
+    def aggregate(collection, queries):
+        return Database.DATABASE[collection].aggregate(queries)
