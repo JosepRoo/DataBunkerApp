@@ -3,6 +3,7 @@ from flask_restful import Resource, reqparse
 from app.common.response import Response
 from app.models.companies.company import Company as CompanyModel
 from app.models.companies.errors import CompanyError
+from app.models.companies.constants import COLLECTION
 
 
 class Company(Resource):
@@ -15,8 +16,8 @@ class Company(Resource):
 
     def get(self, _id=None):
         if _id:
-            return {"company" : CompanyModel.get_company_by_id(_id).get_users().json()}, 200
-        return {"companies": [company.get_users().json() for company in CompanyModel.get_all_companies()]}, 200
+            return CompanyModel.get_company_by_id(_id).get_users().json(), 200
+        return [company.get_users().json() for company in CompanyModel.get_all_companies()], 200
 
     def post(self, _id=None):
         data = Company.parser.parse_args()
@@ -28,6 +29,6 @@ class Company(Resource):
 
     def delete(self, _id):
         company = CompanyModel.get_company_by_id(_id)
-        company.delete_company()
+        company.delete_from_mongo(COLLECTION)
         return Response(success=True, message="Empresa {} borrada".format(company.name))
 

@@ -1,3 +1,5 @@
+__author__ = "Luis Ricardo Gutierrez Luna"
+
 import datetime
 
 from app.models.brands.brand import Brand

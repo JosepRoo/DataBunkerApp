@@ -1,6 +1,6 @@
 import csv
 import datetime
-
+__author__ = "Luis Ricardo Gutierrez Luna"
 from app.common.tree import Tree
 
 
@@ -35,8 +35,8 @@ class FileToJSON:
         """
         Read a csv file
         """
-        # dialect = csv.Sniffer().sniff(file_obj.read(1024))
+        #dialect = csv.Sniffer().sniff(file_obj.read(1024))
         file_obj.seek(0)
-        # reader = csv.reader(file_obj, dialect)
+        #reader = csv.reader(file_obj, dialect)
         reader = csv.reader(file_obj, delimiter=',')
         return reader
