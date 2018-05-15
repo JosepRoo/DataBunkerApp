@@ -36,23 +36,9 @@ class Company(BaseModel):
         if company:
             raise CompanyAlreadyExists("Company with name {} already exists".format(name))
         new_company = cls(**kwargs)
-        new_company.save_to_mongo()
+        new_company.save_to_mongo(COLLECTION, 'users')
         return new_company
 
-    def delete_company(self):
-        Database.remove(COLLECTION, {'_id': self._id})
-
-    def save_to_mongo(self):
-        Database.insert('companies', self.json_Mongo())
-
-    def json(self):
-        return {'name': self.name,
-                'users': [user.json() for user in self.users],
-                '_id': self._id}
-
-    def json_Mongo(self):
-        return {'name': self.name,
-                '_id': self._id}
 
     @classmethod
     def get_all_companies(cls):
