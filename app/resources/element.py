@@ -15,7 +15,7 @@ class Element(Resource):
         if an element_id is given it return a json array with all the elements of that type
         :param element_type:
         :param element_id:
-        :return: elemen_type(Element(element_id)).json()
+        :return: elemen_type(Element(element_id)).json() || List(elemen_type(Element(element_id)).json())
         """
         element_type_title = element_type.title()
         try:

@@ -1,37 +1,32 @@
 import requests
 from flask import session
 
-
 from app.common.database import Database
 from app.models.basemodel import BaseModel
+from app.models.products.product import Product
 from app.models.users.constants import COLLECTION
+from app.models.products.constants import COLLECTION as PRODUCTCOLLECTION
 from app.common.utils import Utils
 from app.models.recoveries.recovery import Recovery
 import app.models.users.errors as UserErrors
+from app.models.users.errors import FavoriteAlreadyAdded, FavoriteNotFound
 
 
 class User(BaseModel):
-    def __init__(self, email, name, password=None, _id=None, enterprise_id=None, privileges=None):
-        BaseModel.__init__(self,_id)
+    def __init__(self, email, name, password=None, _id=None, enterprise_id=None, privileges=None, favorites=None):
+        BaseModel.__init__(self, _id)
         self.email = email
         self.password = password
         self.name = name
         self.privileges = eval(privileges) if privileges else []
         self.enterprise_id = enterprise_id
+        self.favorites = favorites if favorites else []
 
     @classmethod
     def get_by_email(cls, email):
         data = Database.find_one(COLLECTION, {"email": email})
         if data is not None:
             return cls(**data)
-
-    @classmethod
-    def get_by_id(cls, _id):
-        data = Database.find_one(COLLECTION, {"_id": _id})
-        if data is not None:
-            return cls(**data)
-        else:
-            raise UserErrors.UserError("id no existe")
 
     @classmethod
     def get_by_enterprise_id(cls, enterprise_id):
@@ -100,9 +95,22 @@ class User(BaseModel):
         user.set_password(password)
         user.update_mongo(collection=COLLECTION)
 
-    '''
-    @user_blueprint.before_request
-    def before_request():
-        if session.get('email') is None:
-            return jsonify(Response(msg_response="Not Logged in").json())
-    '''
+    def add_favorite(self, product_id):
+        if product_id in self.favorites:
+            raise FavoriteAlreadyAdded("El producto ya fue agregado anteriormente")
+        else:
+            self.favorites.append(product_id)
+            self.update_mongo(COLLECTION)
+            return Product.get_by_id(product_id, PRODUCTCOLLECTION)
+
+    def remove_favorite(self, product_id):
+        if product_id not in self.favorites:
+            raise FavoriteNotFound("El producto no esta en la lista de favoritos")
+        else:
+            self.favorites.remove(product_id)
+            self.update_mongo(COLLECTION)
+            return Product.get_by_id(product_id, PRODUCTCOLLECTION)
+
+    def get_favorites(self):
+        favorites = [Product.get_by_id(favorite, PRODUCTCOLLECTION) for favorite in self.favorites]
+        return favorites if favorites else []

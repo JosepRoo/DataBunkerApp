@@ -90,15 +90,19 @@ class Element(BaseModel):
             return cls(**element)
 
     @classmethod
-    def get_by_name_and_parent_id(cls, name,parent_element_id):
+    def get_by_name_and_parent_id(cls, name, parent_element_id):
         collection = Element.get_collection_by_name(cls.__name__)
-        element = Database.find_one(collection, {"name": name,"parentElementId":parent_element_id})
+        element = Database.find_one(collection, {"name": name, "parentElementId": parent_element_id})
         if element:
             return cls(**element)
 
     @classmethod
-    def get_by_id(cls, _id,collection=None):
+    def get_by_id(cls, _id, collection=None):
         collection = Element.get_collection_by_name(cls.__name__)
         element = Database.find_one(collection, {"_id": _id})
         if element:
             return cls(**element)
+
+    @staticmethod
+    def get_parent_by_id(_id, origin, target):
+        expressions = list()

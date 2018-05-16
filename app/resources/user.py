@@ -4,6 +4,7 @@ from flask_restful import Resource, reqparse
 from app.models.users.errors import UserError
 from app.common.response import Response
 from app.models.users.user import User as UserModel
+from app.models.users.constants import COLLECTION
 
 
 class UserStatus(Resource):
@@ -71,7 +72,7 @@ class User(Resource):
         if email:
             return UserModel.get_by_email(email).json(exclude='password'), 200
         if _id:
-            return UserModel.get_by_id(_id).json(exclude='password'), 200
+            return UserModel.get_by_id(_id, COLLECTION).json(exclude='password'), 200
         return Response(message='Not Logged In or Data not given').json(), 400
 
     def put(self, email=None):
@@ -97,8 +98,49 @@ class User(Resource):
         if email:
             user = UserModel.get_by_email(email)
         if _id:
-            user = UserModel.get_by_id(_id)
+            user = UserModel.get_by_id(_id, COLLECTION)
         if user:
             user.delete_user()
             return Response(success=True, message='User deleted').json(), 200
         return Response(message='Data not given').json(), 400
+
+
+class UserFavorites(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('product_id',
+                        type=str,
+                        required=True
+                        )
+    def get(self):
+        _id = session['_id'] if session.get('_id', None) else None
+        if _id:
+            user = UserModel.get_by_id(_id, COLLECTION)
+            favorites = user.get_favorites()
+            return [product.json(["sub_elements", "parentElementId"]) for product in
+                    favorites] if favorites else favorites, 200
+        return Response(message='User Data not given').json(), 400
+
+    def put(self):
+        data = UserFavorites.parser.parse_args()
+        _id = session['_id'] if session.get('_id', None) else None
+        if _id:
+            try:
+                user = UserModel.get_by_id(_id, COLLECTION)
+                product = user.add_favorite(data['product_id'])
+                return Response(success=True, message="El producto {} fue agregado a favortios".format(product.name)).json(), 200
+            except UserError as e:
+                return Response(message=e.message).json(), 400
+        return Response(message='User Data not given').json(), 400
+
+    def delete(self):
+        data = UserFavorites.parser.parse_args()
+        _id = session['_id'] if session.get('_id', None) else None
+        if _id:
+            try:
+                user = UserModel.get_by_id(_id, COLLECTION)
+                product = user.remove_favorite(data['product_id'])
+                return Response(success=True, message="El producto {} fue elminado de favortios".format(product.name)).json(), 200
+            except UserError as e:
+                return Response(message=e.message).json(), 400
+
+        return Response(message='User Data not given').json(), 400

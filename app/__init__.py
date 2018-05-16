@@ -1,11 +1,12 @@
-from flask import Flask, session, jsonify, request, render_template
+from flask import Flask, session, jsonify, request, url_for
 from flask_restful import Api
+from werkzeug.utils import redirect
 
 from app.common.database import Database
 from app.common.response import Response
 from app.resources.company import Company
 from app.resources.element import Element, SubElement, ElementValue
-from app.resources.user import UserStatus, User
+from app.resources.user import UserStatus, User, UserFavorites
 from config import config
 
 
@@ -25,6 +26,7 @@ def create_app(config_name):
     api.add_resource(SubElement, '/subelements/<string:element_type>/<string:element_id>')
     api.add_resource(ElementValue,
                      '/elementvalue/<string:element_type>/<string:element_id>/<string:begin_date>/<string:end_date>')
+    api.add_resource(UserFavorites, '/user/favorites')
 
     @app.after_request
     def after_request(response):
@@ -39,9 +41,9 @@ def create_app(config_name):
 
     @app.before_request
     def check_login():
-        if session.get('email') is None and session.get('_id') is None \
-                and request.path != '/userstatus' and request.method != 'POST':
-            return default_blueprint.send_static_file('index.html')
-
+        apiCall = request.path.lstrip('/').split('/')[0]
+        apiCalls = ['company', 'user', 'elements', 'subelements', 'elementvalue']
+        if session.get('email') is None and session.get('_id') is None and apiCall in apiCalls:
+            return redirect('/#/screen')
 
     return app

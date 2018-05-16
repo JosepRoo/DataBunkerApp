@@ -15,3 +15,11 @@ class InvalidLogin(UserError):
 class UserAlreadyRegisteredError(UserError):
     pass
 
+
+class FavoriteAlreadyAdded(UserError):
+    pass
+
+
+class FavoriteNotFound(UserError):
+    pass
+

@@ -9,11 +9,15 @@ class BaseModel:
 
     def json(self, exclude=None, date_to_string=True):
         if exclude:
-            return {attrib: [element.json(date_to_string=date_to_string) for element in self.__getattribute__(attrib)]
+            return {
+            attrib: [element.json(date_to_string=date_to_string) if not isinstance(element, str) else element for
+                     element in self.__getattribute__(attrib)]
                     if type(self.__getattribute__(attrib)) is list else self.__getattribute__(attrib)
                     for attrib in self.__dict__.keys() if attrib not in exclude}
 
-        return {attrib: [element.json(date_to_string=date_to_string) for element in self.__getattribute__(attrib)]
+        return {
+        attrib: [element.json(date_to_string=date_to_string) if not isinstance(element, str) else element for element in
+                 self.__getattribute__(attrib)]
                 if type(self.__getattribute__(attrib)) is list else self.__getattribute__(attrib)
                 for attrib in self.__dict__.keys()}
 
@@ -23,7 +27,7 @@ class BaseModel:
     def update_mongo(self, collection, exclude=None):
         Database.update(collection, {"_id": self._id}, self.json(exclude, date_to_string=False))
 
-    def save_to_mongo(self, collection,exclude=None):
+    def save_to_mongo(self, collection, exclude=None):
         Database.insert(collection, self.json(exclude, date_to_string=False))
 
     @classmethod
