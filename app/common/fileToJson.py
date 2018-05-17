@@ -17,7 +17,7 @@ class FileToJSON:
         if "csv" not in self.file_name:
             raise FileToJSONException("File not of type CSV")
         else:
-            file = open(self.file_name)
+            file = open(self.file_name, encoding='utf-8')
             fileReader = FileToJSON.csv_reader(file)
             next(fileReader, None)
             tree = Tree()
