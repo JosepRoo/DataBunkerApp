@@ -55,7 +55,7 @@ class SubElement(Resource):
         except ElementErrors as e:
             return Response(e.message), 404
         except PrivilegeErrors as e:
-            return Response(message=e.message).json(), 401  
+            return Response(message=e.message).json(), 401
 
 
 class ElementValue(Resource):

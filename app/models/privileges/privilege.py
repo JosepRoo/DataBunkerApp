@@ -125,7 +125,7 @@ class Privilege:
                     # si es None lanzar una excepcion
                     else:
                         raise PrivilegeDoesNotExist("No se tiene el privilegio para ver este elemento")
-        elif element_type == "brand":
+        elif element_type == "product":
             brand = Brand.get_by_id(element_id)
             category = Category.get_by_id(brand.parentElementId)
             priv_channel = self.privilege_tree.get(category.parentElementId)
