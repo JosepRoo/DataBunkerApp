@@ -5,6 +5,7 @@ from app.models.brands.brand import Brand
 from app.models.categories.category import Category
 from app.models.channels.channels import Channel
 from app.models.elements.errors import ElementErrors
+from app.models.privileges.errors import PrivilegeErrors
 from app.models.products.product import Product
 
 
@@ -29,7 +30,9 @@ class Element(Resource):
                     element_class.get_elements()]
 
         except ElementErrors as e:
-            return Response(e.message), 404
+            return Response(message=e.message).json(), 404
+        except PrivilegeErrors as e:
+            return Response(message=e.message).json(), 401
 
 
 class SubElement(Resource):
@@ -51,6 +54,8 @@ class SubElement(Resource):
 
         except ElementErrors as e:
             return Response(e.message), 404
+        except PrivilegeErrors as e:
+            return Response(message=e.message).json(), 401  
 
 
 class ElementValue(Resource):

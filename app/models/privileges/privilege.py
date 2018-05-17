@@ -85,13 +85,16 @@ class Privilege:
         """
         # cargar todos los canales en los privilegios
         if element_type == "channel":
-            return list(self.privilege_tree.keys())
+            channels = list(self.privilege_tree.keys())
+            if not channels:
+                raise PrivilegeDoesNotExist("No se tiene el privilegio para ver este elemento")
+            return channels
         elif element_type == "category":
             # checar si el channel_id es padre de las categorias de los privilegios
             channel = self.privilege_tree.get(element_id)
             # si es int cargar todas las categorias del canal
             if isinstance(channel, int):
-                return "ALL"
+                return "All"
             # si es un diccionario cargar las cateogrias de los privilegios
             elif isinstance(channel, dict):
                 return list(channel.keys())
@@ -138,9 +141,9 @@ class Privilege:
                         return "All"
                     elif isinstance(priv_category, dict):
                         priv_brand = priv_category.get(element_id)
-                        if isinstance(priv_brand,int):
+                        if isinstance(priv_brand, int):
                             return "All"
-                        elif isinstance(priv_brand,dict):
+                        elif isinstance(priv_brand, dict):
                             return list(priv_brand.keys())
                         else:
                             raise PrivilegeDoesNotExist("No se tiene el privilegio para ver este elemento")

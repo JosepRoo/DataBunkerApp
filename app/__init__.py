@@ -28,7 +28,7 @@ def create_app(config_name):
     api.add_resource(ElementValue,
                      '/elementvalue/<string:element_type>/<string:element_id>/<string:begin_date>/<string:end_date>')
     api.add_resource(UserFavorites, '/user/favorites')
-    api.add_resource(Privilege, '/user/privilege')
+    api.add_resource(Privilege, '/user/privilege', '/user/privilege/<string:target_user_mail>')
 
     @app.after_request
     def after_request(response):

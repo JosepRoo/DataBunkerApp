@@ -1,3 +1,5 @@
+from flask import session
+
 from app.common.database import Database
 from app.models.basemodel import BaseModel
 from app.models.elements.errors import ElementNotFound
@@ -16,17 +18,27 @@ class Element(BaseModel):
 
     @classmethod
     def get_sub_elements(cls, _id, child_class):
+        from app.models.users.user import User
+        user = User.get_by_email(session['email'])
+        privileges = user.privileges.get_privilege(child_class.__name__ .lower(), _id)
         child_collection = Element.get_collection_by_name(cls.__name__, is_child=True)
-        return [child_class(**sub_element) for sub_element in Database.find(child_collection, {'parentElementId': _id})]
+        if privileges == "All":
+            return [child_class(**sub_element) for sub_element in
+                Database.find(child_collection, {'parentElementId': _id})]
+        return [child_class(**sub_element) for sub_element in
+                Database.find(child_collection, {'parentElementId': _id, "_id": {"$in": privileges}})]
 
     @staticmethod
     def get_average(element_id, begin_date, end_date):
         pass
 
     @classmethod
-    def get_elements(cls, query=dict()):
+    def get_elements(cls):
         collection = Element.get_collection_by_name(cls.__name__)
-        return [cls(**element) for element in Database.find(collection, query)]
+        from app.models.users.user import User
+        user = User.get_by_email(session['email'])
+        privileges = user.privileges.get_privilege(cls.__name__.lower())
+        return [cls(**element) for element in Database.find(collection, {"_id": {"$in": privileges}})]
 
     @classmethod
     def get_element(cls, element_id):
@@ -106,6 +118,5 @@ class Element(BaseModel):
     @staticmethod
     def get_parent_id_by_child_id(_id, element_type):
         collction = Element.get_collection_by_name(element_type.title())
-        parent = Database.find_one(collction,{"_id": _id})
+        parent = Database.find_one(collction, {"_id": _id})
         return parent["parentElementId"]
-
