@@ -24,9 +24,9 @@ class Element(BaseModel):
         pass
 
     @classmethod
-    def get_elements(cls):
+    def get_elements(cls, query=dict()):
         collection = Element.get_collection_by_name(cls.__name__)
-        return [cls(**element) for element in Database.find(collection, {})]
+        return [cls(**element) for element in Database.find(collection, query)]
 
     @classmethod
     def get_element(cls, element_id):
@@ -104,5 +104,8 @@ class Element(BaseModel):
             return cls(**element)
 
     @staticmethod
-    def get_parent_by_id(_id, origin, target):
-        expressions = list()
+    def get_parent_id_by_child_id(_id, element_type):
+        collction = Element.get_collection_by_name(element_type.title())
+        parent = Database.find_one(collction,{"_id": _id})
+        return parent["parentElementId"]
+

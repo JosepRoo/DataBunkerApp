@@ -3,6 +3,7 @@ from flask import session
 
 from app.common.database import Database
 from app.models.basemodel import BaseModel
+from app.models.privileges.privilege import Privilege
 from app.models.products.product import Product
 from app.models.users.constants import COLLECTION
 from app.models.products.constants import COLLECTION as PRODUCTCOLLECTION
@@ -13,12 +14,12 @@ from app.models.users.errors import FavoriteAlreadyAdded, FavoriteNotFound
 
 
 class User(BaseModel):
-    def __init__(self, email, name, password=None, _id=None, enterprise_id=None, privileges=None, favorites=None):
+    def __init__(self, email, name, password=None, _id=None, enterprise_id=None, privileges=dict(), favorites=None):
         BaseModel.__init__(self, _id)
         self.email = email
         self.password = password
         self.name = name
-        self.privileges = eval(privileges) if privileges else []
+        self.privileges = Privilege(privileges)
         self.enterprise_id = enterprise_id
         self.favorites = favorites if favorites else []
 
@@ -114,3 +115,29 @@ class User(BaseModel):
     def get_favorites(self):
         favorites = [Product.get_by_id(favorite, PRODUCTCOLLECTION) for favorite in self.favorites]
         return favorites if favorites else []
+
+    def add_privilege(self, element_type, element):
+        self.privileges.add_privilege(element_type, element)
+        self.update_mongo(COLLECTION)
+        return self.privileges.json()
+
+    def remove_privilege(self, element_type, element):
+        self.privileges.remove_privilege(element_type, element)
+        self.update_mongo(COLLECTION)
+        return self.privileges.json()
+
+    def json(self, exclude=None, date_to_string=True):
+        if exclude:
+            return {
+            attrib: [element.json(date_to_string=date_to_string) if not isinstance(element, str) else element for
+                     element in self.__getattribute__(attrib)]
+                    if type(self.__getattribute__(attrib)) is list else self.__getattribute__(attrib).json()
+                    if isinstance(self.__getattribute__(attrib), Privilege) else self.__getattribute__(attrib)
+                    for attrib in self.__dict__.keys() if attrib not in exclude}
+
+        return {
+        attrib: [element.json(date_to_string=date_to_string) if not isinstance(element, str) else element for element in
+                 self.__getattribute__(attrib)]
+                if type(self.__getattribute__(attrib)) is list else self.__getattribute__(attrib).json()
+                if isinstance(self.__getattribute__(attrib), Privilege) else self.__getattribute__(attrib)
+                for attrib in self.__dict__.keys()}
