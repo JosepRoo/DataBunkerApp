@@ -52,3 +52,5 @@ def create_app(config_name):
                 return redirect('/#/screen')
 
     return app
+
+
