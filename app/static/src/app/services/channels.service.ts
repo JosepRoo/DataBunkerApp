@@ -80,6 +80,8 @@ export class ChannelService {
   }
 
   getData(type, id, startDate, endDate){
+    startDate = startDate.getYear()+1900 + '-' + ("0" + (startDate.getMonth() + 1)).slice(-2) + '-' +("0" + (startDate.getDate())).slice(-2);
+    endDate = endDate.getYear()+1900 + '-' + ("0" + (endDate.getMonth() + 1)).slice(-2) + '-' +("0" + (endDate.getDate())).slice(-2);
     return this.http.get<any>(this.dataUrl+type+'/'+id+'/'+startDate+'/'+endDate,  {headers: this.headers})
       .map(res => {
             return res;

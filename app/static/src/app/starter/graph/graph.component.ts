@@ -18,6 +18,9 @@ export class GraphComponent {
 
   }
 
+  ngOnChanges(data: any, lines: any) {
+    this.ngAfterViewInit();
+    }
   generateChartData() {
       var chartData = [];
       var firstDate = new Date();
@@ -52,6 +55,7 @@ export class GraphComponent {
   ngAfterViewInit() {
     var chartData = this.data;
     var chartValues = [];
+    var chartAxis = [];
     for(var i = 0; i<this.lines.length; i++){
       var data = {
         "valueAxis": "v"+String(i+1),
@@ -59,8 +63,8 @@ export class GraphComponent {
         "bullet": "round",
         "bulletBorderThickness": 1,
         "hideBulletsCount": 30,
-        "title": this.lines[i],
-        "valueField": "average",
+        "title": this.lines[i].name,
+        "valueField": this.lines[i].name,"fillAlphas": 0
       }
       chartValues.push(data);
     }
@@ -78,7 +82,10 @@ export class GraphComponent {
             "axisColor": "gray",
             "axisThickness": 1,
             "axisAlpha": 1,
-            "position": "left"
+            "position": "left",
+            "unit": "$",
+            "unitPosition": "left"
+
           }
         // }, {
         //     "id":"v2",

@@ -1,9 +1,11 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, ViewChild } from '@angular/core';
 
 // Services
 import { MessageService } from '../services/messages.service';
 import { ChannelService } from '../services/channels.service';
 import { ColorGeneratorService } from '../services/colorGenerator.service';
+
+import { GraphComponent } from './graph/graph.component';
 
 // classes
 import { Line } from '../classes/line';
@@ -22,8 +24,11 @@ export class StarterComponent implements AfterViewInit {
 	line = new Line();
 	lines: Line[] = [];
 	data: any[] = [];
-	startDate = "2018-01-01";
-	endDate = "2018-12-31";
+	chartData: any[] = [];
+	startDate : Date = new Date();
+	endDate: Date = new Date();
+
+	@ViewChild(GraphComponent) child: GraphComponent;
 
 	constructor(
 		private messageService: MessageService,
@@ -38,6 +43,7 @@ export class StarterComponent implements AfterViewInit {
 				}
 		});
 
+		this.startDate.setDate(this.endDate.getDate()-30);
 	}
 
 	getCategories() {
@@ -85,59 +91,125 @@ export class StarterComponent implements AfterViewInit {
 	}
 
 	addLine() {
-		this.line.color = this.colorGenerator.getColor();
-		this.line.data = {datos: 1000};
-		this.lines.push(this.line);
-		var data;
-		if (this.line.product == null){
-			this.channelService.getData("brand", this.line.brand._id, this.startDate, this.endDate).subscribe(res => {
-				data = res
+		var self = this;
+		if (this.line.category == null){
+			this.line.name = this.line.channel.name;
+			this.channelService.getData("channel", this.line.channel._id, this.startDate, this.endDate).subscribe(res => {
+				self.line.data = res;
+				self.data.push(res);
+				self.line.color = self.colorGenerator.getColor();
+				self.lines.push(self.line);
+				self.chartData = self.generateData();
+				self.line = new Line();
 			}, (err) => {
 					if (err === 'Unauthorized'){
 					}
 			});
+		} else {
 			if (this.line.brand == null){
+				this.line.name = this.line.category.name;
 				this.channelService.getData("category", this.line.category._id, this.startDate, this.endDate).subscribe(res => {
-					data = res
+					self.line.data = res;
+					self.data.push(res);
+					self.line.color = self.colorGenerator.getColor();
+					self.lines.push(self.line);
+					self.chartData = self.generateData();
+					self.line = new Line();
 				}, (err) => {
 						if (err === 'Unauthorized'){
 						}
 				});
-				if (this.line.category == null){
-					this.channelService.getData("channel", this.line.channel._id, this.startDate, this.endDate).subscribe(res => {
-						data = res
+			} else {
+				if (this.line.product == null){
+					this.line.name = this.line.brand.name;
+					this.channelService.getData("brand", this.line.brand._id, this.startDate, this.endDate).subscribe(res => {
+						self.line.data = res;
+						self.data.push(res);
+						self.line.color = self.colorGenerator.getColor();
+						self.lines.push(self.line);
+						self.chartData = self.generateData();
+						self.line = new Line();
+					}, (err) => {
+							if (err === 'Unauthorized'){
+							}
+					});
+				} else {
+					this.line.name = this.line.product.name;
+					this.channelService.getData("product", this.line.product._id, this.startDate, this.endDate).subscribe(res => {
+						self.line.data = res;
+						self.data.push(res);
+						self.line.color = self.colorGenerator.getColor();
+						self.lines.push(self.line);
+						self.chartData = self.generateData();
+						self.line = new Line();
 					}, (err) => {
 							if (err === 'Unauthorized'){
 							}
 					});
 				}
 			}
+		}
+	}
 
-		} else {
-			this.channelService.getData("product", this.line.product._id, this.startDate, this.endDate).subscribe(res => {
-				data = res
-			}, (err) => {
-					if (err === 'Unauthorized'){
+	generateData(): any[]{
+		var diff = Math.abs(this.startDate.getTime() - this.endDate.getTime());
+		var diffDays = Math.ceil(diff / (1000 * 3600 * 24));
+		var date = new Date(this.startDate.getTime());
+		var axisX = [];
+		var chartData = [];
+		for (var i = 0; i < diffDays; i ++){
+
+			date.setDate(date.getDate()+ 1);
+			var dateString = date.getYear()+1900 + '/' + ("0" + (date.getMonth() + 1)).slice(-2) + '/' +("0" + (date.getDate())).slice(-2);
+			axisX.push(dateString);
+		}
+		var day;
+		for(var i = 0; i < axisX.length; i++){
+			day = axisX[i];
+			var defDate = new Date(day);
+			chartData.push({
+				date: defDate
+			})
+			for (var e = 0; e < this.lines.length; e ++){
+				var line = this.lines[e];
+				for (var h = 0; h < line.data.length; h ++){
+					var dat = line.data[h];
+					if (dat._id == day){
+						chartData[i][line.name] = Math.round(dat.average * 100) / 100;
 					}
-			});
-		}
-		console.log(data);
-		if (data){
-			this.data.push(data);
-		}
+				}
+			}
 
-		this.line = new Line();
+		}
+		return chartData;
 	}
 
 	removeLine(line: Line){
 		var index = this.lines.indexOf(line);
 		if (index > -1) {
+			var name = this.lines[index].name;
+			for (var i = 0; i< this.chartData.length; i++){
+				delete this.chartData[i][name];
+			}
 		   this.lines.splice(index, 1);
 		}
+		this.child.ngAfterViewInit();
 	}
 
 	ngAfterViewInit() {
 
 	}
+
+	getScope(line) {
+		console.log(line.data);
+		try{
+			return (line.data[line.data.length-2].average - line.data[line.data.length-1].average)*100/line.data[line.data.length-1].average;
+		} catch(e){
+			return 0;
+		}
+
+	}
+
+
 
 }

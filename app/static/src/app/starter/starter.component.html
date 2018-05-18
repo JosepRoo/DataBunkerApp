@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-md-7">
+  <div class="col-md-12">
     <form>
       <div class="card">
         <div class="card-header">
@@ -55,7 +55,7 @@
       </div>
     </form>
   </div>
-  <div class="col-md-5">
+  <div class="col-md-12">
     <div class="card">
       <div class="card-header">
         <i class="mdi mdi-format-list-bulleted-type"></i> Busquedas
@@ -82,8 +82,35 @@
   </div>
 </div>
 
-<div class="row" *ngIf="lines && lines.length">
+<div class="row" *ngIf="data && data.length">
   <div class="col-md-12">
-    <app-graph></app-graph>
+    <app-graph [lines]="lines" [data]="chartData"></app-graph>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-6 col-sm-3 col-md-2" *ngFor="let line of lines">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">{{line.name}}</h4>
+        <div class="row" *ngIf="getScope(line) < 0" style="color:red">
+          <div class="col-4 text-right">
+            <i class="fas fa-angle-double-down fa-2x"> </i>
+          </div>
+          <div class="col-8 text-left">
+            <h4 class="card-text">% {{getScope(line) | number : '1.2-2'}}</h4>
+          </div>
+        </div>
+        <div class="row" *ngIf="getScope(line) >= 0" style="color:green">
+          <div class="col-4 text-right">
+            <i class="fas fa-angle-double-up fa-2x"> </i>
+          </div>
+          <div class="col-8 text-left">
+            <h4 class="card-text">% {{getScope(line) | number : '1.2-2'}}</h4>
+          </div>
+        </div>
+          <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+      </div>
+    </div>
   </div>
 </div>
