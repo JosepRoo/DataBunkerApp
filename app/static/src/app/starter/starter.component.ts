@@ -160,7 +160,7 @@ export class StarterComponent implements AfterViewInit {
 		for (var i = 0; i < diffDays; i ++){
 
 			date.setDate(date.getDate()+ 1);
-			var dateString = date.getYear()+1900 + '/' + ("0" + (date.getMonth() + 1)).slice(-2) + '/' +("0" + (date.getDate())).slice(-2);
+			var dateString = date.getFullYear() + '/' + ("0" + (date.getMonth() + 1)).slice(-2) + '/' +("0" + (date.getDate())).slice(-2);
 			axisX.push(dateString);
 		}
 		var day;
