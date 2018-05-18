@@ -5,6 +5,7 @@ import { RouteInfo } from "./sidebar.metadata";
 import { Router, ActivatedRoute } from "@angular/router";
 import { Observable } from 'rxjs';
 
+
 //import models
 import { User } from "../../classes/user";
 import { UserService } from "../../services/user.service";
@@ -60,5 +61,15 @@ export class SidebarComponent implements OnInit {
 
         // this.userService.getUser('b7faddc73eca4461bbfcca2f3939b483')
         //   .subscribe(user => this.user = user);
+    }
+
+    logOut() {
+      this.userService.logOut().subscribe(res => {
+        this.router.navigateByUrl('/screen');
+
+      }, (err) => {
+        this.router.navigateByUrl('/screen');
+
+    });
     }
 }

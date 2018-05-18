@@ -62,6 +62,26 @@ export class UserService {
       });
   }
 
+  checkStatus() {
+    return this.http.get(this.userUrl, {headers: this.headers})
+      .map(res => {
+            return res;
+      })
+      .catch(e => {
+          if (e.status === 401) {
+              return Observable.throw('Unauthorized');
+          }
+          // do any other checking for statuses here
+      });
+  }
+
+  logOut() {
+    return this.http.delete(this.userUrl, {headers: this.headers})
+      .map(res => {
+            return res;
+      })
+  }
+
   checkError(res) {
     if(res.msg_response){
       this.msgService.warn("User Service: "+res.msg_response)

@@ -27,12 +27,12 @@
             <!-- text-->
             <div class="dropdown-divider"></div>
             <!-- text-->
-            <a href="login.html" class="dropdown-item"><i class="fa fa-power-off"></i> Cerrar Sesión</a>
+            <a (click)="logOut()" class="dropdown-item"><i class="fa fa-power-off"></i> Cerrar Sesión</a>
             <!-- text-->
         </div>
         </a>
         <!-- <a href="#" class="" data-toggle="tooltip" title="Email"><i class="mdi mdi-gmail"></i></a> -->
-        <a href="#" class="" data-toggle="tooltip" title="Logout"><i class="mdi mdi-power"></i></a>
+        <a (click)="logOut()" class="" data-toggle="tooltip" title="Logout"><i class="mdi mdi-power"></i></a>
 
     </div>
 </div>
