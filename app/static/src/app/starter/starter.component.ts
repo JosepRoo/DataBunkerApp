@@ -37,7 +37,11 @@ export class StarterComponent implements AfterViewInit {
 	) {
 		var self = this;
 		this.channelService.getChannels().subscribe(res => {
-			self.channels = res;
+			self.channels = res.sort((a, b) => {
+    if (a.name < b.name) return -1;
+    else if (a.name > b.name) return 1;
+    else return 0;
+  });;
 		}, (err) => {
 				if (err === 'Unauthorized'){
 				}
@@ -53,7 +57,11 @@ export class StarterComponent implements AfterViewInit {
 		self.line.product = null;
 		if (this.line.channel)
 			this.channelService.getChannelSubElemenets(this.line.channel._id).subscribe(res => {
-				self.line.channel.sub_elements = res;
+				self.line.channel.sub_elements = res.sort((a, b) => {
+			    if (a.name < b.name) return -1;
+			    else if (a.name > b.name) return 1;
+			    else return 0;
+			  });;
 			}, (err) => {
 					if (err === 'Unauthorized'){
 					}
@@ -66,7 +74,11 @@ export class StarterComponent implements AfterViewInit {
 		self.line.product = null;
 		if (this.line.category)
 			this.channelService.getCategorySubElemenets(this.line.category._id).subscribe(res => {
-				self.line.category.sub_elements = res;
+				self.line.category.sub_elements = res.sort((a, b) => {
+    if (a.name < b.name) return -1;
+    else if (a.name > b.name) return 1;
+    else return 0;
+  });;
 			}, (err) => {
 					if (err === 'Unauthorized'){
 					}
@@ -78,7 +90,11 @@ export class StarterComponent implements AfterViewInit {
 		self.line.product = null;
 		if (this.line.brand)
 			this.channelService.getBrandSubElemenets(this.line.brand._id).subscribe(res => {
-				self.line.brand.sub_elements = res;
+				self.line.brand.sub_elements = res.sort((a, b) => {
+    if (a.name < b.name) return -1;
+    else if (a.name > b.name) return 1;
+    else return 0;
+  });;
 			}, (err) => {
 					if (err === 'Unauthorized'){
 					}
@@ -98,9 +114,9 @@ export class StarterComponent implements AfterViewInit {
 				self.line.data = res;
 				self.data.push(res);
 				self.line.color = self.colorGenerator.getColor();
-				self.lines.push(self.line);
+				self.lines.push(JSON.parse(JSON.stringify(self.line)));
 				self.chartData = self.generateData();
-				self.line = new Line();
+				self.line = new Line()
 			}, (err) => {
 					if (err === 'Unauthorized'){
 					}
@@ -112,9 +128,11 @@ export class StarterComponent implements AfterViewInit {
 					self.line.data = res;
 					self.data.push(res);
 					self.line.color = self.colorGenerator.getColor();
-					self.lines.push(self.line);
+					self.lines.push(JSON.parse(JSON.stringify(self.line)));
 					self.chartData = self.generateData();
-					self.line = new Line();
+					self.line.category = null;
+					self.line.brand = null;
+					self.line.product = null;
 				}, (err) => {
 						if (err === 'Unauthorized'){
 						}
@@ -126,9 +144,10 @@ export class StarterComponent implements AfterViewInit {
 						self.line.data = res;
 						self.data.push(res);
 						self.line.color = self.colorGenerator.getColor();
-						self.lines.push(self.line);
+						self.lines.push(JSON.parse(JSON.stringify(self.line)));
 						self.chartData = self.generateData();
-						self.line = new Line();
+						self.line.brand = null;
+						self.line.product = null;
 					}, (err) => {
 							if (err === 'Unauthorized'){
 							}
@@ -139,9 +158,9 @@ export class StarterComponent implements AfterViewInit {
 						self.line.data = res;
 						self.data.push(res);
 						self.line.color = self.colorGenerator.getColor();
-						self.lines.push(self.line);
+						self.lines.push(JSON.parse(JSON.stringify(self.line)));
 						self.chartData = self.generateData();
-						self.line = new Line();
+						self.line.product = null;
 					}, (err) => {
 							if (err === 'Unauthorized'){
 							}

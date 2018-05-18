@@ -41,13 +41,6 @@ export class UserService {
     };
   }
 
-  getUser(id: string): Observable<User> {
-    return this.http.get<User>(this.userUrl+'get_user/'+id).pipe(
-      tap(_ => this.checkError(_)),
-      catchError(this.handleError<User>(`getUser id=${id}`))
-    );
-  }
-
   logIn(data): Observable<any> {
     data.password = shajs('sha256').update(data.password).digest('hex');
     return this.http.post(this.userUrl, JSON.stringify(data), {headers: this.headers})
@@ -86,5 +79,18 @@ export class UserService {
     if(res.msg_response){
       this.msgService.warn("User Service: "+res.msg_response)
     }
+  }
+
+  getUser() {
+    return this.http.get("user", {headers: this.headers})
+      .map(res => {
+            return res;
+      })
+      .catch(e => {
+          if (e.status === 401) {
+              return Observable.throw('Unauthorized');
+          }
+          // do any other checking for statuses here
+      });
   }
 }

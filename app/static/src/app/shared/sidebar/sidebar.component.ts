@@ -58,6 +58,15 @@ export class SidebarComponent implements OnInit {
             });
 
         });
+        var self = this;
+
+        this.userService.getUser().subscribe(res => {
+  				self.user = res;
+          console.log(res);
+  			}, (err) => {
+  					if (err === 'Unauthorized'){
+  					}
+  			});
 
         // this.userService.getUser('b7faddc73eca4461bbfcca2f3939b483')
         //   .subscribe(user => this.user = user);
