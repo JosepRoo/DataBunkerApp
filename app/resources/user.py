@@ -34,6 +34,9 @@ class UserStatus(Resource):
         UserModel.logout()
         return Response(True, "Sesion Finalizada").json(), 200
 
+    def get(self):
+        return True if session.get("email") else False
+
 
 class User(Resource):
     parser = reqparse.RequestParser()

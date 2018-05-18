@@ -1,3 +1,4 @@
+import datetime
 from flask import Flask, session, jsonify, request, url_for
 from flask_restful import Api
 from werkzeug.utils import redirect
@@ -15,7 +16,6 @@ def create_app(config_name):
     app = Flask(__name__)
     api = Api(app)
     app.config.from_object(config[config_name])
-
     # Register our blueprints
     from .default import default as default_blueprint
     app.register_blueprint(default_blueprint)
@@ -40,13 +40,15 @@ def create_app(config_name):
     @app.before_first_request
     def init_db():
         Database.initialize()
+        session.permanent = True
+        app.permanent_session_lifetime = datetime.timedelta(days=7)
 
     @app.before_request
     def check_login():
         apiCall = request.path.lstrip('/').split('/')[0]
         apiCalls = ['company', 'user', 'elements', 'subelements', 'elementvalue']
         if session.get('email') is None and session.get('_id') is None and apiCall in apiCalls:
-            if apiCall != 'user' and  request.method != 'POST':
+            if apiCall != 'user' and request.method != 'POST':
                 return redirect('/#/screen')
 
     return app
