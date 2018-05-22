@@ -8,6 +8,7 @@ from app.common.response import Response
 from app.resources.company import Company
 from app.resources.element import Element, SubElement, ElementValue
 from app.resources.privilege import Privilege
+from app.resources.uploadData import UploadData
 from app.resources.user import UserStatus, User, UserFavorites
 from config import config
 
@@ -29,6 +30,7 @@ def create_app(config_name):
                      '/elementvalue/<string:element_type>/<string:element_id>/<string:begin_date>/<string:end_date>')
     api.add_resource(UserFavorites, '/user/favorites')
     api.add_resource(Privilege, '/user/privilege', '/user/privilege/<string:target_user_mail>')
+    api.add_resource(UploadData, '/uploaddata')
 
     @app.after_request
     def after_request(response):
