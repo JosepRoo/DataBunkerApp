@@ -25,7 +25,7 @@ class Company(Resource):
             company = CompanyModel.register(data)
             return company.json(), 200
         except CompanyError as e:
-            return Response(message=e.message).json()
+            return Response(message=e.message).json(), 400
 
     def delete(self, _id):
         company = CompanyModel.get_company_by_id(_id)
