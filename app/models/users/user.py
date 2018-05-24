@@ -5,6 +5,7 @@ from app.common.database import Database
 from app.models.basemodel import BaseModel
 from app.models.privileges.privilege import Privilege
 from app.models.products.product import Product
+from app.models.recoveries.errors import UnableToRecoverPassword
 from app.models.users.constants import COLLECTION
 from app.models.products.constants import COLLECTION as PRODUCTCOLLECTION
 from app.common.utils import Utils
@@ -92,10 +93,12 @@ class User(BaseModel):
 
     @staticmethod
     def recover_password(recovery_id, email, password):
-        Recovery.recover_password(recovery_id, email, password)
-        user = User.get_by_email(email)
-        user.set_password(password)
-        user.update_mongo(collection=COLLECTION)
+        if Recovery.recover_in_db(recovery_id, email):
+            user = User.get_by_email(email)
+            user.set_password(password)
+            user.update_mongo(collection=COLLECTION)
+        else:
+            raise UnableToRecoverPassword("No se pudo hacer la recuperacion de la contraseña")
 
     def add_favorite(self, product_id):
         if product_id in self.favorites:

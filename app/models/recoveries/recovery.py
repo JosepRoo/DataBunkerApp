@@ -35,12 +35,11 @@ class Recovery(object):
             'user_email': self.user_email
         }
 
-    @staticmethod
-    def recover_password(recovery_id, email, new_password):
-        recovery = Recovery(email, recovery_id)
-        recovery_in_DB = Database.find_one(COLLECTION, recovery.json())
+    @classmethod
+    def recover_in_db(cls,recovery_id, email):
+        recovery_in_DB = cls(**Database.find_one(COLLECTION, {'_id': recovery_id}))
         if recovery_in_DB is None:
             return False
         else:
-            Database.remove(COLLECTION,recovery.json())
+            Database.remove(COLLECTION, {'_id': recovery_id})
             return True
