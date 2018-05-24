@@ -7,10 +7,11 @@ from app.models.products.constants import COLLECTION
 
 
 class Product(Element):
-    def __init__(self, UPC, name, parentElementId, sub_elements, _id=None):
+    def __init__(self, UPC, name, parentElementId, sub_elements, image=None, _id=None):
         Element.__init__(self, name=name, _id=_id)
         self.parentElementId = parentElementId
         self.UPC = UPC
+        self.image = image
         self.sub_elements = [Log(**sub_element) for sub_element in sub_elements]
 
     @classmethod

@@ -38,20 +38,23 @@ class Tree(dict):
                     category_exists.save_to_mongo(Category.get_collection_by_name(category_exists.__class__.__name__),
                                                   "sub_elements")
                 for brand in self[channel][category]:
-                    brand_exists = Brand.get_by_name_and_parent_id(brand,category_exists._id)
+                    brand_exists = Brand.get_by_name_and_parent_id(brand, category_exists._id)
                     if not brand_exists:
                         brand_exists = Brand(brand, category_exists._id)
                         brand_exists.save_to_mongo(Brand.get_collection_by_name(brand_exists.__class__.__name__),
                                                    "sub_elements")
                     for product in self[channel][category][brand]:
                         log = self[channel][category][brand][product]
-                        product_name, product_upc = product.split("||")
+                        product_name, product_upc, product_image = product.split("||")
                         product_exists = Product.get_by_UPC(product_upc)
                         if not product_exists:
-                            product_exists = Product(product_upc, product_name, brand_exists._id, [log, ])
+                            product_exists = Product(product_upc, product_name, brand_exists._id, [log, ],
+                                                     product_image)
                         elif not product_exists.is_duplicated_date(
                                 datetime.datetime.strptime(log['date'], "%Y-%m-%d %H:%M")):
                             product_exists.sub_elements.append(Log(**log))
+                            if product_exists.image is None:
+                                product_exists.image = product_image
                         else:
                             continue
                         product_exists.update_mongo(
