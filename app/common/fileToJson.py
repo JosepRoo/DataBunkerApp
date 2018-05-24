@@ -30,7 +30,7 @@ class FileToJSON:
                     continue
                 if row[8].strip() == 'NA':
                     row[8] = hashlib.sha256(row[5].encode()).hexdigest()
-                tree[row[1]][row[2]][row[6]][row[5] + "||" + row[8]] = {
+                tree[row[1]][row[2]][row[6]][row[5] + "||" + row[8]+ "||" + row[4]] = {
                     "date": row[3], "value": float(row[7].strip("$"))}
             return tree
 
