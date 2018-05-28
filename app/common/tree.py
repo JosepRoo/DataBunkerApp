@@ -59,3 +59,13 @@ class Tree(dict):
                             continue
                         product_exists.update_mongo(
                             Product.get_collection_by_name(product_exists.__class__.__name__))
+
+    def split_into_categories(self):
+        categories_list = list()
+        for channel in self:
+            for category in self.get(channel):
+                temp = Tree()
+                temp[channel][category] = self[channel][category]
+                categories_list.append(temp)
+
+        return categories_list
