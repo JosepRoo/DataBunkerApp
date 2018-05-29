@@ -7,10 +7,10 @@ from app.common.tree import Tree
 
 class UploadData(Resource):
     def post(self):
-        json = request.json
-        tree = Tree(json)
         try:
+            json = request.get_json(force=True)
+            tree = Tree(json)
             tree.save_to_mongo()
         except:
-            return Response(message="La informacion esta en un formato no valido intentelo nuevamente").json()
+            return Response(message="Ocurrio un error al subir informacion, notificar al administrador").json()
         return Response(success=True,message="La informacion se subio exitosamente").json()
