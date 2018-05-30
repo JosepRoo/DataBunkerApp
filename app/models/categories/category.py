@@ -14,7 +14,7 @@ class Category(Element):
     def get_average(element_id, begin_date, end_date):
         first_date = datetime.datetime.strptime(begin_date, "%Y-%m-%d")
         last_date = datetime.datetime.strptime(end_date, "%Y-%m-%d")
-
+        last_date = last_date + datetime.timedelta(days=1)
         expressions = list()
         expressions.append({'$match': {'_id': element_id}})
         expressions.append(
