@@ -135,7 +135,7 @@ class UserFavorites(Resource):
                 return Response(message=e.message).json(), 400
         return Response(message='User Data not given').json(), 400
 
-    def delete(self):
+    def post(self):
         data = UserFavorites.parser.parse_args()
         _id = session['_id'] if session.get('_id', None) else None
         if _id:
