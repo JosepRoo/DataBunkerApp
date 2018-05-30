@@ -2,6 +2,7 @@ import datetime
 
 from app import Database
 from app.models.elements.element import Element
+from app.models.elements.errors import ElementNotFound
 from app.models.logs.log import Log
 from app.models.products.constants import COLLECTION
 
@@ -45,3 +46,12 @@ class Product(Element):
         for element in result:
             element["_id"] = element["_id"].strftime("%Y/%m/%d")
         return result
+
+    @classmethod
+    def get_element(cls, element_id):
+        collection = Element.get_collection_by_name(cls.__name__)
+        element = cls(**Database.find_one(collection, {"_id": element_id}))
+        if element:
+            element.sub_elements = [element.sub_elements[-2], element.sub_elements[-1]]
+            return element
+        raise ElementNotFound("El elemento con el id y tipo dado no fue encontrado")
