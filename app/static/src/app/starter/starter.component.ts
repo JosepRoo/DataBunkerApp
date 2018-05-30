@@ -220,13 +220,18 @@ export class StarterComponent implements AfterViewInit {
 	}
 
 	getScope(line) {
-		console.log(line.data);
 		try{
-			return (line.data[line.data.length-2].average - line.data[line.data.length-1].average)*100/line.data[line.data.length-1].average;
+			console.log(line.data);
+			return (line.data[0].average - line.data[1].average)*100/line.data[0].average;
 		} catch(e){
+			console.log(e);
 			return 0;
 		}
 
+	}
+
+	cleanLines() {
+		this.lines = [];
 	}
 
 

@@ -5,7 +5,7 @@ export class ColorGenerator {
   private index: number;
 
   constructor(){
-    this.colors = ['#5c4ac7', '#009efb', '#38b6ba', 'rgb(101, 186, 105)'];
+    this.colors = ['#5c4ac7', '#009efb', '#38b6ba', 'rgb(101, 186, 105)', 'rgb(205, 148, 101)', 'rgb(226, 213, 102)'];
     this.index = 0;
   }
 

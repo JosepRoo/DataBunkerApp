@@ -19,6 +19,8 @@ export class ChannelService {
 
 
   private channelUrl = environment.url+'elements/channel';
+  private favoritesUrl = environment.url+'user/favorites';
+  private productUrl = environment.url+'elements/product';
   private subElementsUrl = environment.url+'subelements/';
   private dataUrl = environment.url+'elementvalue/';
   private headers = new HttpHeaders({ 'Content-Type': 'application/json'});
@@ -83,6 +85,64 @@ export class ChannelService {
     startDate = startDate.getFullYear() + '-' + ("0" + (startDate.getMonth() + 1)).slice(-2) + '-' +("0" + (startDate.getDate())).slice(-2);
     endDate = endDate.getFullYear() + '-' + ("0" + (endDate.getMonth() + 1)).slice(-2) + '-' +("0" + (endDate.getDate())).slice(-2);
     return this.http.get<any>(this.dataUrl+type+'/'+id+'/'+startDate+'/'+endDate,  {headers: this.headers})
+      .map(res => {
+            return res;
+      })
+      .catch(e => {
+          if (e.status === 401) {
+              return Observable.throw('Unauthorized');
+          }
+          // do any other checking for statuses here
+      });
+  }
+
+  getProduct(idProduct): Observable<any> {
+    return this.http.get<any>(this.productUrl+'/'+idProduct,  {headers: this.headers})
+      .map(res => {
+            return res;
+      })
+      .catch(e => {
+          if (e.status === 401) {
+              return Observable.throw('Unauthorized');
+          }
+          // do any other checking for statuses here
+      });
+  }
+
+  getFavorites(): Observable<any> {
+    return this.http.get<any>(this.favoritesUrl,  {headers: this.headers})
+      .map(res => {
+            return res;
+      })
+      .catch(e => {
+          if (e.status === 401) {
+              return Observable.throw('Unauthorized');
+          }
+          // do any other checking for statuses here
+      });
+  }
+
+  addFavorite(id): Observable<any>{
+    var data = {
+      product_id: id
+    }
+    return this.http.put<any>(this.favoritesUrl, data,  {headers: this.headers})
+      .map(res => {
+            return res;
+      })
+      .catch(e => {
+          if (e.status === 401) {
+              return Observable.throw('Unauthorized');
+          }
+          // do any other checking for statuses here
+      });
+  }
+
+  removeFavorite(id): Observable<any>{
+    var data = {
+      product_id: id
+    }
+    return this.http.post<any>(this.favoritesUrl, data,  {headers: this.headers})
       .map(res => {
             return res;
       })

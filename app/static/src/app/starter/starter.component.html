@@ -59,6 +59,7 @@
     <div class="card">
       <div class="card-header">
         <i class="mdi mdi-format-list-bulleted-type"></i> Busquedas
+          <a  *ngIf="lines.length" (click)="cleanLines()" style="cursor: pointer !important;" class="pull-right">Quitar todos<i style="color:rgb(241, 96, 96)" class="mdi mdi-delete-forever"></i></a>
       </div>
       <div class="card-body">
         <div class="row" *ngIf="!lines.length">
@@ -70,8 +71,8 @@
           <div class="col">
             <div class="card">
               <div class="col" [ngStyle]="{'color': line.color}">
-                <p><i class="mdi mdi-music-note-whole"></i> {{line.channel.name}} <span *ngIf="line.brand"><i class="mdi mdi-arrow-right-bold">
-                </i> {{line.brand.name}}</span><span *ngIf="line.category"> <i class="mdi mdi-arrow-right-bold"></i> {{line.category.name}}</span><span *ngIf="line.product">
+                <p><i class="mdi mdi-music-note-whole"></i> {{line.channel.name}} <span *ngIf="line.category"><i class="mdi mdi-arrow-right-bold">
+                </i> {{line.category.name}}</span><span *ngIf="line.brand"> <i class="mdi mdi-arrow-right-bold"></i> {{line.brand.name}}</span><span *ngIf="line.product">
                   <i class="mdi mdi-arrow-right-bold"></i> {{line.product.name}}</span><a (click)="removeLine(line)" style="cursor: pointer !important;" class="pull-right"><i style="color:rgb(241, 96, 96)" class="mdi mdi-delete-forever"></i></a></p>
               </div>
             </div>
@@ -98,7 +99,7 @@
             <i class="fas fa-angle-double-down fa-2x"> </i>
           </div>
           <div class="col-8 text-left">
-            <h4 class="card-text">% {{getScope(line) | number : '1.1-3'}}</h4>
+            <h4 class="card-text">% {{getScope(line) | number}}</h4>
           </div>
         </div>
         <div class="row" *ngIf="getScope(line) >= 0" style="color:green">
@@ -106,7 +107,7 @@
             <i class="fas fa-angle-double-up fa-2x"> </i>
           </div>
           <div class="col-8 text-left">
-            <h4 class="card-text">% {{getScope(line) | number : '1.1-3'}}</h4>
+            <h4 class="card-text">% {{getScope(line) | number}}</h4>
           </div>
         </div>
           <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->

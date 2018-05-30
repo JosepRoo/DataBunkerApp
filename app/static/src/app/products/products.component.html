@@ -1,23 +1,4 @@
-<div class="row" *ngIf="(products | myfilter:favFilter).length">
-  <h3>Favoritos</h3>
-</div>
-<br />
-<div class="row">
-  <div class="col-12 col-md-3" *ngFor="let product of products | myfilter:favFilter">
-    <div class="card">
-      <img class="card-img-top img-responsive" src="https://cdn4.iconfinder.com/data/icons/gray-toolbar-7/512/cube-512.png" alt="Card image cap">
-      <div class="card-body">
-        <h4 class="card-title text-left">{{product.name}}<ngb-rating class="pull-right" max="1" [(rate)]="product.rate"></ngb-rating></h4>
-        <p class="card-text text-left">{{product.price | currency}}</p>
-        <p class="card-text up-color text-left" *ngIf="product.scope >= 0"><i class="mdi mdi-arrow-up-bold-circle"></i> {{product.scope | percent}}</p>
-        <p class="card-text down-color text-left" *ngIf="product.scope < 0"><i class="mdi mdi-arrow-up-bold-circle"></i> {{product.scope | percent}}</p>
-        <a routerLink="/products/1" class="btn btn-primary btn-sm btn-own"><i class="mdi mdi-information"></i> Detalle</a>
-        <a (click)="clickStar(product)" class="btn btn-danger btn-sm pull-right btn-own"><i class="mdi mdi-delete-circle"></i> Quitar</a>
-      </div>
-    </div>
-  </div>
-</div>
-<br />
+
 <div class="row justify-content-between" *ngIf="(products | myfilter:prodFilter).length">
   <div class="col-12 col-md-4">
     <h3>Productos</h3>
@@ -38,18 +19,94 @@
     </form>
   </div> -->
 </div>
+<form>
+  <div class="card">
+    <div class="card-header">
+      <i class="mdi mdi-file-find"></i> Nueva Busqueda
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label for="lineChannel">Canal</label>
+            <select class="form-control" (change)="getCategories(); " [(ngModel)]="line.channel" name="channel" required>
+              <option [ngValue]="null"></option>
+              <option [ngValue]="option" *ngFor="let option of channels">{{option.name}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col" *ngIf="line.channel">
+          <div class="form-group">
+            <label for="lineCategory">Categoria</label>
+            <select class="form-control" (change)="getBrands();" [(ngModel)]="line.category" name="category">
+              <option [ngValue]="null"></option>
+              <option [ngValue]="option" *ngFor="let option of line.channel.sub_elements">{{option.name}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col" *ngIf="line.category">
+          <div class="form-group form-sm">
+            <label for="lineBrand">Marca</label>
+            <select class="form-control" (change)="getProducts();" [(ngModel)]="line.brand" name="brand">
+              <option [ngValue]="null"></option>
+              <option [ngValue]="option" *ngFor="let option of line.category.sub_elements">{{option.name}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col" *ngIf="line.brand">
+          <div class="form-group">
+            <label for="lineProduct">Producto</label>
+            <select class="form-control" [(ngModel)]="line.product" name="producto">
+              <option [ngValue]="null"></option>
+              <option [ngValue]="option" *ngFor="let option of line.brand.sub_elements">{{option.name}}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <div class="row justify-content-end">
+        <div class="col-md-3 col-sm-12">
+          <button [disabled]="!line.product" class="btn btn-block btn-primary btn-sm" (click)="addLine()">Agregar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
 <br />
 <div class="row">
-  <div class="col-12 col-md-3" *ngFor="let product of products| myfilter:prodFilter">
+  <div class="col-12 col-md-3" *ngFor="let product of products">
     <div class="card">
-      <img class="card-img-top img-responsive" src="https://cdn4.iconfinder.com/data/icons/gray-toolbar-7/512/cube-512.png" alt="Card image cap">
+      <img *ngIf="product.image" class="card-img-top img-responsive" src="{{product.image}}" alt="Card image cap">
+      <img *ngIf="!product.image" class="card-img-top img-responsive" src="https://cdn4.iconfinder.com/data/icons/gray-toolbar-7/512/cube-512.png" alt="Card image cap">
       <div class="card-body">
         <h4 class="card-title text-left">{{product.name}}<ngb-rating class="pull-right" max="1" [(rate)]="product.rate"></ngb-rating></h4>
         <p class="card-text text-left">{{product.price | currency}}</p>
         <p class="card-text up-color text-left" *ngIf="product.scope >= 0"><i class="mdi mdi-arrow-up-bold-circle"></i> {{product.scope | percent}}</p>
         <p class="card-text down-color text-left" *ngIf="product.scope < 0"><i class="mdi mdi-arrow-up-bold-circle"></i> {{product.scope | percent}}</p>
-        <a outerLink="/products/1" class="btn btn-primary btn-sm btn-own"><i class="mdi mdi-information"></i> Detalle</a>
         <a (click)="clickStar(product)" class="btn btn-success btn-sm pull-right btn-own"><i class="mdi mdi-star-circle"></i> Favorito</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<br />
+<div class="row" *ngIf="favorites.length">
+  <h3>Favoritos</h3>
+</div>
+<br />
+<div class="row">
+  <div class="col-12 col-md-3" *ngFor="let product of favorites">
+    <div class="card">
+      <img *ngIf="product.image" class="card-img-top img-responsive" src="{{product.image}}" alt="Card image cap">
+      <img *ngIf="!product.image" class="card-img-top img-responsive" src="https://cdn4.iconfinder.com/data/icons/gray-toolbar-7/512/cube-512.png" alt="Card image cap">
+      <div class="card-body">
+        <h4 class="card-title text-left">{{product.name}}<ngb-rating class="pull-right" max="1" [rate]="1"></ngb-rating></h4>
+        <p class="card-text text-left">{{product.price | currency}}</p>
+        <p class="card-text up-color text-left" *ngIf="product.scope >= 0"><i class="mdi mdi-arrow-up-bold-circle"></i> {{product.scope | percent}}</p>
+        <p class="card-text down-color text-left" *ngIf="product.scope < 0"><i class="mdi mdi-arrow-up-bold-circle"></i> {{product.scope | percent}}</p>
+        <a routerLink="/products/1" class="btn btn-primary btn-sm btn-own"><i class="mdi mdi-information"></i> Detalle</a>
+        <a (click)="removeStar(product)" class="btn btn-danger btn-sm pull-right btn-own"><i class="mdi mdi-delete-circle"></i> Quitar</a>
       </div>
     </div>
   </div>
