@@ -52,10 +52,14 @@ export class ProductsComponent implements OnInit {
 
     this.startDate.setDate(this.endDate.getDate()-30);
     this.channelService.getFavorites().subscribe(res => {
-      self.favorites = res
-      for (var i = 0; i < self.favorites.length; i++){
-        self.favorites[i].scope = (self.favorites[i].sub_elements[1].value - self.favorites[i].sub_elements[0].value)*100/self.favorites[i].sub_elements[1].value;
+      for (var i = 0; i < res.length; i++){
+        try{
+          res[i].scope = (res[i].sub_elements[1].value - res[i].sub_elements[0].value)*100/res[i].sub_elements[1].value;
+        } catch (e){
+          res[i].scope = 0;
+        }
       }
+      self.favorites = res
     });
   }
 
@@ -64,7 +68,11 @@ export class ProductsComponent implements OnInit {
     this.line.name = this.line.product.name;
     this.channelService.getProduct(this.line.product._id).subscribe(res => {
       self.line.data = res;
-      res.scope = (res.sub_elements[1].value - res.sub_elements[0].value)*100/res.sub_elements[1].value;
+      try {
+        res.scope = (res.sub_elements[1].value - res.sub_elements[0].value)*100/res.sub_elements[1].value;
+      } catch (e){
+        res.scope = 0;
+      }
       self.products.push(res);
       self.line.color = self.colorGenerator.getColor();
       self.line.product = null;

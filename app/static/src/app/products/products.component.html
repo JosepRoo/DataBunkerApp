@@ -105,7 +105,6 @@
         <p class="card-text text-left">{{product.price | currency}}</p>
         <p class="card-text up-color text-left" *ngIf="product.scope >= 0"><i class="mdi mdi-arrow-up-bold-circle"></i> {{product.scope | percent}}</p>
         <p class="card-text down-color text-left" *ngIf="product.scope < 0"><i class="mdi mdi-arrow-up-bold-circle"></i> {{product.scope | percent}}</p>
-        <a routerLink="/products/1" class="btn btn-primary btn-sm btn-own"><i class="mdi mdi-information"></i> Detalle</a>
         <a (click)="removeStar(product)" class="btn btn-danger btn-sm pull-right btn-own"><i class="mdi mdi-delete-circle"></i> Quitar</a>
       </div>
     </div>
