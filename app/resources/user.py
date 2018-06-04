@@ -120,7 +120,7 @@ class UserFavorites(Resource):
             user = UserModel.get_by_id(_id, COLLECTION)
             favorites = user.get_favorites()
             return [product.json(["sub_elements", "parentElementId"]) for product in
-                    favorites] if favorites else favorites, 200
+                    favorites if product] if favorites else favorites, 200
         return Response(message='User Data not given').json(), 400
 
     def put(self):
