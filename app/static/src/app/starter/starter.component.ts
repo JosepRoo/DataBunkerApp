@@ -225,10 +225,10 @@ export class StarterComponent implements AfterViewInit {
 	getScope(line) {
 		try{
 			console.log(line.data);
-			var lines = line.data.sort((a: any, b: any) =>
+			line.data = line.data.sort((a: any, b: any) =>
 					new Date(a.date).getTime() - new Date(b.date).getTime()
 			);
-			return (lines.data[0].average - lines.data[1].average)*100/lines.data[0].average;
+			return (line.data[0].average - line.data[1].average)*100/line.data[0].average;
 		} catch(e){
 			console.log(e);
 			return 0;
