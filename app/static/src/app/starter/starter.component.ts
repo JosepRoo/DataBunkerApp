@@ -226,7 +226,7 @@ export class StarterComponent implements AfterViewInit {
 		try{
 			console.log(line.data);
 			line.data = line.data.sort((a: any, b: any) =>
-					new Date(a.date).getTime() - new Date(b.date).getTime()
+					new Date(a._id).getTime() - new Date(b._id).getTime()
 			);
 			return (line.data[0].average - line.data[1].average)*100/line.data[0].average;
 		} catch(e){
