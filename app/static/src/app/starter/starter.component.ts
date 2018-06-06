@@ -112,6 +112,9 @@ export class StarterComponent implements AfterViewInit {
 			this.line.name = this.line.channel.name;
 			this.channelService.getData("channel", this.line.channel._id, this.startDate, this.endDate).subscribe(res => {
 				self.line.data = res;
+				self.line.data = self.line.data.sort((a: any, b: any) =>
+        new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
 				self.data.push(res);
 				self.line.color = self.colorGenerator.getColor();
 				self.lines.push(JSON.parse(JSON.stringify(self.line)));

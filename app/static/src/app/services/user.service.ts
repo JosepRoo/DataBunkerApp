@@ -23,7 +23,7 @@ export class UserService {
   private userUrl: string = environment.url+'userstatus';
   private headers = new HttpHeaders({ 'Content-Type': 'application/json'});
 
-  constructor(private companyService: CompanyService, private http: HttpClient, private msgService: MessageService) {
+  constructor(private companyService: CompanyService, private http: HttpClient, private msgService: MessageService, public router: Router,) {
     // this.user.company = companyService.getCompany();
   }
 
@@ -89,6 +89,9 @@ export class UserService {
       .catch(e => {
           if (e.status === 401) {
               return Observable.throw('Unauthorized');
+          }
+          if (e.status === 400) {
+              this.router.navigateByUrl('/screen');
           }
           // do any other checking for statuses here
       });
