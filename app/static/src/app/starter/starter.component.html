@@ -10,37 +10,59 @@
             <div class="col">
               <div class="form-group">
                 <label for="lineChannel">Canal</label>
+                <ng-multiselect-dropdown
+                    class="form-control" (change)="getCategories(); " [(ngModel)]="line.channel" name="channel" required
+                >
+                  <option [ngValue]="null"></option>
+                  <option [ngValue]="option" *ngFor="let option of channels">{{option.name}}</option>
+                </ng-multiselect-dropdown>
+                <!--
                 <select class="form-control" (change)="getCategories(); " [(ngModel)]="line.channel" name="channel" required>
                   <option [ngValue]="null"></option>
                   <option [ngValue]="option" *ngFor="let option of channels">{{option.name}}</option>
                 </select>
+              -->
               </div>
             </div>
             <div class="col" *ngIf="line.channel">
               <div class="form-group">
                 <label for="lineCategory">Categoria</label>
+                  <ng-multiselect-dropdown class="form-control" (change)="getBrands();" [(ngModel)]="line.category" name="category">
+                    <option [ngValue]="null"></option>
+                    <option [ngValue]="option" *ngFor="let option of line.channel.sub_elements">{{option.name}}</option>
+                  </ng-multiselect-dropdown>
+<!--
                 <select class="form-control" (change)="getBrands();" [(ngModel)]="line.category" name="category">
                   <option [ngValue]="null"></option>
                   <option [ngValue]="option" *ngFor="let option of line.channel.sub_elements">{{option.name}}</option>
                 </select>
+              -->
               </div>
             </div>
             <div class="col" *ngIf="line.category">
               <div class="form-group form-sm">
                 <label for="lineBrand">Marca</label>
-                <select class="form-control" (change)="getProducts();" [(ngModel)]="line.brand" name="brand">
+                <ng-multiselect-dropdown class="form-control" (change)="getProducts();" [(ngModel)]="line.brand" name="brand">
                   <option [ngValue]="null"></option>
                   <option [ngValue]="option" *ngFor="let option of line.category.sub_elements">{{option.name}}</option>
-                </select>
+                </ng-multiselect-dropdown>
+                <!--<select class="form-control" (change)="getProducts();" [(ngModel)]="line.brand" name="brand">
+                  <option [ngValue]="null"></option>
+                  <option [ngValue]="option" *ngFor="let option of line.category.sub_elements">{{option.name}}</option>
+                </select>-->
               </div>
             </div>
             <div class="col" *ngIf="line.brand">
               <div class="form-group">
                 <label for="lineProduct">Producto</label>
-                <select class="form-control" [(ngModel)]="line.product" name="producto">
+                <ng-multiselect-dropdown class="form-control" [(ngModel)]="line.product" name="producto">
                   <option [ngValue]="null"></option>
                   <option [ngValue]="option" *ngFor="let option of line.brand.sub_elements">{{option.name}}</option>
-                </select>
+                </ng-multiselect-dropdown>
+                <!--<select class="form-control" [(ngModel)]="line.product" name="producto">
+                  <option [ngValue]="null"></option>
+                  <option [ngValue]="option" *ngFor="let option of line.brand.sub_elements">{{option.name}}</option>
+                </select>-->
               </div>
             </div>
           </div>

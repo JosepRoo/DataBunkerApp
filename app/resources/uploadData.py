@@ -10,7 +10,9 @@ class UploadData(Resource):
         try:
             json = request.get_json(force=True)
             tree = Tree(json)
-            tree.save_to_mongo()
-        except:
-            return Response(message="Ocurrio un error al subir informacion, notificar al administrador").json()
-        return Response(success=True,message="La informacion se subio exitosamente").json()
+            result = tree.save_to_mongo()
+            result['message'] = "La informacion se subio exitosamente"
+            result['success'] = True
+        except Exception as e:
+            return Response(message=f"Ocurrio un error al subir informacion, notificar al administrador:\n{str(e)}").json(), 500
+        return result, 200

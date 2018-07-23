@@ -23,9 +23,10 @@ class Privilege(Resource):
                         required=True,
                         help="This field cannot be blank."
                         )
+
     def put(self):
         data = Privilege.parser.parse_args()
-        if 'data-bunker' not in session['email']:
+        if not session.get('email') or 'data-bunker' not in session.get('email'):
             return Response(message="No tienes los privilegios para modificar privilegios").json(), 401
         user = User.get_by_email(data['target_user_mail'])
         try:
@@ -35,7 +36,7 @@ class Privilege(Resource):
 
     def delete(self):
         if 'data-bunker' not in session['email']:
-            return Response(message="No tienes los privilegios para modificar privilegios") , 401
+            return Response(message="No tienes los privilegios para modificar privilegios"), 401
         data = Privilege.parser.parse_args()
         user = User.get_by_email(data['target_user_mail'])
         try:
