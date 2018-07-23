@@ -1,5 +1,6 @@
 import datetime
 from flask import Flask, session, jsonify, request, url_for
+from flask_compress import Compress
 from flask_restful import Api
 from werkzeug.utils import redirect
 
@@ -17,6 +18,7 @@ def create_app(config_name):
     app = Flask(__name__)
     api = Api(app)
     app.config.from_object(config[config_name])
+    Compress(app)
     # Register our blueprints
     from .default import default as default_blueprint
     app.register_blueprint(default_blueprint)

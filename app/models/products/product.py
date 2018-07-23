@@ -3,14 +3,18 @@ import datetime
 from app import Database
 from app.models.elements.element import Element
 from app.models.elements.errors import ElementNotFound
+from app.models.emails.email import Email
+from app.models.emails.errors import EmailErrors, FailedToSendEmail
 from app.models.logs.log import Log
 from app.models.products.constants import COLLECTION
 
 
 class Product(Element):
-    def __init__(self, UPC, name, parentElementId, sub_elements, image=None, _id=None):
+    def __init__(self, UPC, name, parentElementId, sub_elements, image=None, _id=None, grandParentId=None, greatGrandParentId=None):
         Element.__init__(self, name=name, _id=_id)
         self.parentElementId = parentElementId
+        self.grandParentId = grandParentId
+        self.greatGrandParentId = greatGrandParentId
         self.UPC = UPC
         self.image = image
         self.sub_elements = [Log(**sub_element) for sub_element in sub_elements]
@@ -55,3 +59,83 @@ class Product(Element):
             element.sub_elements = [element.sub_elements[-2], element.sub_elements[-1]]
             return element
         raise ElementNotFound("El elemento con el id y tipo dado no fue encontrado")
+
+    @staticmethod
+    def send_email_alerts():
+        emails = Product.build_email_products()
+        for email in emails:
+            # alert_email = Email(to='areyna@sitsolutions.org', subject='Notificación de productos favoritos')
+            alert_email = Email(to=email, subject='Notificación de productos favoritos')
+
+            emails_text = "Nuestro sistema ha detectado que los siguientes productos han bajado de precio:\n"
+            for product in emails[email]:
+                emails_text += f"\t{product.get('name')} cambió de ${product.get('yesterday')}" \
+                               f"a ${product.get('today')}\n"
+            emails_text += "\nEntra a estos enlaces para revisar el detalle de tus productos:\n"
+            for product in emails[email]:
+                emails_text += f"\tcomparador.data-bunker.com.mx/elements/product/{product.get('_id')}\n"
+
+            emails_html = """\
+            <html>
+            <head>Alerta de favoritos</head>
+            <body>
+            <h3>Nuestro sistema ha detectado que los siguientes productos han bajado de precio:</h3>"""
+            for product in emails[email]:
+                emails_html += f"""<p>{product.get('name')} cambió de ${product.get('yesterday')}
+                                    a ${product.get('today')}</p>"""
+                image = product.get('image').replace('\\', '')
+                emails_html += f"<img src={image} alt='Producto' />"
+            emails_html += """<p>Entra a estos enlaces para revisar el detalle de tus productos:</p>"""
+            for product in emails[email]:
+                emails_html += f"""<p>comparador.data-bunker.com.mx/elements/product/{product.get('_id')}</p>"""
+
+            alert_email.text(emails_text)
+            alert_email.html(emails_html)
+            try:
+                alert_email.send()
+            except EmailErrors as e:
+                raise FailedToSendEmail(e)
+
+    @staticmethod
+    def build_email_products():
+        expressions = list()
+        expressions.append({"$project": {"_id": 1}})
+        product_ids = list(Database.aggregate('products', expressions))
+        expressions = list()
+        expressions.append({"$match": {}})
+        expressions.append({"$project": {"_id": "$email", "favoritos": "$favorites"}})
+        user_favourites = list(Database.aggregate('users', expressions))
+        product_subscribers = []
+        for item in product_ids:
+            arr = list(filter(lambda x: item['_id'] in x['favoritos'], user_favourites))
+            if arr:
+                product_subscribers.append({"_id": item['_id'], "emails": [user.get('_id') for user in arr]})
+        expressions = list()
+        expressions.append({"$match": {"_id": {"$in": [product.get('_id') for product in product_subscribers]}}})
+        selected_products = list(Database.aggregate('products', expressions))
+        return Product.find_cheaper_products(selected_products, product_subscribers)
+
+    @staticmethod
+    def find_cheaper_products(selected_products, product_subscribers):
+        cheaper_products = {}
+        for element in selected_products:
+            logs = element.get('sub_elements')[::-1]
+            first_date = logs.pop(0)
+            while logs[0].get('date').day == first_date.get('date').day:
+                logs.pop(0)
+            today_price = first_date.get('value')
+            yesterday_price = logs[0].get('value')
+            if today_price < yesterday_price:
+                for product in product_subscribers:
+                    if product.get('_id') == element.get('_id'):
+                        for email in product.get('emails'):
+                            product_detail = {'_id': element.get('_id'),
+                                              'name': element.get('name'),
+                                              'yesterday': yesterday_price,
+                                              'today': today_price,
+                                              'image': element.get('image')}
+                            if email not in cheaper_products:
+                                cheaper_products[email] = [product_detail]
+                            else:
+                                cheaper_products[email].append(product_detail)
+        return cheaper_products

@@ -25,40 +25,79 @@ class Tree(dict):
                 self[k] = data
 
     def save_to_mongo(self):
+        result = {
+            "channels": {
+                "success": 0,
+                "failed": 0
+            },
+            "categories": {
+                "success": 0,
+                "failed": 0
+            },
+            "brands": {
+                "success": 0,
+                "failed": 0
+            },
+            "products": {
+                "success": 0,
+                "failed": 0,
+                "skipped": 0
+            }
+        }
         for channel in self.keys():
             channel_exists = Channel.get_by_name(channel)
-            if not channel_exists:
-                channel_exists = Channel(channel)
-                channel_exists.save_to_mongo(Channel.get_collection_by_name(channel_exists.__class__.__name__),
-                                             "sub_elements")
+            try:
+                if not channel_exists:
+                    channel_exists = Channel(channel)
+                    channel_exists.save_to_mongo(Channel.get_collection_by_name(channel_exists.__class__.__name__),
+                                                 "sub_elements")
+                result['channels']['success'] += 1
+            except:
+                result['channels']['failed'] += 1
             for category in self[channel]:
-                category_exists = Category.get_by_name_and_parent_id(category, channel_exists._id)
-                if not category_exists:
-                    category_exists = Category(category, channel_exists._id)
-                    category_exists.save_to_mongo(Category.get_collection_by_name(category_exists.__class__.__name__),
-                                                  "sub_elements")
+                try:
+                    category_exists = Category.get_by_name_and_parent_id(category, channel_exists._id)
+                    if not category_exists:
+                        category_exists = Category(category, channel_exists._id)
+                        category_exists.save_to_mongo(
+                            Category.get_collection_by_name(category_exists.__class__.__name__),
+                            "sub_elements")
+                    result['categories']['success'] += 1
+                except:
+                    result['categories']['failed'] += 1
                 for brand in self[channel][category]:
-                    brand_exists = Brand.get_by_name_and_parent_id(brand, category_exists._id)
-                    if not brand_exists:
-                        brand_exists = Brand(brand, category_exists._id)
-                        brand_exists.save_to_mongo(Brand.get_collection_by_name(brand_exists.__class__.__name__),
-                                                   "sub_elements")
+                    try:
+                        brand_exists = Brand.get_by_name_and_parent_id(brand, category_exists._id)
+                        if not brand_exists:
+                            brand_exists = Brand(brand, category_exists._id)
+                            brand_exists.save_to_mongo(Brand.get_collection_by_name(brand_exists.__class__.__name__),
+                                                       "sub_elements")
+                            result['brands']['success'] += 1
+                    except Exception:
+                        result['brands']['failed'] += 1
                     for product in self[channel][category][brand]:
-                        log = self[channel][category][brand][product]
-                        product_name, product_upc, product_image = product.split("||")
-                        product_exists = Product.get_by_UPC(product_upc)
-                        if not product_exists:
-                            product_exists = Product(product_upc, product_name, brand_exists._id, [log, ],
-                                                     product_image)
-                        elif not product_exists.is_duplicated_date(
-                                datetime.datetime.strptime(log['date'], "%Y-%m-%d %H:%M")):
-                            product_exists.sub_elements.append(Log(**log))
-                            if product_exists.image is None:
-                                product_exists.image = product_image
-                        else:
-                            continue
-                        product_exists.update_mongo(
-                            Product.get_collection_by_name(product_exists.__class__.__name__))
+                        try:
+                            log = self[channel][category][brand][product]
+                            log["value"] = float(log['value'].strip("$ \t"))
+                            product_name, product_upc, product_image = product.split("||")
+                            product_exists = Product.get_by_UPC(product_upc)
+                            if not product_exists:
+                                product_exists = Product(product_upc, product_name, brand_exists._id, [log, ],
+                                                         product_image, category_exists._id, channel_exists._id)
+                            elif not product_exists.is_duplicated_date(
+                                    datetime.datetime.strptime(log['date'], "%Y-%m-%d %H:%M")):
+                                product_exists.sub_elements.append(Log(**log))
+                                if product_exists.image is None:
+                                    product_exists.image = product_image
+                            else:
+                                result['products']['skipped'] += 1
+                                continue
+                            product_exists.update_mongo(
+                                Product.get_collection_by_name(product_exists.__class__.__name__))
+                            result['products']['success'] += 1
+                        except Exception:
+                            result['products']['failed'] += 1
+        return result
 
     def split_into_categories(self):
         categories_list = list()
