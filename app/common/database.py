@@ -1,17 +1,18 @@
+import os
 import pymongo
 
 __author__ = 'jslvtr'
 
 
-class Database(object):
-    #URI = "mongodb://richogtz:cloudstrifeFF7!@127.0.0.1:27017"
-    URI = "mongodb://127.0.0.1:27017"
+class Database:
+    # URI = "mongodb://richogtz:cloudstrifeFF7!@127.0.0.1:27017/databunker"
+    URI = os.environ.get('MONGODB_URI') or "mongodb://127.0.0.1:27017/databunker"
     DATABASE = None
 
     @staticmethod
     def initialize():
         client = pymongo.MongoClient(Database.URI)
-        Database.DATABASE = client['databunker']
+        Database.DATABASE = client.get_database()
 
     @staticmethod
     def insert(collection, data):
