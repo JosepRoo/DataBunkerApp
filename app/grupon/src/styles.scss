@@ -1,0 +1,102 @@
+/* Global styles */
+
+// imports
+@import '~@angular/material/theming';
+
+html, body { height: 100%; }
+body { margin: 0; font-family: 'Roboto', sans-serif; }
+
+// Remove default explorer styles
+button, a :focus {
+  outline:0;
+}
+
+// Material configuration
+@include mat-core();
+
+$custom-typography: mat-typography-config(
+    $font-family: 'Roboto'
+);
+
+$bv-brand: (
+    50: #15314b,
+    100: #15314b,
+    200: #15314b,
+    300: #15314b,
+    400: #15314b,
+    500: #15314b,
+    600: black,
+    700: black,
+    800: black,
+    900: black,
+    A100: black,
+    A200: black,
+    A400: black,
+    A700: black,
+    contrast: (
+        50: $black-87-opacity,
+        100: $black-87-opacity,
+        200: $black-87-opacity,
+        300: $black-87-opacity,
+        400: $black-87-opacity,
+        500: white,
+        600: white,
+        700: white,
+        800: white,
+        900: white,
+        A100: $black-87-opacity,
+        A200: $black-87-opacity,
+        A400: $black-87-opacity,
+        A700: white,
+    )
+);
+
+$bv-brand-error: (
+    50: #d70000,
+    100: #d70000,
+    200: #d70000,
+    300: #d70000,
+    400: #d70000,
+    500: #d70000,
+    600: black,
+    700: black,
+    800: black,
+    900: black,
+    A100: black,
+    A200: black,
+    A400: black,
+    A700: black,
+    contrast: (
+        50: $black-87-opacity,
+        100: $black-87-opacity,
+        200: $black-87-opacity,
+        300: $black-87-opacity,
+        400: $black-87-opacity,
+        500: white,
+        600: white,
+        700: white,
+        800: white,
+        900: white,
+        A100: $black-87-opacity,
+        A200: $black-87-opacity,
+        A400: $black-87-opacity,
+        A700: white,
+    )
+);
+
+$candy-app-primary: mat-palette($bv-brand);
+$candy-app-accent:  mat-palette($bv-brand, A200, A100, A400);
+$candy-app-warn:    mat-palette($bv-brand-error);
+$candy-app-theme: mat-light-theme($candy-app-primary, $candy-app-accent, $candy-app-warn);
+
+// includes for material configuration
+@include mat-core($custom-typography);
+@include angular-material-theme($candy-app-theme);
+
+// overwrite material styles
+.mat-form-field.mat-form-field {
+  width           : 100% !important;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: 'Roboto', sans-serif; }

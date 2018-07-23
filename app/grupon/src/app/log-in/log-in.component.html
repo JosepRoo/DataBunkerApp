@@ -1,0 +1,34 @@
+<div class="row justify-content-center">
+  <div class="col-11 col-sm-6 col-md-4">
+    <mat-card class="logIn-card">    
+      <mat-card-content>
+        <h5>Iniciar Sesión</h5>
+        <form [formGroup]="logIn" (submit)="logInUser()">
+          <div class="row justify-content-center">
+            <div class="col-12 form-row">
+              <mat-form-field>
+                <input matInput placeholder="Correo electrónico" formControlName="email">
+                <mat-error *ngIf="logIn.controls.email.hasError('required')">Tu correo es necesario para ingresar</mat-error>
+                <mat-error *ngIf="logIn.controls.email.hasError('email') && !logIn.controls.email.hasError('required')">El correo es incorrecto</mat-error>
+              </mat-form-field>
+            </div>
+            <div class="col-12 form-row">
+              <mat-form-field>
+                <input type="password" matInput placeholder="Contraseña" formControlName="password">
+                <mat-error *ngIf="logIn.controls.password.hasError('required')">Tu contraseña es necesaria para ingresar</mat-error>
+              </mat-form-field>
+            </div>
+            <div *ngIf="!loading.show" class="col-12">
+              <button class="btn btn-block" color="primary" mat-raised-button type="submit"><span>Continuar</span></button>
+            </div>
+            <div *ngIf="loading.show" class="col-4">
+              <mat-progress-spinner style="margin:0 auto;" [diameter]="40" [color]="'primary'" [mode]="'indeterminate'" [value]="50"></mat-progress-spinner>
+            </div>
+          </div>
+        </form>
+      </mat-card-content>
+      <mat-card-actions>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

@@ -1,0 +1,29 @@
+.main-footer {
+  width: 100%;
+  margin-top: 15px;
+  position:absolute;
+  bottom:0;
+}
+
+.main-footer > .structure {
+  text-align: center;
+}
+.main-footer > .structure ul {
+  vertical-align: middle;
+}
+.main-footer > .structure li {
+  display: inline-block;
+}
+
+.outApp-container {
+  background: linear-gradient(to bottom, white, rgb(21, 49, 75));
+  height: 100vh;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.footer-label {
+  color:white; 
+  font-size:13px; 
+  font-weight: 600;
+}

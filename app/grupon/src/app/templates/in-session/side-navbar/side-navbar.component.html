@@ -1,0 +1,89 @@
+<div class="main-container" [class.main-is-mobile]="mobileQuery.matches">
+  <mat-sidenav-container class="main-container" [style.marginTop.px]="mobileQuery.matches ? 56 : 0" autosize>
+    <mat-sidenav class="main-sidenav z-depth-1-half" #snav opened="true" [mode]="mobileQuery.matches ? 'over' : 'side'" [fixedInViewport]="mobileQuery.matches"
+      fixedTopGap="56">
+      <mat-nav-list class="menu-header text-center">
+        <br>
+        <a *ngIf="!showFiller && !mobileQuery.matches" routerLink="">
+          <img style="height:100px" src="http://icons.iconarchive.com/icons/paomedia/small-n-flat/512/user-male-icon.png" class="img-fluid rounded" alt="User">
+          <p style="color:white; padding-top:10px;" class="text-center">
+            {{user?.name}}
+          </p>
+          <p style="color:white; font-size:13px;" class="text-center">
+            {{user?.email}}
+          </p>
+        </a>
+        <a *ngIf="showFiller || mobileQuery.matches" routerLink="">          
+          <p class="text-center" style="font-size: 24px; font-weight: 600; color:white; padding-top:10px;">
+            {{user?.name.split(" ")[0][0]}}{{user?.name.split(" ")[1][0]}}
+          </p>
+        </a>
+      </mat-nav-list>
+
+      <mat-nav-list class="nav-menu">
+        <a mat-list-item routerLink="/app/dashboard">
+          <mat-icon style="margin-left: 7px;">insert_chart</mat-icon>
+          <span *ngIf="!showFiller && !mobileQuery.matches" class="inline-block menu-item">OPT Dashboard</span>
+        </a>
+        <a mat-list-item routerLink="/dashboard/sendSMS">
+          <mat-icon style="margin-left: 7px;">dns</mat-icon>
+          <span *ngIf="!showFiller && !mobileQuery.matches" class="inline-block menu-item">Análisis Comparador</span>
+        </a>
+        <a mat-list-item routerLink="">
+          <mat-icon style="margin-left: 7px;">assignment_late</mat-icon>
+          <span *ngIf="!showFiller && !mobileQuery.matches" class="inline-block menu-item">Alertas</span>
+        </a>
+        <a mat-list-item routerLink="/app/export">
+          <mat-icon style="margin-left: 7px;">cloud_download</mat-icon>
+          <span *ngIf="!showFiller && !mobileQuery.matches" class="inline-block menu-item">Exportar</span>
+        </a>
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <mat-sidenav-content style="background-color: #F0F0F0;">
+
+      <!-- <mdb-navbar SideClass="navbar navbar-expand-lg navbar-light white">
+        <links>
+            <div class="form-inline waves-light" mdbWavesEffect>
+              <span (click)="mobileQuery.matches ? snav.toggle() || showFiller = false : showFiller = !showFiller; !mobileQuery.matches ? snav.open() : null;" class="menu-toggler"><mat-icon style="color: gray;">menu</mat-icon></span>
+              <span class="main-spacer"></span>
+              <mat-icon class="main-icon top-menu-icon">person_pin</mat-icon>
+              <mat-icon class="main-icon top-menu-icon">notifications</mat-icon>
+              <mat-icon class="main-icon top-menu-icon">settings</mat-icon>
+              <mat-icon class="main-icon top-menu-icon" style="margin-right:20px;">power_settings_new</mat-icon>
+            </div>
+        </links>
+      </mdb-navbar> -->
+
+      <mat-toolbar class="main-header">
+        <span (click)="mobileQuery.matches ? snav.toggle() || showFiller = false : showFiller = !showFiller; !mobileQuery.matches ? snav.open() : null;"
+          class="menu-toggler">
+          <mat-icon style="color: gray;">menu</mat-icon>
+        </span>
+        <span class="main-spacer"></span>
+        <div class="row">
+          <div class="col-12" style="line-height:5px !important;">
+            <h5>{{user?.balance | currency}}</h5>
+            <span *ngIf="user?.user_type == 'pre'" class="subtitle">SALDO PREPAGO</span>
+            <span *ngIf="user?.user_type == 'pos'" class="subtitle">SALDO POSPAGO</span>
+          </div>
+        </div>
+        <!-- <mat-icon class="main-icon top-menu-icon">person_pin</mat-icon>
+        <mat-icon class="main-icon top-menu-icon">notifications</mat-icon>
+        <mat-icon class="main-icon top-menu-icon">settings</mat-icon> -->
+        <mat-icon class="main-icon top-menu-icon" style="margin-right:20px;">power_settings_new</mat-icon>
+      </mat-toolbar>
+
+      <div class="container-fluid">
+        <br />
+        <router-outlet></router-outlet>
+      </div>
+
+      <mat-toolbar class="main-footer">
+        <a class="text-right footer-link" routerLink="">
+          Powered by Cloud Sited Solutions.
+        </a>
+      </mat-toolbar>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>
