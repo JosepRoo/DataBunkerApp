@@ -59,8 +59,9 @@ class Tree(dict):
                     category_exists = Category.get_by_name_and_parent_id(category, channel_exists._id)
                     if not category_exists:
                         category_exists = Category(category, channel_exists._id)
-                        category_exists.save_to_mongo(Category.get_collection_by_name(category_exists.__class__.__name__),
-                                                      "sub_elements")
+                        category_exists.save_to_mongo(
+                            Category.get_collection_by_name(category_exists.__class__.__name__),
+                            "sub_elements")
                     result['categories']['success'] += 1
                 except:
                     result['categories']['failed'] += 1
@@ -82,7 +83,7 @@ class Tree(dict):
                             product_exists = Product.get_by_UPC(product_upc)
                             if not product_exists:
                                 product_exists = Product(product_upc, product_name, brand_exists._id, [log, ],
-                                                         product_image)
+                                                         product_image, category_exists._id, channel_exists._id)
                             elif not product_exists.is_duplicated_date(
                                     datetime.datetime.strptime(log['date'], "%Y-%m-%d %H:%M")):
                                 product_exists.sub_elements.append(Log(**log))
