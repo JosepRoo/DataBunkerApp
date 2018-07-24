@@ -7,8 +7,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { Routes, RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
-import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
-
 import { FullComponent } from './layouts/full/full.component';
 import { BlankComponent } from './layouts/blank/blank.component';
 
@@ -71,7 +69,6 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     FormsModule,
     HttpModule,
     NgbModule.forRoot(),
-    NgMultiSelectDropDownModule.forRoot(),
     PerfectScrollbarModule,
     AppRoutingModule,
     HttpClientModule,
