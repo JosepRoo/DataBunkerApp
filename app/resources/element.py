@@ -71,3 +71,28 @@ class ElementValue(Resource):
             res = Product.get_average(element_id, begin_date, end_date)
 
         return res
+
+
+class BuildProductsReport(Resource):
+    @staticmethod
+    def get(element_type, element_ids, start_date, end_date):
+        """
+        Builds a report containing the information of the products that the current user has access to,
+        given the id of a
+        :return: XLSX report
+        """
+        try:
+            ids = element_ids.split("&&")
+            if element_type == "channel":
+                Channel.build_products_report(ids, start_date, end_date)
+            elif element_type == "category":
+                Category.build_products_report(ids, start_date, end_date)
+            elif element_type == "brand":
+                Brand.build_products_report(ids, start_date, end_date)
+            elif element_type == "product":
+                Product.build_products_report(ids, start_date, end_date)
+            return Response(success=True, message="Reporte de productos exitosamente generado.").json(), 200
+        except ElementErrors as e:
+            return Response(message=e.message).json(), 404
+        except PrivilegeErrors as e:
+            return Response(message=e.message).json(), 401

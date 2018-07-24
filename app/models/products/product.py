@@ -1,5 +1,7 @@
 import datetime
 
+from flask import session
+
 from app import Database
 from app.models.elements.element import Element
 from app.models.elements.errors import ElementNotFound
@@ -142,3 +144,12 @@ class Product(Element):
                             else:
                                 cheaper_products[email].append(product_detail)
         return cheaper_products
+
+    @staticmethod
+    def build_products_report(element_ids, first_date, last_date):
+        user_id = session.get('_id')
+        expressions = list()
+        expressions.append({"$match": {"_id": '1bb9a07c379a42a19fba9cab12ba5cc8'}})
+        expressions.append({"$project": {"_id": 0, "privileges": "$privileges"}})
+        expressions.append({"$replaceRoot": {"newRoot": "$privileges"}})
+        result = list(Database.aggregate('users', expressions))
