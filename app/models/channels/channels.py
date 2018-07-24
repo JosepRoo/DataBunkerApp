@@ -1,7 +1,7 @@
 import datetime
 
 from app import Database
-from app.models.channels.constants import COLLECTION
+from app.models.products.constants import COLLECTION
 from app.models.elements.element import Element
 
 
@@ -26,6 +26,7 @@ class Channel(Element):
                                        'average': {'$avg': '$sub_elements.value'}}})
 
         result = list(Database.aggregate(COLLECTION, expressions))
+        print(result)
         for element in result:
             element["_id"] = element["_id"].strftime("%Y/%m/%d")
         return result

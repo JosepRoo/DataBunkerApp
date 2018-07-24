@@ -50,7 +50,6 @@ def create_app(config_name):
 
     @app.before_request
     def check_login():
-        print(request.path)
         apiCall = request.path.lstrip('/').split('/')[0]
         apiCalls = ['company', 'user', 'elements', 'subelements', 'elementvalue']
         if session.get('email') is None and session.get('_id') is None and apiCall in apiCalls:
