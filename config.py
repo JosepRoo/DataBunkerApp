@@ -18,7 +18,15 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY')
     STATIC_FOLDER = os.path.join(os.pardir, 'static/dist')
-
+    COMPRESS_MIMETYPES = ['text/html',
+                          'text/css',
+                          'text/xml',
+                          'application/json',
+                          'application/javascript',
+                          'text/javascript',
+                          'text/javascript; charset=utf-8'
+                          ]
+    GROUPON_FOLDER = os.path.join(os.pardir, 'grupon/dist')
 
 class DevelopmentConfig(Config):
     DEBUG = True
