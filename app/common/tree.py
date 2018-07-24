@@ -71,7 +71,7 @@ class Tree(dict):
                 except Exception as e:
                     result['categories']['failed'] += 1
                     result['channels']['messages'].append(str(e))
-                print(self[channel][category])
+                print(f"{category_exists._id} len: {len(self[channel][category].keys())}")
                 for brand in self[channel][category]:
                     try:
                         brand_exists = Brand.get_by_name_and_parent_id(brand, category_exists._id)
