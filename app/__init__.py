@@ -20,8 +20,9 @@ def create_app(config_name):
     app.config.from_object(config[config_name])
     Compress(app)
     # Register our blueprints
-    from .default import default as default_blueprint
+    from .default import default as default_blueprint, groupon
     app.register_blueprint(default_blueprint)
+    app.register_blueprint(groupon, url_prefix="/groupon")
 
     api.add_resource(UserStatus, '/userstatus')
     api.add_resource(User, '/user/<string:email>', '/user')
@@ -49,6 +50,7 @@ def create_app(config_name):
 
     @app.before_request
     def check_login():
+        print(request.path)
         apiCall = request.path.lstrip('/').split('/')[0]
         apiCalls = ['company', 'user', 'elements', 'subelements', 'elementvalue']
         if session.get('email') is None and session.get('_id') is None and apiCall in apiCalls:
@@ -56,5 +58,3 @@ def create_app(config_name):
                 return redirect('/#/screen')
 
     return app
-
-
