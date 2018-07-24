@@ -47,7 +47,7 @@ export class StarterComponent implements AfterViewInit {
 				}
 		});
 
-		this.startDate.setDate(this.endDate.getDate()-90);
+		this.startDate.setDate(this.endDate.getDate()-30);
 	}
 
 	getCategories() {
