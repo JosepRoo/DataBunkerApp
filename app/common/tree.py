@@ -89,6 +89,7 @@ class Tree(dict):
                             log = self[channel][category][brand][product]
                             log["value"] = float(log['value'].strip("$ \t"))
                             product_name, product_upc, product_image = product.split("||")
+                            print(product_name, product_upc, product_image, log['value'], type(log['value']))
                             product_exists = Product.get_by_UPC(product_upc)
                             if not product_exists:
                                 product_exists = Product(product_upc, product_name, brand_exists._id, [log, ],
