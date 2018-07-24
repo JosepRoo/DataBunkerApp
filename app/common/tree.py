@@ -28,20 +28,24 @@ class Tree(dict):
         result = {
             "channels": {
                 "success": 0,
-                "failed": 0
+                "failed": 0,
+                "messages": list()
             },
             "categories": {
                 "success": 0,
-                "failed": 0
+                "failed": 0,
+                "messages": list()
             },
             "brands": {
                 "success": 0,
-                "failed": 0
+                "failed": 0,
+                "messages": list()
             },
             "products": {
                 "success": 0,
                 "failed": 0,
-                "skipped": 0
+                "skipped": 0,
+                "messages": list()
             }
         }
         for channel in self.keys():
@@ -52,8 +56,9 @@ class Tree(dict):
                     channel_exists.save_to_mongo(Channel.get_collection_by_name(channel_exists.__class__.__name__),
                                                  "sub_elements")
                 result['channels']['success'] += 1
-            except:
+            except Exception as e:
                 result['channels']['failed'] += 1
+                result['channels']['messages'].append(str(e))
             for category in self[channel]:
                 try:
                     category_exists = Category.get_by_name_and_parent_id(category, channel_exists._id)
@@ -63,8 +68,9 @@ class Tree(dict):
                             Category.get_collection_by_name(category_exists.__class__.__name__),
                             "sub_elements")
                     result['categories']['success'] += 1
-                except:
+                except Exception as e:
                     result['categories']['failed'] += 1
+                    result['channels']['messages'].append(str(e))
                 for brand in self[channel][category]:
                     try:
                         brand_exists = Brand.get_by_name_and_parent_id(brand, category_exists._id)
@@ -73,8 +79,9 @@ class Tree(dict):
                             brand_exists.save_to_mongo(Brand.get_collection_by_name(brand_exists.__class__.__name__),
                                                        "sub_elements")
                             result['brands']['success'] += 1
-                    except Exception:
+                    except Exception as e:
                         result['brands']['failed'] += 1
+                        result['channels']['messages'].append(str(e))
                     for product in self[channel][category][brand]:
                         try:
                             log = self[channel][category][brand][product]
@@ -95,8 +102,9 @@ class Tree(dict):
                             product_exists.update_mongo(
                                 Product.get_collection_by_name(product_exists.__class__.__name__))
                             result['products']['success'] += 1
-                        except Exception:
+                        except Exception as e:
                             result['products']['failed'] += 1
+                            result['channels']['messages'].append(str(e))
         return result
 
     def split_into_categories(self):
