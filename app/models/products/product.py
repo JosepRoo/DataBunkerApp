@@ -56,7 +56,10 @@ class Product(Element):
         collection = Element.get_collection_by_name(cls.__name__)
         element = cls(**Database.find_one(collection, {"_id": element_id}))
         if element:
-            element.sub_elements = [element.sub_elements[-2], element.sub_elements[-1]]
+            if len(element.sub_elements) >= 2:
+                element.sub_elements = [element.sub_elements[-2], element.sub_elements[-1]]
+            else:
+                element.sub_elements = [0, element.sub_elements[-1]]
             return element
         raise ElementNotFound("El elemento con el id y tipo dado no fue encontrado")
 

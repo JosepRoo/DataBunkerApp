@@ -8,18 +8,19 @@ class BaseModel:
         self._id = uuid.uuid4().hex if _id is None else _id
 
     def json(self, exclude=None, date_to_string=True):
-        if exclude:
-            return {
-            attrib: [element.json(date_to_string=date_to_string) if not isinstance(element, str) else element for
-                     element in self.__getattribute__(attrib)]
-                    if type(self.__getattribute__(attrib)) is list else self.__getattribute__(attrib)
-                    for attrib in self.__dict__.keys() if attrib not in exclude}
-
-        return {
-        attrib: [element.json(date_to_string=date_to_string) if not isinstance(element, str) else element for element in
-                 self.__getattribute__(attrib)]
-                if type(self.__getattribute__(attrib)) is list else self.__getattribute__(attrib)
-                for attrib in self.__dict__.keys()}
+        result = dict()
+        for attrib in self.__dict__.keys():
+            if exclude is not None and attrib in exclude:
+                continue
+            if type(self.__getattribute__(attrib)) is list:
+                for element in self.__getattribute__(attrib):
+                    if not isinstance(element, str) and not isinstance(element, int):
+                        result[attrib] = element.json(date_to_string=date_to_string)
+                    else:
+                        result[attrib] = element
+            else:
+                result[attrib] = self.__getattribute__(attrib)
+        return result
 
     def delete_from_mongo(self, collection):
         Database.remove(collection, {"_id": self._id})
