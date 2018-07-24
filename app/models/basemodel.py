@@ -13,11 +13,12 @@ class BaseModel:
             if exclude is not None and attrib in exclude:
                 continue
             if type(self.__getattribute__(attrib)) is list:
+                result[attrib] = list()
                 for element in self.__getattribute__(attrib):
                     if not isinstance(element, str) and not isinstance(element, int):
-                        result[attrib] = element.json(date_to_string=date_to_string)
+                        result[attrib].append(element.json(date_to_string=date_to_string))
                     else:
-                        result[attrib] = element
+                        result[attrib].append(element)
             else:
                 result[attrib] = self.__getattribute__(attrib)
         return result
