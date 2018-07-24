@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from passlib.hash import pbkdf2_sha512
 import re
 
@@ -39,3 +41,8 @@ class Utils(object):
         if arr:
             return sum(arr)/len(arr)
         return 0.0
+
+    @staticmethod
+    def date_range(date1, date2):
+        for n in range(int((date2 - date1).days) + 1):
+            yield date1 + timedelta(n)
