@@ -83,6 +83,7 @@ class Tree(dict):
                     except Exception as e:
                         result['brands']['failed'] += 1
                         result['channels']['messages'].append(str(e))
+                    print(f"\t{brand_exists._id} len: {len(self[channel][category][brand].keys())}")
                     for product in self[channel][category][brand]:
                         try:
                             log = self[channel][category][brand][product]
