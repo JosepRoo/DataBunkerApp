@@ -1,7 +1,7 @@
 import datetime
 
 from app import Database
-from app.models.brands.constants import COLLECTION
+from app.models.products.constants import COLLECTION
 from app.models.elements.element import Element
 
 
@@ -16,19 +16,16 @@ class Brand(Element):
         last_date = datetime.datetime.strptime(end_date, "%Y-%m-%d")
         last_date = last_date + datetime.timedelta(days=1)
         expressions = list()
-        expressions.append({'$match': {'_id': element_id}})
+        expressions.append({'$match': {'parentElementId': element_id}})
+        expressions.append({'$unwind': '$sub_elements'})
         expressions.append(
-            {'$lookup': {'from': 'products', 'localField': '_id', 'foreignField': 'parentElementId',
-                         'as': 'products'}})
-        expressions.append({'$unwind': '$products'})
-        expressions.append({'$unwind': '$products.sub_elements'})
-        expressions.append(
-            {'$project': {'products.sub_elements.date': 1, 'products.sub_elements.value': 1,
-                          'day': {'$dayOfMonth': '$products.sub_elements.date'},
-                          'month': {'$month': '$products.sub_elements.date'}}})
-        expressions.append({'$match': {'products.sub_elements.date': {'$gte': first_date, '$lte': last_date}}})
-        expressions.append({'$group': {'_id': '$products.sub_elements.date',
-                                       'average': {'$avg': '$products.sub_elements.value'}}})
+            {'$project': {'sub_elements.date': 1, 'sub_elements.value': 1,
+                          'day': {'$dayOfMonth': '$sub_elements.date'},
+                          'month': {'$month': '$sub_elements.date'}}})
+        expressions.append({'$match': {'sub_elements.date': {'$gte': first_date, '$lte': last_date}}})
+        expressions.append({'$group': {'_id': '$sub_elements.date',
+                                       'average': {'$avg': '$sub_elements.value'}}})
+        expressions.append({'$sort': {'_id': 1}})
 
         result = list(Database.aggregate(COLLECTION, expressions))
         for element in result:

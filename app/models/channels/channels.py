@@ -24,9 +24,9 @@ class Channel(Element):
         expressions.append({'$match': {'sub_elements.date': {'$gte': first_date, '$lte': last_date}}})
         expressions.append({'$group': {'_id': '$sub_elements.date',
                                        'average': {'$avg': '$sub_elements.value'}}})
+        expressions.append({'$sort': {'_id': 1}})
 
         result = list(Database.aggregate(COLLECTION, expressions))
-        print(result)
         for element in result:
             element["_id"] = element["_id"].strftime("%Y/%m/%d")
         return result
