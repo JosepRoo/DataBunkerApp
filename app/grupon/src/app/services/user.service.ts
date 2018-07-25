@@ -41,7 +41,7 @@ export class UserService {
         return res;
       }),
       catchError(e => {
-        if (e.status === 401) {
+        if (e.status === 401 || e.status === 400) {
           this.router.navigate(['../']);
           return throwError(e.error.message);
         }

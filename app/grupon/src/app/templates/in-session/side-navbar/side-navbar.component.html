@@ -15,25 +15,25 @@
         </a>
         <a *ngIf="showFiller || mobileQuery.matches" routerLink="">          
           <p class="text-center" style="font-size: 24px; font-weight: 600; color:white; padding-top:10px;">
-            {{user?.name.split(" ")[0][0]}}{{user?.name.split(" ")[1][0]}}
+            {{user?.name.split(" ")[0][0]}} <span *ngIf="user?.name.split(' ')[1]">{{user?.name.split(" ")[1][0]}}</span>
           </p>
         </a>
       </mat-nav-list>
 
       <mat-nav-list class="nav-menu">
-        <a mat-list-item routerLink="/app/dashboard">
+        <a mat-list-item routerLink="/app/dashboard" [routerLinkActive]="['active']">
           <mat-icon style="margin-left: 7px;">insert_chart</mat-icon>
           <span *ngIf="!showFiller && !mobileQuery.matches" class="inline-block menu-item">OPT Dashboard</span>
         </a>
-        <a mat-list-item routerLink="/dashboard/sendSMS">
+        <a mat-list-item routerLink="/app/compare" [routerLinkActive]="['active']">
           <mat-icon style="margin-left: 7px;">dns</mat-icon>
           <span *ngIf="!showFiller && !mobileQuery.matches" class="inline-block menu-item">Análisis Comparador</span>
         </a>
-        <a mat-list-item routerLink="">
+        <a mat-list-item routerLink="/app/alerts" [routerLinkActive]="['active']">
           <mat-icon style="margin-left: 7px;">assignment_late</mat-icon>
           <span *ngIf="!showFiller && !mobileQuery.matches" class="inline-block menu-item">Alertas</span>
         </a>
-        <a mat-list-item routerLink="/app/export">
+        <a mat-list-item routerLink="/app/export" [routerLinkActive]="['active']">
           <mat-icon style="margin-left: 7px;">cloud_download</mat-icon>
           <span *ngIf="!showFiller && !mobileQuery.matches" class="inline-block menu-item">Exportar</span>
         </a>
@@ -74,7 +74,7 @@
         <mat-icon class="main-icon top-menu-icon" style="margin-right:20px;">power_settings_new</mat-icon>
       </mat-toolbar>
 
-      <div class="container-fluid">
+      <div class="container-fluid" style="padding-bottom: 50px;">
         <br />
         <router-outlet></router-outlet>
       </div>

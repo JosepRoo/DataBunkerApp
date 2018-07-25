@@ -1,4 +1,1 @@
-export const environment = {
-  production: false,
-  url: 'https://databunkerapp.herokuapp.com'
-};
+export const environment = { production: false, url: 'http://comparador.data-bunker.com.mx' };
