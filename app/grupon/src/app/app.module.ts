@@ -26,7 +26,8 @@ import { MAT_DATE_LOCALE } from '@angular/material';
 import { MatExpansionModule } from '@angular/material/expansion';
 
 // Charts
-import { AmChartsModule } from '@amcharts/amcharts3-angular';
+// import { AmChartsModule } from '@amcharts/amcharts3-angular';
+import { ChartsModule } from 'ng2-charts';
 
 // Services
 import { UserService } from './services/user.service';
@@ -83,7 +84,7 @@ import { ProductsListComponent } from './dashboard/products-list/products-list.c
     MatNativeDateModule,
     MatExpansionModule,
     // charts modules
-    AmChartsModule
+    ChartsModule
   ],
   entryComponents: [ErrorSnackComponent],
   providers: [

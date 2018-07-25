@@ -1,7 +1,6 @@
 import { DataService } from './../services/data.service';
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { DataSelectComponent } from './../data-select/data-select.component';
-import { AmChartsService, AmChart } from '@amcharts/amcharts3-angular';
 
 // Services
 
@@ -10,35 +9,24 @@ import { AmChartsService, AmChart } from '@amcharts/amcharts3-angular';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit, OnDestroy {
+export class DashboardComponent implements OnInit {
   buttonStatus: Boolean = false;
   startDate: Date;
   selectedData: any = [];
   chartLoading: Boolean = false;
   dateChanged = false;
   subscribes = [];
-  chart: AmChart;
 
   // Children
   @ViewChild(DataSelectComponent) dataSelect: DataSelectComponent;
 
   constructor(
     private dataService: DataService,
-    private AmCharts: AmChartsService
   ) {}
 
   ngOnInit() {
     this.startDate = new Date();
     this.startDate.setMonth(this.startDate.getMonth() - 3);
-    this.chart = this.AmCharts.makeChart('chartdiv', {
-      type: 'serial',
-      theme: 'light',
-      legend: {
-        'useGraphSettings': true
-      },
-      dataProvider: [],
-      synchronizeGrid: true,
-    });
   }
 
   switchButton(status) {
@@ -84,11 +72,5 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   onDateChanged() {
     this.dateChanged = true;
-  }
-
-  ngOnDestroy() {
-    if (this.chart) {
-      this.AmCharts.destroyChart(this.chart);
-    }
   }
 }
