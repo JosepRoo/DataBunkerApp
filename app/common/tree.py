@@ -71,7 +71,7 @@ class Tree(dict):
                 except Exception as e:
                     result['categories']['failed'] += 1
                     result['channels']['messages'].append(str(e))
-                print(f"{category_exists._id} len: {len(self[channel][category].keys())}")
+                print(f"{category_exists.name} len: {len(self[channel][category].keys())}")
                 for brand in self[channel][category]:
                     try:
                         brand_exists = Brand.get_by_name_and_parent_id(brand, category_exists._id)
@@ -79,17 +79,17 @@ class Tree(dict):
                             brand_exists = Brand(brand, category_exists._id)
                             brand_exists.save_to_mongo(Brand.get_collection_by_name(brand_exists.__class__.__name__),
                                                        "sub_elements")
-                            result['brands']['success'] += 1
+                        result['brands']['success'] += 1
                     except Exception as e:
                         result['brands']['failed'] += 1
                         result['channels']['messages'].append(str(e))
-                    print(f"\t{brand_exists._id} len: {len(self[channel][category][brand].keys())}")
+                    print(f"\t{brand_exists.name} len: {len(self[channel][category][brand].keys())}")
                     for product in self[channel][category][brand]:
                         try:
                             log = self[channel][category][brand][product]
                             log["value"] = float(log['value'].strip("$ \t"))
                             product_name, product_upc, product_image = product.split("||")
-                            print(product_name, product_upc, product_image, log['value'], type(log['value']))
+                            print("\t\t", product_name, product_upc, product_image, log['value'], type(log['value']))
                             product_exists = Product.get_by_UPC(product_upc)
                             if not product_exists:
                                 product_exists = Product(product_upc, product_name, brand_exists._id, [log, ],
