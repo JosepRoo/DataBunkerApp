@@ -28,6 +28,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
 // Charts
 // import { AmChartsModule } from '@amcharts/amcharts3-angular';
 import { ChartsModule } from 'ng2-charts';
+import 'hammerjs';
+import 'chartjs-plugin-zoom';
 
 // Services
 import { UserService } from './services/user.service';
@@ -43,6 +45,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { ExportComponent } from './export/export.component';
 import { DataSelectComponent } from './data-select/data-select.component';
 import { ProductsListComponent } from './dashboard/products-list/products-list.component';
+import { GraphComponent } from './dashboard/graph/graph.component';
 
 @NgModule({
   declarations: [
@@ -55,7 +58,8 @@ import { ProductsListComponent } from './dashboard/products-list/products-list.c
     DashboardComponent,
     ExportComponent,
     DataSelectComponent,
-    ProductsListComponent
+    ProductsListComponent,
+    GraphComponent
   ],
   imports: [
     // angular dependencies
