@@ -84,13 +84,13 @@ class BuildProductsReport(Resource):
         try:
             ids = element_ids.split("&&")
             if element_type == "channel":
-                Channel.build_products_report(ids, start_date, end_date)
+                Product.build_products_report(ids, start_date, end_date, "greatGrandParentId")
             elif element_type == "category":
-                Category.build_products_report(ids, start_date, end_date)
+                Product.build_products_report(ids, start_date, end_date, "grandParentId")
             elif element_type == "brand":
-                Brand.build_products_report(ids, start_date, end_date)
+                Product.build_products_report(ids, start_date, end_date, "parentElementId")
             elif element_type == "product":
-                Product.build_products_report(ids, start_date, end_date)
+                Product.build_products_report(ids, start_date, end_date, "_id")
             return Response(success=True, message="Reporte de productos exitosamente generado.").json(), 200
         except ElementErrors as e:
             return Response(message=e.message).json(), 404
