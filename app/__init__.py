@@ -35,7 +35,7 @@ def create_app(config_name):
     api.add_resource(Privilege, '/user/privilege', '/user/privilege/<string:target_user_mail>')
     api.add_resource(UploadData, '/uploaddata')
 
-    api.add_resource(BuildProductsReport, '/elements/<string:element_type>/<string:element_ids>/'
+    api.add_resource(BuildProductsReport, '/elements/report/<string:element_type>/<string:element_ids>/'
                                           '<string:start_date>/<string:end_date>')
 
     @app.after_request

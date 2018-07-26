@@ -15,7 +15,8 @@ from config import basedir
 
 
 class Product(Element):
-    def __init__(self, UPC, name, parentElementId, sub_elements, image=None, _id=None, grandParentId=None, greatGrandParentId=None):
+    def __init__(self, UPC, name, parentElementId, sub_elements, image=None, _id=None, grandParentId=None,
+                 greatGrandParentId=None):
         Element.__init__(self, name=name, _id=_id)
         self.parentElementId = parentElementId
         self.grandParentId = grandParentId
@@ -157,12 +158,14 @@ class Product(Element):
         expressions = list()
         expressions.append({'$match': {'_id': {"$in": allowed_products}}})
         expressions.append({'$match': {field_name: {"$in": element_ids}}})
-        expressions.append({'$project': {"_id": 0, 'Nombre': '$name', 'UPC': 1, 'sub_elements':
-            {"$filter": {"input": "$sub_elements", "as": "sub_elements", "cond": {"$and": [
-                {"$gte": ["$$sub_elements.date", first_date]},
-                {"$lte": ["$$sub_elements.date", last_date]}
-            ]}}}
-        }})
+        expressions.append({'$project':
+                                {"_id": 0, 'Nombre': '$name', 'UPC': 1, 'sub_elements':
+                                    {"$filter":
+                                         {"input": "$sub_elements", "as": "sub_elements", "cond":
+                                             {"$and": [
+                                                 {"$gte": ["$$sub_elements.date", first_date]},
+                                                 {"$lte": ["$$sub_elements.date", last_date]}
+                                             ]}}}}})
         expressions.append({'$project': {"sub_elements.created_date": 0}})
         expressions.append({"$sort": {"sub_elements.date": 1}})
         result = list(Database.aggregate('products', expressions))
@@ -198,22 +201,18 @@ class Product(Element):
         for element in result:
             for channel in element:
                 if element[channel] == 1:
-                    for product in Database.DATABASE['products'].find(
-                            {'greatGrandParentId': channel}):
-                        user_products.append(product.get('_id'))
+                    user_products.extend(
+                        [product.get('_id') for product in Database.find(COLLECTION, {'greatGrandParentId': channel})])
                     continue
                 for category in element[channel]:
                     if element[channel][category] == 1:
-                        for product in Database.DATABASE['products'].find(
-                                {'grandParentId': category}):
-                            user_products.append(product.get('_id'))
+                        user_products.extend(
+                            [product.get('_id') for product in Database.find(COLLECTION, {'grandParentId': category})])
                         continue
                     for brand in element[channel][category]:
                         if element[channel][category][brand] == 1:
-                            for product in Database.DATABASE['products'].find(
-                                    {'parentElementId': brand}):
-                                user_products.append(product.get('_id'))
+                            user_products.extend([product.get('_id') for product in
+                                                  Database.find(COLLECTION, {'parentElementId': brand})])
                             continue
-                        for product in element[channel][category][brand]:
-                            user_products.append(product)
+                        user_products.extend([product for product in element[channel][category][brand]])
         return user_products
