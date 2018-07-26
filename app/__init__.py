@@ -7,7 +7,7 @@ from werkzeug.utils import redirect
 from app.common.database import Database
 from app.common.response import Response
 from app.resources.company import Company
-from app.resources.element import Element, SubElement, ElementValue
+from app.resources.element import Element, SubElement, ElementValue, BuildProductsReport
 from app.resources.privilege import Privilege
 from app.resources.uploadData import UploadData
 from app.resources.user import UserStatus, User, UserFavorites
@@ -34,6 +34,9 @@ def create_app(config_name):
     api.add_resource(UserFavorites, '/user/favorites')
     api.add_resource(Privilege, '/user/privilege', '/user/privilege/<string:target_user_mail>')
     api.add_resource(UploadData, '/uploaddata')
+
+    api.add_resource(BuildProductsReport, '/elements/<string:element_type>/report/<string:element_ids>/'
+                                          '<string:start_date>/<string:end_date>')
 
     @app.after_request
     def after_request(response):

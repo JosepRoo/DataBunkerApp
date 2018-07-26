@@ -1,5 +1,11 @@
+from datetime import timedelta
+
 from passlib.hash import pbkdf2_sha512
 import re
+import string
+import os
+import xlsxwriter
+import pandas as pd
 
 #utility class used thorughout other classes to perform common functions that dont fit in any other class
 class Utils(object):
@@ -39,3 +45,45 @@ class Utils(object):
         if arr:
             return sum(arr)/len(arr)
         return 0.0
+
+    @staticmethod
+    def date_range(date1, date2):
+        for n in range(int((date2 - date1).days) + 1):
+            yield date1 + timedelta(n)
+
+    @staticmethod
+    def generate_report(arr_dict, path, type):
+        # Create a Pandas dataframe from the data.
+        data = {key: [item[key] if key in item else 0 for item in arr_dict] for key in arr_dict[-1].keys()}
+        df = pd.DataFrame(data)
+
+        # Create a Pandas Excel writer using XlsxWriter as the engine.
+        writer = pd.ExcelWriter(path, engine='xlsxwriter')
+
+        # Convert the dataframe to an XlsxWriter Excel object.
+        df.to_excel(writer, sheet_name=type)
+
+        # Get the xlsxwriter workbook and worksheet objects.
+        workbook = writer.book
+        worksheet = writer.sheets[type]
+
+        format1 = workbook.add_format({'num_format': 7})
+
+        # From letter D (the first currency value) to the last letter containing a price
+        for letter in list(string.ascii_uppercase)[3:len(arr_dict[-1].keys())+1]:
+            # Set the format but not the column width.
+            worksheet.set_column(f'{letter}:{letter}', None, format1)
+
+        col_widths = Utils.get_col_widths(df)
+        for i, width in enumerate(col_widths):
+            worksheet.set_column(i, i, width)
+
+        # Close the Pandas Excel writer and output the Excel file.
+        writer.save()
+
+    @staticmethod
+    def get_col_widths(dataframe):
+        # First we find the maximum length of the index column
+        idx_max = max([len(str(s)) for s in dataframe.index.values] + [len(str(dataframe.index.name))])
+        # Then, we concatenate this to the max of the lengths of column name and its values for each column
+        return [idx_max] + [max([len(str(s)) for s in dataframe[col].values] + [len(col)]) for col in dataframe.columns]

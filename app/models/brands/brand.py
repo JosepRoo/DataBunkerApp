@@ -31,3 +31,4 @@ class Brand(Element):
         for element in result:
             element["_id"] = element["_id"].strftime("%Y/%m/%d")
         return result
+

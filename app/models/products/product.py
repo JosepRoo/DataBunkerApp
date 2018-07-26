@@ -1,16 +1,22 @@
 import datetime
 
+from flask import session
+
 from app import Database
+from app.common.utils import Utils
 from app.models.elements.element import Element
 from app.models.elements.errors import ElementNotFound
 from app.models.emails.email import Email
 from app.models.emails.errors import EmailErrors, FailedToSendEmail
 from app.models.logs.log import Log
 from app.models.products.constants import COLLECTION
+from app.models.users.constants import COLLECTION as USERS
+from config import basedir
 
 
 class Product(Element):
-    def __init__(self, UPC, name, parentElementId, sub_elements, image=None, _id=None, grandParentId=None, greatGrandParentId=None):
+    def __init__(self, UPC, name, parentElementId, sub_elements, image=None, _id=None, grandParentId=None,
+                 greatGrandParentId=None):
         Element.__init__(self, name=name, _id=_id)
         self.parentElementId = parentElementId
         self.grandParentId = grandParentId
@@ -142,3 +148,71 @@ class Product(Element):
                             else:
                                 cheaper_products[email].append(product_detail)
         return cheaper_products
+
+    @staticmethod
+    def build_products_report(element_ids, begin_date, end_date, field_name):
+        allowed_products = Product.find_allowed_products()
+        first_date = datetime.datetime.strptime(begin_date, "%Y-%m-%d")
+        last_date = datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(days=1)
+
+        expressions = list()
+        expressions.append({'$match': {'_id': {"$in": allowed_products}}})
+        expressions.append({'$match': {field_name: {"$in": element_ids}}})
+        expressions.append({'$project':
+                                {"_id": 0, 'Nombre': '$name', 'UPC': 1, 'sub_elements':
+                                    {"$filter":
+                                         {"input": "$sub_elements", "as": "sub_elements", "cond":
+                                             {"$and": [
+                                                 {"$gte": ["$$sub_elements.date", first_date]},
+                                                 {"$lte": ["$$sub_elements.date", last_date]}
+                                             ]}}}}})
+        expressions.append({'$project': {"sub_elements.created_date": 0}})
+        expressions.append({"$sort": {"sub_elements.date": 1}})
+        result = list(Database.aggregate('products', expressions))
+
+        dates_range = [dt.strftime("%Y-%m-%d") for dt in
+                       Utils.date_range(first_date, last_date - datetime.timedelta(days=1))]
+
+        for i in range(len(result)):
+            log_dates = {datetime.datetime.strftime(log.get('date'), "%Y-%m-%d"): log.get('value') for log in
+                         result[i].get('sub_elements')}
+            for date in dates_range:
+                if date not in log_dates:
+                    result[i][date] = 0
+                else:
+                    result[i][date] = log_dates.get(date)
+            del result[i]['sub_elements']
+
+        date = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+        excel_path = f'{basedir}/app/reports/products/ReporteProductos_{date}.xlsx'
+        Utils.generate_report(result, excel_path, "Productos")
+        return result
+
+    @staticmethod
+    def find_allowed_products():
+        user_products = []
+        user_id = session.get('_id')
+        expressions = list()
+        # expressions.append({"$match": {"_id": '1bb9a07c379a42a19fba9cab12ba5cc8'}})
+        expressions.append({"$match": {"_id": user_id}})
+        expressions.append({"$project": {"_id": 0, "privileges": "$privileges"}})
+        expressions.append({"$replaceRoot": {"newRoot": "$privileges"}})
+        result = list(Database.aggregate(USERS, expressions))
+        for element in result:
+            for channel in element:
+                if element[channel] == 1:
+                    user_products.extend(
+                        [product.get('_id') for product in Database.find(COLLECTION, {'greatGrandParentId': channel})])
+                    continue
+                for category in element[channel]:
+                    if element[channel][category] == 1:
+                        user_products.extend(
+                            [product.get('_id') for product in Database.find(COLLECTION, {'grandParentId': category})])
+                        continue
+                    for brand in element[channel][category]:
+                        if element[channel][category][brand] == 1:
+                            user_products.extend([product.get('_id') for product in
+                                                  Database.find(COLLECTION, {'parentElementId': brand})])
+                            continue
+                        user_products.extend([product for product in element[channel][category][brand]])
+        return user_products
