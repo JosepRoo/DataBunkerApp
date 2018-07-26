@@ -1,3 +1,5 @@
+import { map } from 'rxjs/operators';
+import { DataService } from './../services/data.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
 
 // Components
@@ -16,7 +18,9 @@ export class ExportComponent implements OnInit {
   // Children
   @ViewChild(DataSelectComponent) dataSelect: DataSelectComponent;
 
-  constructor() {}
+  constructor(
+    private dataService: DataService
+  ) {}
 
   ngOnInit() {
     this.startDate = new Date();
@@ -28,6 +32,15 @@ export class ExportComponent implements OnInit {
 
   getSelectedData() {
     this.selectedData = this.dataSelect.getData();
-    console.log(this.selectedData);
+    const ids = this.selectedData.data.map(el => {
+      return el._id;
+    });
+    this.dataService.exportData(
+      ids,
+      this.selectedData.type,
+      this.dataSelect.getStartDate(),
+      this.dataSelect.getEndDate()).subscribe(res => {
+      console.log(res);
+    });
   }
 }

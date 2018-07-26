@@ -35,6 +35,8 @@ export class DataSelectComponent implements OnInit {
 
   // Inputs
   @Input() startDate: Date;
+  @Input() isDateDisabled: Boolean;
+  @Input() filterLabel: String;
 
   constructor(private dataService: DataService) {}
 
@@ -45,6 +47,9 @@ export class DataSelectComponent implements OnInit {
       this.channels = res;
       this.loading = false;
     });
+    if (!this.filterLabel) {
+      this.filterLabel = 'Filtros';
+    }
   }
 
   printInfo() {
@@ -109,13 +114,17 @@ export class DataSelectComponent implements OnInit {
   getData() {
     const data: any = {};
     if (this.selectedData.products.length) {
-      data.products = this.selectedData.products;
+      data.type = 'products';
+      data.data = this.selectedData.products;
     } else if (this.selectedData.brands.length) {
-      data.brands = this.selectedData.brands;
+      data.type = 'brands';
+      data.data = this.selectedData.brands;
     } else if (this.selectedData.categories.length) {
-      data.categories = this.selectedData.categories;
+      data.type = 'categories';
+      data.data = this.selectedData.categories;
     } else if (this.selectedData.channels.length) {
-      data.channels = this.selectedData.channels;
+      data.type = 'channels';
+      data.data = this.selectedData.channels;
     }
     return data;
   }

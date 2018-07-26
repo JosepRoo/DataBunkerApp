@@ -10,9 +10,9 @@ import * as shajs from 'sha.js';
 
 @Injectable()
 export class UserService {
-
   private userUrl: string = environment.url + '/userstatus';
   private user: string = environment.url + '/user';
+  private favorites: string = this.user + '/favorites';
   private headers = new HttpHeaders({ 'Content-Type': 'application/json' });
 
   constructor(private http: HttpClient, public router: Router) {}
@@ -47,5 +47,21 @@ export class UserService {
         }
       })
     );
+  }
+
+  getFavorites(): Observable<any> {
+    return this.http
+      .get(this.favorites, { headers: this.headers })
+      .pipe(
+        map(res => {
+          return res;
+        }),
+        catchError(e => {
+          if (e.status === 401) {
+            this.router.navigate(['../']);
+            return throwError(e.error.message);
+          }
+        })
+      );
   }
 }

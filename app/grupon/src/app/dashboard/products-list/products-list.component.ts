@@ -8,11 +8,11 @@ import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from '@angu
 export class ProductsListComponent implements OnInit, OnChanges {
   @Input() selectedData: any;
   @Output() clickedProduct: EventEmitter<any> = new EventEmitter();
+  @Output() addFavorite: EventEmitter<any> = new EventEmitter();
 
   constructor() {}
 
   ngOnInit() {}
 
-  ngOnChanges() {
-  }
+  ngOnChanges() {}
 }

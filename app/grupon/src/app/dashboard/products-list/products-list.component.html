@@ -22,7 +22,10 @@
           <span style="color: rgb(146, 80, 80);" *ngIf="product.change < 0">
           <mat-icon>trending_up</mat-icon>{{product.change | number : '1.2-2'}}</span>
         </div>
-        <div class="col-2">
+        <div class="col-1">
+          <mat-icon (click)="addFavorite.emit(product)" style="cursor: pointer; color: rgb(255, 166, 0);">add_alert</mat-icon>          
+        </div>
+        <div class="col-1">          
           <mat-icon (click)="clickedProduct.emit(product)" style="cursor: pointer; color: rgb(255, 0, 43);">remove_circle_outline</mat-icon>
         </div>
       </div>

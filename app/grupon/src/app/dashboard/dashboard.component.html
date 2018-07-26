@@ -37,7 +37,7 @@
   </div>
   <div class="col-11 col-md-5">
     <div *ngIf="selectedData.length">
-      <app-products-list (clickedProduct)="removeProduct($event)" [selectedData]="selectedData"></app-products-list>
+      <app-products-list (addFavorite)="addFavorite($event)" (clickedProduct)="removeProduct($event)" [selectedData]="selectedData"></app-products-list>
     </div>
   </div>
 </div>

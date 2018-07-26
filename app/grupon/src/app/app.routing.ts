@@ -7,6 +7,9 @@ import { OutSessionComponent } from './templates/out-session/out-session.compone
 import { LogInComponent } from './log-in/log-in.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ExportComponent } from './export/export.component';
+import { AlertComponent } from './alert/alert.component';
+import { UsersComponent } from './users/users.component';
+import { NewUserComponent } from './new-user/new-user.component';
 
 const routes: Routes = [
   {
@@ -16,6 +19,9 @@ const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
       { path: 'export', component: ExportComponent },
+      { path: 'alerts', component: AlertComponent },
+      { path: 'users', component: UsersComponent },
+      { path: 'new-user', component: NewUserComponent },
       { path: '**', component: DashboardComponent }
     ]
   },
