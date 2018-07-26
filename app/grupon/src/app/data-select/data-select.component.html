@@ -1,0 +1,78 @@
+<div *ngIf="loading" style="margin-top: 50px;" class="row justify-content-center">
+  <div class="col-12 col-sm-4 col-md-3 text-center">
+    <mat-progress-spinner style="margin:0 auto;" mode="indeterminate" color="primary"></mat-progress-spinner>
+    <br>
+    <!-- <h5>Cargando...</h5> -->
+  </div>
+</div>
+
+<div *ngIf="!loading">
+  <mat-accordion [multi]="'true'">
+    <mat-expansion-panel [expanded]="'true'">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Rango de fecha
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="row">
+        <div class="col-6">
+          <mat-form-field>
+            <input (dateChange)="onDateChanged()" [(ngModel)]="startDate" matInput [max]="today" [matDatepicker]="picker" placeholder="Desde">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div class="col-6">
+          <mat-form-field>
+            <input (dateChange)="onDateChanged()" [(ngModel)]="endDate" matInput [max]="today" [matDatepicker]="pickerEnd" placeholder="Hasta">
+            <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+            <mat-datepicker #pickerEnd></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
+    </mat-expansion-panel>
+    <mat-expansion-panel [expanded]="'true'">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Filtros
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="row">
+        <div class="col-12 col-sm-6 col-md-3">
+          <mat-form-field>
+            <mat-select (selectionChange)="channelChanged()" placeholder="Canales" [(ngModel)]="selectedData.channels" multiple>
+              <mat-option *ngFor="let channel of channels" [value]="channel">{{channel.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-12 col-sm-6 col-md-3" *ngIf="selectedData.channels.length">
+          <mat-form-field>
+            <mat-select (selectionChange)="categoryChanged()" placeholder="Categorías" [(ngModel)]="selectedData.categories" multiple>
+              <mat-optgroup *ngFor="let channel of selectedData.channels" [label]="channel.name">
+                <mat-option *ngFor="let category of channel.categories" [value]="category">{{category.name}}</mat-option>
+              </mat-optgroup>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-12 col-sm-6 col-md-3" *ngIf="selectedData.categories.length">
+          <mat-form-field>
+            <mat-select (selectionChange)="brandChanged()" placeholder="Marcas" [(ngModel)]="selectedData.brands" multiple>
+              <mat-optgroup *ngFor="let category of selectedData.categories" [label]="category.channel + ' - ' + category.name">
+                <mat-option *ngFor="let brand of category.brands" [value]="brand">{{brand.name}}</mat-option>
+              </mat-optgroup>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-12 col-sm-6 col-md-3" *ngIf="selectedData.brands.length">
+          <mat-form-field>
+            <mat-select (selectionChange)="productChanged()" placeholder="Productos" [(ngModel)]="selectedData.products" multiple>
+              <mat-optgroup *ngFor="let brand of selectedData.brands" [label]="brand.channel + ' - ' + brand.name">
+                <mat-option *ngFor="let product of brand.products" [value]="product">{{product.name}}</mat-option>
+              </mat-optgroup>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>

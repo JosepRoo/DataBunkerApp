@@ -1,0 +1,36 @@
+<mat-accordion>
+  <mat-expansion-panel [expanded]="'true'">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Productos Agregados
+      </mat-panel-title>
+      <mat-panel-description>
+        Tienes {{selectedData.length}} productos seleccionados.
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <mat-divider style="padding-top: 5px !important; padding-bottom: 5px !important;"></mat-divider>
+    <div *ngFor="let product of selectedData">
+      <div class="row">
+        <div class="col-8">
+          <p>
+            {{product.channel}} - {{product.name}}             
+          </p>
+        </div>
+        <div class="col-2">
+          <span style="color: rgb(80, 146, 80);" *ngIf="product.change > 0">
+            <mat-icon>trending_up</mat-icon>{{product.change | number : '1.2-2'}}</span>
+          <span style="color: rgb(146, 80, 80);" *ngIf="product.change < 0">
+          <mat-icon>trending_up</mat-icon>{{product.change | number : '1.2-2'}}</span>
+        </div>
+        <div class="col-2">
+          <mat-icon (click)="clickedProduct.emit(product)" style="cursor: pointer; color: rgb(255, 0, 43);">remove_circle_outline</mat-icon>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <mat-divider style="padding-top: 5px !important; padding-bottom: 5px !important;"></mat-divider>
+        </div>
+      </div>
+    </div>
+  </mat-expansion-panel>
+</mat-accordion>

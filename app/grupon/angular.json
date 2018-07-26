@@ -35,7 +35,11 @@
                 "input": "./node_modules/bootstrap/dist/css/bootstrap.css"
               }
             ],
-            "scripts": []
+            "scripts": [
+              {
+                "input": "./node_modules/chart.js/dist/Chart.bundle.min.js"
+              }
+            ]
           },
           "configurations": {
             "production": {
