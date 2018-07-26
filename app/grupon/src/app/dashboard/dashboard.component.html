@@ -18,7 +18,7 @@
 <br>
 
 <div class="row justify-content-center">
-  <div class="col-11 col-sm-6">
+  <div class="col-11 col-md-6">
     <div *ngIf="chartLoading" style="margin-top: 50px;" class="row justify-content-center">
       <div class="col-12 col-sm-4 col-md-3 text-center">
         <mat-progress-spinner style="margin:0 auto;" mode="indeterminate" color="primary"></mat-progress-spinner>
@@ -26,13 +26,18 @@
         <!-- <h5>Cargando...</h5> -->
       </div>
     </div>
-    <div *ngIf="!chartLoading">
-
+    <div *ngIf="!chartLoading && selectedData.length">
+      <mat-accordion displayMode="default" [multi]="true">
+          <mat-expansion-panel [expanded]="'true'">
+            <mat-expansion-panel-header>Gráfica</mat-expansion-panel-header>
+            <app-graph [selectedData]="selectedData" [lineChartLabels]="lineChartLabels"></app-graph>
+          </mat-expansion-panel>
+      </mat-accordion>   
     </div>
   </div>
-  <div class="col-11 col-sm-5">
+  <div class="col-11 col-md-5">
     <div *ngIf="selectedData.length">
-      <app-products-list [selectedData]="selectedData"></app-products-list>
+      <app-products-list (clickedProduct)="removeProduct($event)" [selectedData]="selectedData"></app-products-list>
     </div>
   </div>
 </div>

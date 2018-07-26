@@ -55,7 +55,7 @@
         </links>
       </mdb-navbar> -->
 
-      <mat-toolbar class="main-header">
+      <mat-toolbar class="main-header sticky-top">
         <span (click)="mobileQuery.matches ? snav.toggle() || showFiller = false : showFiller = !showFiller; !mobileQuery.matches ? snav.open() : null;"
           class="menu-toggler">
           <mat-icon style="color: gray;">menu</mat-icon>
@@ -74,7 +74,7 @@
         <mat-icon class="main-icon top-menu-icon" style="margin-right:20px;">power_settings_new</mat-icon>
       </mat-toolbar>
 
-      <div class="container-fluid" style="padding-bottom: 50px;">
+      <div class="container-fluid" style="padding-bottom: 80px;">
         <br />
         <router-outlet></router-outlet>
       </div>
