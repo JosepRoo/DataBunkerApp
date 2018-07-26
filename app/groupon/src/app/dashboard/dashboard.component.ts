@@ -82,9 +82,10 @@ export class DashboardComponent implements OnInit {
                 return a > b ? -1 : a < b ? 1 : 0;
               });
               const size = product.values.length;
-              product.change = (product.values[size - 1].average -
-                product.values[size - 2].average) /
-                product.values[size - 2].average;
+              // product.change = (product.values[size - 1].average -
+              //   product.values[size - 2].average) /
+              //   product.values[size - 2].average;
+              product.change = .2222;
             }
             this.subscribes.splice(0, 1);
             if (!this.subscribes.length) {
