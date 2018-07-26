@@ -31,8 +31,8 @@ class User(BaseModel):
             return cls(**data)
 
     @classmethod
-    def get_by_enterprise_id(cls, enterprise_id):
-        data = Database.find(COLLECTION, {"enterprise_id": enterprise_id})
+    def get_list(cls):
+        data = Database.find(COLLECTION, {})
         if data is not None:
             return [cls(**user) for user in data]
 

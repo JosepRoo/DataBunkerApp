@@ -1,5 +1,7 @@
 import uuid
 
+import datetime
+
 from app.common.database import Database
 
 
@@ -12,15 +14,21 @@ class BaseModel:
         for attrib in self.__dict__.keys():
             if exclude is not None and attrib in exclude:
                 continue
-            if type(self.__getattribute__(attrib)) is list:
+            attrib_value = self.__getattribute__(attrib)
+            if type(attrib_value) is list:
                 result[attrib] = list()
-                for element in self.__getattribute__(attrib):
-                    if not isinstance(element, str) and not isinstance(element, int):
+                for element in attrib_value:
+                    if type(element) is datetime.datetime and date_to_string:
+                        result[attrib].append(element.strftime("%Y-%m-%d %H:%M"))
+                    elif not isinstance(element, str) and not isinstance(element, int) and not isinstance(element, datetime.datetime):
                         result[attrib].append(element.json(date_to_string=date_to_string))
                     else:
                         result[attrib].append(element)
+
+            elif type(attrib_value) is datetime.datetime and date_to_string:
+                    result[attrib] = attrib_value.strftime("%Y-%m-%d %H:%M")
             else:
-                result[attrib] = self.__getattribute__(attrib)
+                result[attrib] = attrib_value
         return result
 
     def delete_from_mongo(self, collection):
