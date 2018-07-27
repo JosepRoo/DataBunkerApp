@@ -43,7 +43,7 @@ export class NewUserComponent implements OnInit {
       name: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
-      channel: ['', Validators.required]
+      channel_id: ['', Validators.required]
     });
     this.dataService.getChannels().subscribe(res => {
       this.channels = res;
