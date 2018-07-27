@@ -16,6 +16,10 @@ export class DataService {
   private elementsUrl: string = environment.url + '/elements';
   private subElementsUrl: string = environment.url + '/subelements';
   private valueUrl: string = environment.url + '/elementvalue';
+  private favoriteUrl: string = environment.url + '/user/favorites';
+
+  // element value
+  private productValue: string = environment.url + '/elements/product';
 
   // get refs
   private channelUrl: string = this.elementsUrl + '/channel';
@@ -25,12 +29,37 @@ export class DataService {
   private categorySubElementsUrl: string = this.subElementsUrl + '/category';
   private brandSubElementsUrl: string = this.subElementsUrl + '/brand';
 
+  // export
+  private exportChannels: string = this.elementsUrl + '/channel/report';
+  private exportCategories: string = this.elementsUrl + '/category/report';
+  private exportBrands: string = this.elementsUrl + '/brand/report';
+  private exportProducts: string = this.elementsUrl + '/product/report';
+
   // get value refs
   private productsValue: string = this.valueUrl + '/product';
 
   private headers = new HttpHeaders({ 'Content-Type': 'application/json' });
 
-  constructor(private http: HttpClient, public router: Router, private datePipe: DatePipe) {}
+  constructor(
+    private http: HttpClient,
+    public router: Router,
+    private datePipe: DatePipe
+  ) {}
+
+  getProduct(product_id): Observable<any> {
+    return this.http.get(this.productValue + '/' + product_id, { headers: this.headers }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError(e => {
+        if (e.status === 401) {
+          return throwError(e.error.message);
+        } else {
+          return throwError(e.error.message);
+        }
+      })
+    );
+  }
 
   getChannels(): Observable<any> {
     return this.http.get(this.channelUrl, { headers: this.headers }).pipe(
@@ -102,10 +131,86 @@ export class DataService {
 
   getProductData(productId, starDate, endDate): Observable<any> {
     return this.http
-      .get(this.productsValue + '/' +
-            productId + '/' +
-            this.datePipe.transform(starDate, 'yyyy-MM-dd') + '/' +
-            this.datePipe.transform(endDate, 'yyyy-MM-dd'), { headers: this.headers })
+      .get(
+        this.productsValue +
+          '/' +
+          productId +
+          '/' +
+          this.datePipe.transform(starDate, 'yyyy-MM-dd') +
+          '/' +
+          this.datePipe.transform(endDate, 'yyyy-MM-dd'),
+        { headers: this.headers }
+      )
+      .pipe(
+        map(res => {
+          return res;
+        }),
+        catchError(e => {
+          if (e.status === 401) {
+            this.router.navigate(['../']);
+            return throwError(e.error.message);
+          }
+        })
+      );
+  }
+
+  addFavorite(productId): Observable<any> {
+    const data = {
+      product_id: productId
+    };
+    return this.http
+      .put(this.favoriteUrl, data, {
+        headers: this.headers
+      })
+      .pipe(
+        map(res => {
+          return res;
+        }),
+        catchError(e => {
+          if (e.status === 401) {
+            this.router.navigate(['../']);
+            return throwError(e.error.message);
+          } else {
+            return throwError(e);
+          }
+        })
+      );
+  }
+
+  exportData(idArray, type, starDate, endDate): Observable<any> {
+    let url;
+    switch (type) {
+      case 'channels':
+        url = this.exportChannels;
+        break;
+      case 'categories':
+        url = this.exportCategories;
+        break;
+      case 'brands':
+        url = this.exportBrands;
+        break;
+      case 'products':
+        url = this.exportProducts;
+        break;
+      default:
+        break;
+    }
+    let ids = idArray[0];
+    for (let index = 1; index < idArray.length; index++) {
+      const element = idArray[index];
+      ids = ids + '&&' + element;
+    }
+    return this.http
+      .get(
+        url +
+          '/' +
+          ids +
+          '/' +
+          this.datePipe.transform(starDate, 'yyyy-MM-dd') +
+          '/' +
+          this.datePipe.transform(endDate, 'yyyy-MM-dd'),
+        { headers: this.headers }
+      )
       .pipe(
         map(res => {
           return res;

@@ -1,0 +1,48 @@
+<div *ngIf="loading" style="margin-top: 50px;" class="row justify-content-center">
+  <div class="col-12 col-sm-4 col-md-3 text-center">
+    <mat-progress-spinner style="margin:0 auto;" mode="indeterminate" color="primary"></mat-progress-spinner>
+    <br>
+    <!-- <h5>Cargando...</h5> -->
+  </div>
+</div>
+
+<div *ngIf="!loading">
+  <div class="row justify-content-center">
+    <div class="col-11" style="padding-bottom: 15px;">
+      <h5>Detalle de producto</h5>
+      <mat-divider></mat-divider>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-11">
+      <div class="row justify-content-center">
+        <div class="col-12 col-sm-4">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>{{product?.name}}</mat-card-title>
+              <mat-card-subtitle>UPC: {{product?.UPC}}</mat-card-subtitle>
+            </mat-card-header>
+            <img *ngIf="product?.image" matCardImage [src]="product?.image">
+            <mat-card-content>
+        
+            </mat-card-content>
+          </mat-card>
+        </div>
+        <div class="col-12 col-sm-8">
+          <div *ngIf="product?.sub_elements.length">
+            <mat-accordion displayMode="default" [multi]="true">
+              <mat-expansion-panel [expanded]="'true'">
+                <mat-expansion-panel-header>Gráfica</mat-expansion-panel-header>
+                <app-graph [selectedData]="selectedData" [lineChartLabels]="lineChartLabels"></app-graph>
+              </mat-expansion-panel>
+            </mat-accordion>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+
