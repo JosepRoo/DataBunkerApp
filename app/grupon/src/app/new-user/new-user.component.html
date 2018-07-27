@@ -42,7 +42,7 @@
             </div>
             <div class="col-12 col-sm-6 col-md-3">
               <mat-form-field>
-                <mat-select placeholder="Canal propio" formControlName="channel">
+                <mat-select placeholder="Canal propio" formControlName="channel_id">
                   <mat-option *ngFor="let channel of channels" [value]="channel._id">{{channel.name}}</mat-option>
                 </mat-select>
               </mat-form-field>
