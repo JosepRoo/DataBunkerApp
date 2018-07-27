@@ -84,13 +84,13 @@ class BuildProductsReport(Resource):
         try:
             ids = element_ids.split("&&")
             if element_type == "channel":
-                return Product.build_products_report(ids, start_date, end_date, "greatGrandParentId").json(), 200
+                return Product.build_products_report(ids, start_date, end_date, "greatGrandParentId")
             elif element_type == "category":
-                return Product.build_products_report(ids, start_date, end_date, "grandParentId").json(), 200
+                return Product.build_products_report(ids, start_date, end_date, "grandParentId")
             elif element_type == "brand":
-                return Product.build_products_report(ids, start_date, end_date, "parentElementId").json(), 200
+                return Product.build_products_report(ids, start_date, end_date, "parentElementId")
             elif element_type == "product":
-                return Product.build_products_report(ids, start_date, end_date, "_id").json(), 200
+                return Product.build_products_report(ids, start_date, end_date, "_id")
         except ElementErrors as e:
             return Response(message=e.message).json(), 404
         except PrivilegeErrors as e:
