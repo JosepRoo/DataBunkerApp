@@ -4,7 +4,6 @@ from flask import session
 from app.common.database import Database
 from app.models.basemodel import BaseModel
 from app.models.privileges.privilege import Privilege
-from app.models.products.product import Product
 from app.models.recoveries.errors import UnableToRecoverPassword
 from app.models.users.constants import COLLECTION
 from app.models.products.constants import COLLECTION as PRODUCTCOLLECTION
@@ -103,6 +102,7 @@ class User(BaseModel):
             raise UnableToRecoverPassword("No se pudo hacer la recuperacion de la contraseña")
 
     def add_favorite(self, product_id):
+        from app.models.products.product import Product
         if product_id in self.favorites:
             raise FavoriteAlreadyAdded("El producto ya fue agregado anteriormente")
         else:
@@ -111,6 +111,7 @@ class User(BaseModel):
             return Product.get_by_id(product_id, PRODUCTCOLLECTION)
 
     def remove_favorite(self, product_id):
+        from app.models.products.product import Product
         if product_id not in self.favorites:
             raise FavoriteNotFound("El producto no esta en la lista de favoritos")
         else:
@@ -119,6 +120,7 @@ class User(BaseModel):
             return Product.get_by_id(product_id, PRODUCTCOLLECTION)
 
     def get_favorites(self):
+        from app.models.products.product import Product
         favorites = [Product.get_by_id(favorite, PRODUCTCOLLECTION) for favorite in self.favorites]
         return favorites if favorites else []
 

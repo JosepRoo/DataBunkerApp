@@ -1,3 +1,4 @@
+from flask import session
 from flask_restful import Resource, reqparse
 
 from app.common.response import Response
@@ -83,14 +84,29 @@ class BuildProductsReport(Resource):
         try:
             ids = element_ids.split("&&")
             if element_type == "channel":
-                Product.build_products_report(ids, start_date, end_date, "greatGrandParentId")
+                return Product.build_products_report(ids, start_date, end_date, "greatGrandParentId"), 200
             elif element_type == "category":
-                Product.build_products_report(ids, start_date, end_date, "grandParentId")
+                return Product.build_products_report(ids, start_date, end_date, "grandParentId"), 200
             elif element_type == "brand":
-                Product.build_products_report(ids, start_date, end_date, "parentElementId")
+                return Product.build_products_report(ids, start_date, end_date, "parentElementId"), 200
             elif element_type == "product":
-                Product.build_products_report(ids, start_date, end_date, "_id")
-            return Response(success=True, message="Reporte de productos exitosamente generado.").json(), 200
+                return Product.build_products_report(ids, start_date, end_date, "_id"), 200
+        except ElementErrors as e:
+            return Response(message=e.message).json(), 404
+        except PrivilegeErrors as e:
+            return Response(message=e.message).json(), 401
+
+
+class BuildComparatorTable(Resource):
+    @staticmethod
+    def get():
+        """
+        Builds a table comparing the prices of different products that the current user has access to,
+        with other prices of other channels
+        :return: Comparator Table
+        """
+        try:
+            return Product.build_upc_channels_report().json(), 200
         except ElementErrors as e:
             return Response(message=e.message).json(), 404
         except PrivilegeErrors as e:
