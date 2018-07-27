@@ -177,6 +177,29 @@ export class DataService {
       );
   }
 
+  removeFavorite(productId): Observable<any> {
+    const data = {
+      product_id: productId
+    };
+    return this.http
+      .post(this.favoriteUrl, data, {
+        headers: this.headers
+      })
+      .pipe(
+        map(res => {
+          return res;
+        }),
+        catchError(e => {
+          if (e.status === 401) {
+            this.router.navigate(['../']);
+            return throwError(e.error.message);
+          } else {
+            return throwError(e);
+          }
+        })
+      );
+  }
+
   exportData(idArray, type, starDate, endDate): Observable<any> {
     let url;
     switch (type) {

@@ -29,9 +29,15 @@ export class ProductComponent implements OnInit {
       this.dataService.getProduct(this.product_id).subscribe(res => {
         res.values = res.sub_elements;
         res.values.map(el => {
-          el._id = new Date(el.date);
-          el.average = el.value;
+          if (el.value) {
+            el._id = new Date(el.date);
+            el.average = el.value;
+            return el;
+          }
         });
+        res.values = res.values.filter(el =>
+          el !== 0
+        );
         this.product = res;
         this.product.channel = '';
         this.selectedData.push(this.product);

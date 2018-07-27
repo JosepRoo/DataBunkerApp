@@ -38,7 +38,7 @@ export class AlreadyAddedComponent { }
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
   buttonStatus: Boolean = false;
   startDate: Date;
   selectedData: any = [];
@@ -55,15 +55,24 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
     this.startDate = new Date();
     this.startDate.setMonth(this.startDate.getMonth() - 3);
-    this.lineChartLabels = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July'
-    ];
+    if (localStorage.getItem('selectedData')) {
+      const data = JSON.parse(localStorage.getItem('selectedData'));
+      this.selectedData = data.map(el => {
+        el.values = el.values.map(_el => {
+          _el._id = new Date(_el._id);
+          return _el;
+        });
+        return el;
+      });
+    }
+    if (localStorage.getItem('lineChartLabels')) {
+      const labels = JSON.parse(localStorage.getItem('lineChartLabels'));
+      this.lineChartLabels = labels.map(el => {
+        return new Date(el);
+      });
+      // console.log(this.lineChartLabels);
+      console.log(this.selectedData);
+    }
   }
 
   switchButton(status) {
@@ -82,6 +91,12 @@ export class DashboardComponent implements OnInit {
       }
     }
     this.getProductsValues();
+  }
+
+  ngOnDestroy() {
+    localStorage.setItem('startDate', JSON.stringify(this.startDate));
+    localStorage.setItem('selectedData', JSON.stringify(this.selectedData));
+    localStorage.setItem('lineChartLabels', JSON.stringify(this.lineChartLabels));
   }
 
   getProductsValues() {

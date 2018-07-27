@@ -1,3 +1,5 @@
+import { DataService } from './../services/data.service';
+import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../services/user.service';
 
@@ -8,16 +10,28 @@ import { UserService } from '../services/user.service';
 })
 export class AlertComponent implements OnInit {
   favorites: any;
-
-  constructor(
-    private userService: UserService
-  ) { }
+  loading: Boolean = true;
+  constructor(private userService: UserService, private dataService: DataService, private router: Router) {}
 
   ngOnInit() {
-    this.userService.getFavorites().subscribe(res => {
-      this.favorites = res;
-      console.log(this.favorites);
+    this.loadFavorites();
+  }
+
+  removeFavorite(id) {
+    this.dataService.removeFavorite(id).subscribe(_res => {
+      this.loadFavorites();
     });
   }
 
+  loadFavorites() {
+    this.loading = true;
+    this.userService.getFavorites().subscribe(res => {
+      this.favorites = res;
+      this.loading = false;
+    });
+  }
+
+  selectProduct(id) {
+    this.router.navigate(['/app/product/' + id]);
+  }
 }
