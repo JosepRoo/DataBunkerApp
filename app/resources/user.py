@@ -96,11 +96,11 @@ class User(Resource):
             return Response(message=e.message).json(), 400
 
     def delete(self, email=None):
-        _id = session['_id'] if session.get('_id', None) else None
+        _id = session.get('_id')
         user = None
         if email:
             user = UserModel.get_by_email(email)
-        if _id:
+        elif _id:
             user = UserModel.get_by_id(_id, COLLECTION)
         if user:
             user.delete_user()
