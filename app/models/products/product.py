@@ -212,8 +212,7 @@ class Product(Element):
 
         date = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
         excel_path = f'{basedir}/app/reports/products/ReporteProductos_{date}.xlsx'
-        Utils.generate_report(result, excel_path, "Productos")
-        return result
+        return Utils.generate_report(result, excel_path, "Productos")
 
     @staticmethod
     def build_upc_channels_report():

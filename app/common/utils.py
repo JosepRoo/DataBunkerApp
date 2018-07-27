@@ -57,7 +57,7 @@ class Utils(object):
     def generate_report(arr_dict, path, type):
         # Create an in-memory output file for the new workbook.
         output = io.BytesIO()
-
+        print(arr_dict)
         # Create a Pandas dataframe from the data.
         data = {key: [item[key] if key in item else 0 for item in arr_dict] for key in arr_dict[-1].keys()}
         df = pd.DataFrame(data)
