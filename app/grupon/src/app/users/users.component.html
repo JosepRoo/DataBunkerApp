@@ -1,3 +1,46 @@
-<p>
-  users works!
-</p>
+<div class="row justify-content-center">
+  <div class="col-11" style="padding-bottom: 15px;">
+    <h5>Usuarios</h5>
+    <mat-divider></mat-divider>
+  </div>
+</div>
+
+<div *ngIf="loading" style="margin-top: 50px;" class="row justify-content-center">
+  <div class="col-12 col-sm-4 col-md-3 text-center">
+    <mat-progress-spinner style="margin:0 auto;" mode="indeterminate" color="primary"></mat-progress-spinner>
+    <br>
+    <!-- <h5>Cargando...</h5> -->
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-11">
+    <table style="width: 100% !important;" *ngIf="!loading" mat-table [dataSource]="users" class="mat-elevation-z1">
+      <!-- Position Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Nombre </th>
+        <td mat-cell *matCellDef="let user"> {{user.name}} </td>
+      </ng-container>
+    
+      <!-- Name Column -->
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef> Correo </th>
+        <td mat-cell *matCellDef="let user"> {{user.email}} </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="favorites">
+        <th mat-header-cell *matHeaderCellDef> Favoritos </th>
+        <td mat-cell *matCellDef="let user"> {{user.favorites.length}} productos </td>
+      </ng-container>
+
+      <ng-container matColumnDef="_id">
+        <th mat-header-cell *matHeaderCellDef> </th>
+        <td class="text-right" mat-cell *matCellDef="let user"><button *ngIf="!user.delete" (click)="user.delete = !user.delete" class="btn btn-sm btn-warning">Eliminar</button><button (click)="deleteUser(user.email)" *ngIf="user.delete" class="btn btn-sm btn-danger">Confirmar</button></td>
+      </ng-container>
+    
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+</div>

@@ -11,6 +11,8 @@ import { AlertComponent } from './alert/alert.component';
 import { UsersComponent } from './users/users.component';
 import { NewUserComponent } from './new-user/new-user.component';
 import { ProductComponent } from './product/product.component';
+import { CompareComponent } from './compare/compare.component';
+
 
 const routes: Routes = [
   {
@@ -22,6 +24,7 @@ const routes: Routes = [
       { path: 'export', component: ExportComponent },
       { path: 'alerts', component: AlertComponent },
       { path: 'users', component: UsersComponent },
+      { path: 'compare', component: CompareComponent },
       { path: 'new-user', component: NewUserComponent },
       { path: 'product/:id', component: ProductComponent },
       { path: '**', component: DashboardComponent }

@@ -20,7 +20,7 @@
           <span style="color: rgb(80, 146, 80);" *ngIf="product.change > 0">
             <mat-icon>trending_up</mat-icon>{{product.change | number : '1.2-2'}}</span>
           <span style="color: rgb(146, 80, 80);" *ngIf="product.change < 0">
-          <mat-icon>trending_up</mat-icon>{{product.change | number : '1.2-2'}}</span>
+          <mat-icon>trending_down</mat-icon>{{product.change | number : '1.2-2'}}</span>
         </div>
         <div class="col-1">
           <mat-icon (click)="selectProductDetails(product._id)" style="cursor: pointer; color: rgb(38, 80, 197);">info</mat-icon>

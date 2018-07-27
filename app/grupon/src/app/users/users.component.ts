@@ -8,15 +8,21 @@ import { UserService } from '../services/user.service';
 })
 export class UsersComponent implements OnInit {
   users: any;
-
-  constructor(
-    private userService: UserService
-  ) { }
+  loading: Boolean = false;
+  displayedColumns: string[] = ['name', 'email', 'favorites', '_id'];
+  constructor(private userService: UserService) {}
 
   ngOnInit() {
     this.userService.getUsers().subscribe(res => {
-      console.log(res);
+      this.users = res;
     });
   }
 
+  deleteUser(email) {
+    this.userService.deleteUser(email).subscribe(_res => {
+      this.userService.getUsers().subscribe(res => {
+        this.users = res;
+      });
+    });
+  }
 }
