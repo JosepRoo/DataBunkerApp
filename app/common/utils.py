@@ -54,10 +54,9 @@ class Utils(object):
             yield date1 + timedelta(n)
 
     @staticmethod
-    def generate_report(arr_dict, path, type):
+    def generate_report(arr_dict, file_name, type):
         # Create an in-memory output file for the new workbook.
         output = io.BytesIO()
-        print(arr_dict)
         # Create a Pandas dataframe from the data.
         data = {key: [item[key] if key in item else 0 for item in arr_dict] for key in arr_dict[-1].keys()}
         df = pd.DataFrame(data)
@@ -88,8 +87,7 @@ class Utils(object):
         xlsx_data = output.getvalue()
 
         response = Response(xlsx_data,
-                            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                            headers={"Content-Disposition": "attachment;filename=Dss_project.txt"},
+                            headers={"Content-Disposition": f"attachment;filename={file_name}"},
                             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         return response
 
