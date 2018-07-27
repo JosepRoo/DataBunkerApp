@@ -1,3 +1,30 @@
-<p>
-  alert works!
-</p>
+<div class="row justify-content-center">
+  <div class="col-11" style="padding-bottom: 15px;">
+    <h5>Alertas</h5>
+    <mat-divider></mat-divider>
+  </div>
+  <div class="col-11" *ngIf="!loading">
+    <div class="row justify-content-start">
+      <div *ngFor="let product of favorites" class="col-12 col-sm-6 col-md-3" style="padding-top:15px;">
+        <mat-card>
+            <mat-card-header>
+                <mat-card-title>{{product?.name | slice:0:35}}</mat-card-title>
+                <mat-card-subtitle>UPC - {{product?.UPC}}</mat-card-subtitle>
+            </mat-card-header>
+            <img alt=" " *ngIf="product?.image" class="img-responsive" style="height: 250px !important;" matCardImage [src]="product?.image">
+            <mat-card-actions align="start">
+               <mat-icon (click)="removeFavorite(product._id)" style="cursor: pointer; color: rgb(255, 72, 0); margin-right:15px;">remove_circle</mat-icon>
+               <mat-icon (click)="selectProduct(product._id)" style="cursor: pointer; color: rgb(38, 80, 197);">info</mat-icon>
+            </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div *ngIf="loading" style="margin-top: 50px;" class="row justify-content-center">
+    <div class="col-12 col-sm-4 col-md-3 text-center">
+      <mat-progress-spinner style="margin:0 auto;" mode="indeterminate" color="primary"></mat-progress-spinner>
+      <br>
+    </div>
+  </div>
