@@ -1,8 +1,10 @@
 from datetime import timedelta
 
+from flask import Response
 from passlib.hash import pbkdf2_sha512
 import re
 import string
+import io
 import os
 import xlsxwriter
 import pandas as pd
@@ -52,13 +54,15 @@ class Utils(object):
             yield date1 + timedelta(n)
 
     @staticmethod
-    def generate_report(arr_dict, path, type):
+    def generate_report(arr_dict, file_name, type):
+        # Create an in-memory output file for the new workbook.
+        output = io.BytesIO()
         # Create a Pandas dataframe from the data.
         data = {key: [item[key] if key in item else 0 for item in arr_dict] for key in arr_dict[-1].keys()}
         df = pd.DataFrame(data)
 
         # Create a Pandas Excel writer using XlsxWriter as the engine.
-        writer = pd.ExcelWriter(path, engine='xlsxwriter')
+        writer = pd.ExcelWriter(output, engine='xlsxwriter')
 
         # Convert the dataframe to an XlsxWriter Excel object.
         df.to_excel(writer, sheet_name=type)
@@ -80,6 +84,12 @@ class Utils(object):
 
         # Close the Pandas Excel writer and output the Excel file.
         writer.save()
+        xlsx_data = output.getvalue()
+
+        response = Response(xlsx_data,
+                            headers={"Content-Disposition": f"attachment;filename={file_name}"},
+                            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        return response
 
     @staticmethod
     def get_col_widths(dataframe):

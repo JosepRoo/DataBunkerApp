@@ -11,6 +11,7 @@ from app.models.emails.errors import EmailErrors, FailedToSendEmail
 from app.models.logs.log import Log
 from app.models.products.constants import COLLECTION
 from app.models.users.constants import COLLECTION as USERS
+from app.models.users.user import User
 from config import basedir
 
 
@@ -158,8 +159,34 @@ class Product(Element):
         expressions = list()
         expressions.append({'$match': {'_id': {"$in": allowed_products}}})
         expressions.append({'$match': {field_name: {"$in": element_ids}}})
+        expressions.append({'$lookup':
+                            {
+                                'from': 'channels',
+                                'localField': 'greatGrandParentId',
+                                'foreignField': '_id',
+                                'as': 'channel'
+                            }})
+        expressions.append({'$lookup':
+                            {
+                                'from': 'categories',
+                                'localField': 'grandParentId',
+                                'foreignField': '_id',
+                                'as': 'category'
+                            }})
+        expressions.append({'$lookup':
+                            {
+                                'from': 'brands',
+                                'localField': 'parentElementId',
+                                'foreignField': '_id',
+                                'as': 'brand'
+                            }})
         expressions.append({'$project':
-                                {"_id": 0, 'Nombre': '$name', 'UPC': 1, 'sub_elements':
+                                {"_id": 0, 'UPC': 1,
+                                 'Canal': {'$arrayElemAt': ['$channel.name', 0]},
+                                 'Categoría': {'$arrayElemAt': ['$category.name', 0]},
+                                 'Marca': {'$arrayElemAt': ['$brand.name', 0]},
+                                 'Nombre': '$name',
+                                 'sub_elements':
                                     {"$filter":
                                          {"input": "$sub_elements", "as": "sub_elements", "cond":
                                              {"$and": [
@@ -185,7 +212,41 @@ class Product(Element):
 
         date = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
         excel_path = f'{basedir}/app/reports/products/ReporteProductos_{date}.xlsx'
-        Utils.generate_report(result, excel_path, "Productos")
+        return Utils.generate_report(result, f'ReporteProductos_{date}.xlsx', "Productos")
+
+    @staticmethod
+    def build_upc_channels_report():
+        user = User.get_by_email(session.get('email'))
+        allowed_products = Product.find_allowed_products()
+        expressions = list()
+        expressions.append({'$match': {'$or': [{'_id': {'$in': allowed_products}},
+                                               {'greatGrandParentId': user.channel_id}]}})
+        expressions.append({'$lookup':
+            {
+                'from': 'channels',
+                'localField': 'greatGrandParentId',
+                'foreignField': '_id',
+                'as': 'channel'
+            }})
+        expressions.append({'$project': {'_id': 0, 'UPC': 1, 'Nombre': '$name',
+                                         'Canal': {'$arrayElemAt': ['$channel.name', 0]},
+                                         'last_price': {'$arrayElemAt': ['$sub_elements.value', -1]}}})
+        expressions.append({'$group': {'_id': {'UPC': '$UPC', 'Nombre': '$Nombre'},
+                                       'channels': {'$push': {'k': '$Canal', 'v': '$last_price'}}}})
+        expressions.append({'$project': {'_id': 0,
+                                         'UPC': '$_id.UPC',
+                                         'Nombre': '$_id.Nombre',
+                                         'Canales': {'$arrayToObject': '$channels'}}})
+        expressions.append({'$addFields': {'Canales.UPC': '$UPC', 'Canales.Nombre': '$Nombre'}})
+        expressions.append({'$replaceRoot': {'newRoot': '$Canales'}})
+        expressions.append({'$sort': {'UPC': 1}})
+        expressions.append({'$sort': {'Nombre': 1}})
+        result = list(Database.aggregate('products', expressions))
+        channel_names = [x.get('name') for x in list(Database.find('channels', {}))]
+        for i in range(len(result)):
+            for name in channel_names:
+                if name not in result[i].keys():
+                    result[i][name] = 0
         return result
 
     @staticmethod

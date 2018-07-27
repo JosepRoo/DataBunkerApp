@@ -7,10 +7,10 @@ from werkzeug.utils import redirect
 from app.common.database import Database
 from app.common.response import Response
 from app.resources.company import Company
-from app.resources.element import Element, SubElement, ElementValue, BuildProductsReport
+from app.resources.element import Element, SubElement, ElementValue, BuildProductsReport, BuildComparatorTable
 from app.resources.privilege import Privilege
 from app.resources.uploadData import UploadData
-from app.resources.user import UserStatus, User, UserFavorites
+from app.resources.user import UserStatus, User, UserFavorites, UserList
 from config import config
 
 
@@ -26,6 +26,7 @@ def create_app(config_name):
 
     api.add_resource(UserStatus, '/userstatus')
     api.add_resource(User, '/user/<string:email>', '/user')
+    api.add_resource(UserList, '/users')
     api.add_resource(Company, '/company', '/company/<string:_id>')
     api.add_resource(Element, '/elements/<string:element_type>', '/elements/<string:element_type>/<string:element_id>')
     api.add_resource(SubElement, '/subelements/<string:element_type>/<string:element_id>')
@@ -37,6 +38,7 @@ def create_app(config_name):
 
     api.add_resource(BuildProductsReport, '/elements/<string:element_type>/report/<string:element_ids>/'
                                           '<string:start_date>/<string:end_date>')
+    api.add_resource(BuildComparatorTable, '/comparator_table')
 
     @app.after_request
     def after_request(response):

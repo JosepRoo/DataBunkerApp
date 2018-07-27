@@ -6,7 +6,6 @@ from app.models.brands.brand import Brand
 from app.models.categories.category import Category
 from app.models.channels.channels import Channel
 from app.models.logs.log import Log
-from app.models.products.product import Product
 
 
 class Tree(dict):
@@ -25,6 +24,7 @@ class Tree(dict):
                 self[k] = data
 
     def save_to_mongo(self):
+        from app.models.products.product import Product
         result = {
             "channels": {
                 "success": 0,

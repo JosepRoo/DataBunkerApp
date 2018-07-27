@@ -1,3 +1,4 @@
+from flask import session
 from flask_restful import Resource, reqparse
 
 from app.common.response import Response
@@ -23,10 +24,9 @@ class Element(Resource):
             element_class = globals()[element_type_title]
             if element_id:
                 return element_class.get_element(element_id).json(
-                    ("sub_elements", "parentElementId")) if element_type != "product" else element_class.get_element(
+                    ("sub_elements",)) if element_type != "product" else element_class.get_element(
                     element_id).json("parentElementId")
-            return [element.json(("sub_elements", "parentElementId")) if element_type != "product" else element.json(
-                "parentElementId") for element in
+            return [element.json(("sub_elements",)) if element_type != "product" else element.json() for element in
                     element_class.get_elements()]
 
         except ElementErrors as e:
@@ -47,9 +47,9 @@ class SubElement(Resource):
             child_class = globals()["Product"]
         try:
             element_class = globals()[element_type_title]
-            return [sub_element.json(("sub_elements", "parentElementId"))
+            return [sub_element.json(("sub_elements",))
                     if element_type != "product"
-                    else sub_element.json("parentElementId") for sub_element in
+                    else sub_element.json() for sub_element in
                     element_class.get_sub_elements(element_id, child_class)]
 
         except ElementErrors as e:
@@ -84,14 +84,29 @@ class BuildProductsReport(Resource):
         try:
             ids = element_ids.split("&&")
             if element_type == "channel":
-                Product.build_products_report(ids, start_date, end_date, "greatGrandParentId")
+                return Product.build_products_report(ids, start_date, end_date, "greatGrandParentId")
             elif element_type == "category":
-                Product.build_products_report(ids, start_date, end_date, "grandParentId")
+                return Product.build_products_report(ids, start_date, end_date, "grandParentId")
             elif element_type == "brand":
-                Product.build_products_report(ids, start_date, end_date, "parentElementId")
+                return Product.build_products_report(ids, start_date, end_date, "parentElementId")
             elif element_type == "product":
-                Product.build_products_report(ids, start_date, end_date, "_id")
-            return Response(success=True, message="Reporte de productos exitosamente generado.").json(), 200
+                return Product.build_products_report(ids, start_date, end_date, "_id")
+        except ElementErrors as e:
+            return Response(message=e.message).json(), 404
+        except PrivilegeErrors as e:
+            return Response(message=e.message).json(), 401
+
+
+class BuildComparatorTable(Resource):
+    @staticmethod
+    def get():
+        """
+        Builds a table comparing the prices of different products that the current user has access to,
+        with other prices of other channels
+        :return: Comparator Table
+        """
+        try:
+            return Product.build_upc_channels_report(), 200
         except ElementErrors as e:
             return Response(message=e.message).json(), 404
         except PrivilegeErrors as e:

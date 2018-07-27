@@ -4,7 +4,6 @@ from flask import session
 from app.common.database import Database
 from app.models.basemodel import BaseModel
 from app.models.privileges.privilege import Privilege
-from app.models.products.product import Product
 from app.models.recoveries.errors import UnableToRecoverPassword
 from app.models.users.constants import COLLECTION
 from app.models.products.constants import COLLECTION as PRODUCTCOLLECTION
@@ -15,11 +14,13 @@ from app.models.users.errors import FavoriteAlreadyAdded, FavoriteNotFound
 
 
 class User(BaseModel):
-    def __init__(self, email, name, password=None, _id=None, enterprise_id=None, privileges=dict(), favorites=None):
+    def __init__(self, email, name, channel_id=None, password=None, _id=None, enterprise_id=None,
+                 privileges=dict(), favorites=None):
         BaseModel.__init__(self, _id)
         self.email = email
         self.password = password
         self.name = name
+        self.channel_id = channel_id
         self.privileges = Privilege(privileges)
         self.enterprise_id = enterprise_id
         self.favorites = favorites if favorites else []
@@ -31,8 +32,8 @@ class User(BaseModel):
             return cls(**data)
 
     @classmethod
-    def get_by_enterprise_id(cls, enterprise_id):
-        data = Database.find(COLLECTION, {"enterprise_id": enterprise_id})
+    def get_list(cls):
+        data = Database.find(COLLECTION, {})
         if data is not None:
             return [cls(**user) for user in data]
 
@@ -41,7 +42,7 @@ class User(BaseModel):
         user = User.get_by_email(email)
         if user is not None and Utils.check_hashed_password(password, user.password) and Utils.email_is_valid(email):
             User.login(email, user._id)
-            return True
+            return user
         raise UserErrors.InvalidLogin("Email o Contraseña incorrectos")
 
     @classmethod
@@ -52,7 +53,7 @@ class User(BaseModel):
             new_user = cls(**kwargs)
             new_user.password = Utils.hash_password(new_user.password)
             new_user.save_to_mongo(COLLECTION)
-            User.login(new_user.email, new_user._id)
+            # User.login(new_user.email, new_user._id)
             return new_user
         raise UserErrors.UserAlreadyRegisteredError("El Usuario ya existe")
 
@@ -101,6 +102,7 @@ class User(BaseModel):
             raise UnableToRecoverPassword("No se pudo hacer la recuperacion de la contraseña")
 
     def add_favorite(self, product_id):
+        from app.models.products.product import Product
         if product_id in self.favorites:
             raise FavoriteAlreadyAdded("El producto ya fue agregado anteriormente")
         else:
@@ -109,6 +111,7 @@ class User(BaseModel):
             return Product.get_by_id(product_id, PRODUCTCOLLECTION)
 
     def remove_favorite(self, product_id):
+        from app.models.products.product import Product
         if product_id not in self.favorites:
             raise FavoriteNotFound("El producto no esta en la lista de favoritos")
         else:
@@ -117,6 +120,7 @@ class User(BaseModel):
             return Product.get_by_id(product_id, PRODUCTCOLLECTION)
 
     def get_favorites(self):
+        from app.models.products.product import Product
         favorites = [Product.get_by_id(favorite, PRODUCTCOLLECTION) for favorite in self.favorites]
         return favorites if favorites else []
 
