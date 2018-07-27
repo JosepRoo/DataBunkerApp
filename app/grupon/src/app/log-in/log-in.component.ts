@@ -5,6 +5,7 @@ import { MatSnackBar } from '@angular/material';
 
 // Services
 import { UserService } from './../services/user.service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-error-snack',
@@ -35,7 +36,8 @@ export class LogInComponent implements OnInit {
     private formBuilder: FormBuilder,
     private userService: UserService,
     private route: Router,
-    public snackBar: MatSnackBar
+    public snackBar: MatSnackBar,
+    private location: Location
   ) {}
 
   ngOnInit() {
@@ -52,6 +54,7 @@ export class LogInComponent implements OnInit {
       this.userService.logIn(this.logIn.getRawValue()).subscribe(
         res => {
           self.loading.show = false;
+          this.location.replaceState('/');
           this.route.navigate(['app']);
         },
         error => {

@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 
 @Component({
@@ -8,11 +9,17 @@ import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from '@angu
 export class ProductsListComponent implements OnInit, OnChanges {
   @Input() selectedData: any;
   @Output() clickedProduct: EventEmitter<any> = new EventEmitter();
+  @Output() addFavorite: EventEmitter<any> = new EventEmitter();
 
-  constructor() {}
+  constructor(
+    private router: Router
+  ) {}
 
   ngOnInit() {}
 
-  ngOnChanges() {
+  ngOnChanges() {}
+
+  selectProductDetails(id) {
+    this.router.navigate(['/app/product/' +  id]);
   }
 }

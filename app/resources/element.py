@@ -24,10 +24,9 @@ class Element(Resource):
             element_class = globals()[element_type_title]
             if element_id:
                 return element_class.get_element(element_id).json(
-                    ("sub_elements", "parentElementId")) if element_type != "product" else element_class.get_element(
+                    ("sub_elements",)) if element_type != "product" else element_class.get_element(
                     element_id).json("parentElementId")
-            return [element.json(("sub_elements", "parentElementId")) if element_type != "product" else element.json(
-                "parentElementId") for element in
+            return [element.json(("sub_elements",)) if element_type != "product" else element.json() for element in
                     element_class.get_elements()]
 
         except ElementErrors as e:
@@ -48,9 +47,9 @@ class SubElement(Resource):
             child_class = globals()["Product"]
         try:
             element_class = globals()[element_type_title]
-            return [sub_element.json(("sub_elements", "parentElementId"))
+            return [sub_element.json(("sub_elements",))
                     if element_type != "product"
-                    else sub_element.json("parentElementId") for sub_element in
+                    else sub_element.json() for sub_element in
                     element_class.get_sub_elements(element_id, child_class)]
 
         except ElementErrors as e:

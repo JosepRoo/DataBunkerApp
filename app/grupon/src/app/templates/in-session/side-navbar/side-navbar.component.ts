@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { MediaMatcher } from '@angular/cdk/layout';
 import { ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { MatIconRegistry } from '@angular/material';
+import { UserService } from '../../../services/user.service';
 
 @Component({
   selector: 'app-side-navbar',
@@ -18,7 +19,8 @@ export class SideNavbarComponent implements OnDestroy {
   constructor(
     changeDetectorRef: ChangeDetectorRef,
     media: MediaMatcher,
-    private matIconRegistry: MatIconRegistry
+    private matIconRegistry: MatIconRegistry,
+    private userService: UserService
   ) {
     this.mobileQuery = media.matchMedia('(max-width: 800px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
@@ -34,4 +36,10 @@ export class SideNavbarComponent implements OnDestroy {
   shouldRun = [/(^|\.)plnkr\.co$/, /(^|\.)stackblitz\.io$/].some(h =>
     h.test(window.location.host)
   );
+
+  logOut() {
+    this.userService.logOut().subscribe(res => {
+      console.log(res);
+    });
+  }
 }

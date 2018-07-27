@@ -14,7 +14,7 @@ from app.models.users.errors import FavoriteAlreadyAdded, FavoriteNotFound
 
 
 class User(BaseModel):
-    def __init__(self, email, name, channel_id, password=None, _id=None, enterprise_id=None,
+    def __init__(self, email, name, channel_id=None, password=None, _id=None, enterprise_id=None,
                  privileges=dict(), favorites=None):
         BaseModel.__init__(self, _id)
         self.email = email
@@ -32,8 +32,8 @@ class User(BaseModel):
             return cls(**data)
 
     @classmethod
-    def get_by_enterprise_id(cls, enterprise_id):
-        data = Database.find(COLLECTION, {"enterprise_id": enterprise_id})
+    def get_list(cls):
+        data = Database.find(COLLECTION, {})
         if data is not None:
             return [cls(**user) for user in data]
 
@@ -53,7 +53,7 @@ class User(BaseModel):
             new_user = cls(**kwargs)
             new_user.password = Utils.hash_password(new_user.password)
             new_user.save_to_mongo(COLLECTION)
-            User.login(new_user.email, new_user._id)
+            # User.login(new_user.email, new_user._id)
             return new_user
         raise UserErrors.UserAlreadyRegisteredError("El Usuario ya existe")
 

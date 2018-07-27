@@ -1,0 +1,57 @@
+<form [formGroup]="user" (submit)="addNewUser()">
+  <div class="row justify-content-center">
+    <div class="col-11" style="padding-bottom: 15px;">
+      <h5>Nuevo Usuario</h5>
+      <mat-divider></mat-divider>
+    </div>
+    <div class="col-11" *ngIf="loading">
+      <div style="margin-top: 50px;" class="row justify-content-center">
+        <div class="col-12 col-sm-4 col-md-3 text-center">
+          <mat-progress-spinner style="margin:0 auto;" mode="indeterminate" color="primary"></mat-progress-spinner>
+          <br>
+          <!-- <h5>Cargando...</h5> -->
+        </div>
+      </div>
+    </div>
+    <div class="col-11" *ngIf="!loading">
+      <div class="row justify-content-sm-end justify-content-center">
+        <div class="col-12 col-sm-4 col-md-3">
+          <button type="submit" class="btn btn-block" mat-raised-button color="primary">
+            <mat-icon> add_circle_outline </mat-icon> Agregar</button>
+        </div>
+      </div>
+      <br>
+      <mat-accordion displayMode="default" [multi]="true" [hideToggle]="false">
+        <mat-expansion-panel [hideToggle]="false" [expanded]="'true'">
+          <mat-expansion-panel-header>Datos básicos</mat-expansion-panel-header>
+          <div class="row">
+            <div class="col-12 col-sm-6 col-md-3">
+              <mat-form-field>
+                <input type="text" matInput placeholder="Nombre" formControlName="name">
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-sm-6 col-md-3">
+              <mat-form-field>
+                <input type="email" matInput placeholder="Correo" formControlName="email">
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-sm-6 col-md-3">
+              <mat-form-field>
+                <input type="password" matInput placeholder="Contraseña" formControlName="password">
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-sm-6 col-md-3">
+              <mat-form-field>
+                <mat-select placeholder="Canal propio" formControlName="channel_id">
+                  <mat-option *ngFor="let channel of channels" [value]="channel._id">{{channel.name}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+      <br>
+      <app-data-select [filterLabel]="'Privilegios'" [isDateDisabled]="true"></app-data-select>
+    </div>
+  </div>
+</form>

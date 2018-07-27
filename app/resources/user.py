@@ -100,11 +100,11 @@ class User(Resource):
             return Response(message=e.message).json(), 400
 
     def delete(self, email=None):
-        _id = session['_id'] if session.get('_id', None) else None
+        _id = session.get('_id')
         user = None
         if email:
             user = UserModel.get_by_email(email)
-        if _id:
+        elif _id:
             user = UserModel.get_by_id(_id, COLLECTION)
         if user:
             user.delete_user()
@@ -118,6 +118,7 @@ class UserFavorites(Resource):
                         type=str,
                         required=True
                         )
+
     def get(self):
         _id = session['_id'] if session.get('_id', None) else None
         if _id:
@@ -134,7 +135,8 @@ class UserFavorites(Resource):
             try:
                 user = UserModel.get_by_id(_id, COLLECTION)
                 product = user.add_favorite(data['product_id'])
-                return Response(success=True, message="El producto {} fue agregado a favortios".format(product.name)).json(), 200
+                return Response(success=True,
+                                message="El producto {} fue agregado a favortios".format(product.name)).json(), 200
             except UserError as e:
                 return Response(message=e.message).json(), 400
         return Response(message='User Data not given').json(), 400
@@ -146,8 +148,18 @@ class UserFavorites(Resource):
             try:
                 user = UserModel.get_by_id(_id, COLLECTION)
                 product = user.remove_favorite(data['product_id'])
-                return Response(success=True, message="El producto {} fue elminado de favortios".format(product.name)).json(), 200
+                return Response(success=True,
+                                message="El producto {} fue elminado de favortios".format(product.name)).json(), 200
             except UserError as e:
                 return Response(message=e.message).json(), 400
 
         return Response(message='User Data not given').json(), 400
+
+
+class UserList(Resource):
+    def get(self):
+        if session.get('email') is None:
+            return Response(message='Not Logged In or Data not given').json(), 401
+        elif "data-bunker.com" not in session.get('email'):
+            return Response(message='No cuentas con los privilegios para hacer esa peticion').json(), 401
+        return [user.json(exclude=('password','enterprise_id')) for user in UserModel.get_list()]

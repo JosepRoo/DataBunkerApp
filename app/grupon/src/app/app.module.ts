@@ -42,10 +42,16 @@ import { LogInComponent } from './log-in/log-in.component';
 import { ErrorSnackComponent } from './log-in/log-in.component';
 import { SideNavbarComponent } from './templates/in-session/side-navbar/side-navbar.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { ProductAddedComponent } from './dashboard/dashboard.component';
+import { AlreadyAddedComponent } from './dashboard/dashboard.component';
 import { ExportComponent } from './export/export.component';
 import { DataSelectComponent } from './data-select/data-select.component';
 import { ProductsListComponent } from './dashboard/products-list/products-list.component';
 import { GraphComponent } from './dashboard/graph/graph.component';
+import { AlertComponent } from './alert/alert.component';
+import { UsersComponent } from './users/users.component';
+import { NewUserComponent, UserAddedComponent } from './new-user/new-user.component';
+import { ProductComponent } from './product/product.component';
 
 @NgModule({
   declarations: [
@@ -59,7 +65,14 @@ import { GraphComponent } from './dashboard/graph/graph.component';
     ExportComponent,
     DataSelectComponent,
     ProductsListComponent,
-    GraphComponent
+    GraphComponent,
+    AlertComponent,
+    ProductAddedComponent,
+    AlreadyAddedComponent,
+    UsersComponent,
+    NewUserComponent,
+    UserAddedComponent,
+    ProductComponent
   ],
   imports: [
     // angular dependencies
@@ -90,7 +103,12 @@ import { GraphComponent } from './dashboard/graph/graph.component';
     // charts modules
     ChartsModule
   ],
-  entryComponents: [ErrorSnackComponent],
+  entryComponents: [
+    ErrorSnackComponent,
+    ProductAddedComponent,
+    AlreadyAddedComponent,
+    UserAddedComponent
+  ],
   providers: [
     UserService,
     DataService,
