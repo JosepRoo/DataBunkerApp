@@ -1,8 +1,10 @@
+import { element } from 'protractor';
 import { Component, OnInit, Output, Input } from '@angular/core';
 
 // Services
 import { DataService } from './../services/data.service';
 import { EventEmitter } from '@angular/core';
+import { ELEMENT_PROBE_PROVIDERS } from '../../../node_modules/@angular/platform-browser/src/dom/debug/ng_probe';
 
 @Component({
   selector: 'app-data-select',
@@ -63,6 +65,7 @@ export class DataSelectComponent implements OnInit {
         this.dataService.getCategories(channel._id).subscribe(res => {
           res.map(category => {
             category.channel = channel.name;
+            category.channel_id = channel._id;
           });
           channel.categories = res;
         });
@@ -82,6 +85,7 @@ export class DataSelectComponent implements OnInit {
         this.dataService.getBrands(category._id).subscribe(res => {
           res.map(brand => {
             brand.channel = category.channel;
+            brand.channel_id = category.channel_id;
           });
           category.brands = res;
         });
@@ -127,6 +131,56 @@ export class DataSelectComponent implements OnInit {
       data.data = this.selectedData.channels;
     }
     return data;
+  }
+
+  getPrivileges() {
+    const privileges: any = [];
+    if (this.selectedData.products.length) {
+      this.selectedData.products.forEach(_element => {
+        const data: any = {};
+        data.element_type = 'product';
+        data.element = {};
+        data.element[_element.greatGrandParentId] = {
+          [_element.grandParentId]: {
+            [_element.parentElementId]: {
+              [_element._id]: 1
+            }
+          }
+        };
+        privileges.push(data);
+      });
+    } else if (this.selectedData.brands.length) {
+      this.selectedData.brands.forEach(_element => {
+        const data: any = {};
+        data.element_type = 'brand';
+        data.element = {};
+        data.element[_element.channel_id] = {
+          [_element.parentElementId]: {
+            [_element._id]: 1
+          }
+        };
+        privileges.push(data);
+      });
+    } else if (this.selectedData.categories.length) {
+      this.selectedData.categories.forEach(_element => {
+        const data: any = {};
+        data.element_type = 'category';
+        data.element = {};
+        data.element[_element.parentElementId] = {
+          [_element._id]: 1
+        };
+        privileges.push(data);
+      });
+    } else if (this.selectedData.channels.length) {
+      this.selectedData.channels.forEach(_element => {
+        const data: any = {};
+        data.element_type = 'channel';
+        data.element = {};
+        data.element[_element._id] = 1;
+        privileges.push(data);
+      });
+    }
+    return privileges;
   }
 
   getStartDate() {

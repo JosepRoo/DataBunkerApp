@@ -18,6 +18,9 @@ export class DataService {
   private valueUrl: string = environment.url + '/elementvalue';
   private favoriteUrl: string = environment.url + '/user/favorites';
 
+  // element value
+  private productValue: string = environment.url + '/elements/product';
+
   // get refs
   private channelUrl: string = this.elementsUrl + '/channel';
 
@@ -42,6 +45,21 @@ export class DataService {
     public router: Router,
     private datePipe: DatePipe
   ) {}
+
+  getProduct(product_id): Observable<any> {
+    return this.http.get(this.productValue + '/' + product_id, { headers: this.headers }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError(e => {
+        if (e.status === 401) {
+          return throwError(e.error.message);
+        } else {
+          return throwError(e.error.message);
+        }
+      })
+    );
+  }
 
   getChannels(): Observable<any> {
     return this.http.get(this.channelUrl, { headers: this.headers }).pipe(

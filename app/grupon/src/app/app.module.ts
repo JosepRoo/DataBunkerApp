@@ -50,7 +50,8 @@ import { ProductsListComponent } from './dashboard/products-list/products-list.c
 import { GraphComponent } from './dashboard/graph/graph.component';
 import { AlertComponent } from './alert/alert.component';
 import { UsersComponent } from './users/users.component';
-import { NewUserComponent } from './new-user/new-user.component';
+import { NewUserComponent, UserAddedComponent } from './new-user/new-user.component';
+import { ProductComponent } from './product/product.component';
 
 @NgModule({
   declarations: [
@@ -69,7 +70,9 @@ import { NewUserComponent } from './new-user/new-user.component';
     ProductAddedComponent,
     AlreadyAddedComponent,
     UsersComponent,
-    NewUserComponent
+    NewUserComponent,
+    UserAddedComponent,
+    ProductComponent
   ],
   imports: [
     // angular dependencies
@@ -103,7 +106,8 @@ import { NewUserComponent } from './new-user/new-user.component';
   entryComponents: [
     ErrorSnackComponent,
     ProductAddedComponent,
-    AlreadyAddedComponent
+    AlreadyAddedComponent,
+    UserAddedComponent
   ],
   providers: [
     UserService,

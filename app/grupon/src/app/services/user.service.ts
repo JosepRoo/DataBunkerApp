@@ -5,6 +5,7 @@ import { environment } from '../../environments/environment';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { Location } from '@angular/common';
 import { throwError } from 'rxjs';
 import * as shajs from 'sha.js';
 
@@ -15,7 +16,7 @@ export class UserService {
   private favorites: string = this.user + '/favorites';
   private headers = new HttpHeaders({ 'Content-Type': 'application/json' });
 
-  constructor(private http: HttpClient, public router: Router) {}
+  constructor(private http: HttpClient, public router: Router, private location: Location) {}
 
   logIn(data): Observable<any> {
     data.password = shajs('sha256')
@@ -59,6 +60,75 @@ export class UserService {
         catchError(e => {
           if (e.status === 401) {
             this.router.navigate(['../']);
+            return throwError(e.error.message);
+          }
+        })
+      );
+  }
+
+  logOut(): Observable<any> {
+    return this.http
+      .delete(this.userUrl, { headers: this.headers })
+      .pipe(
+        map(res => {
+          this.location.replaceState('/');
+          this.router.navigate(['/']);
+          return res;
+        }),
+        catchError(e => {
+          if (e.status === 401) {
+            this.router.navigate(['../']);
+            return throwError(e.error.message);
+          }
+        })
+      );
+  }
+
+  register(user): Observable<any> {
+    user.password = shajs('sha256')
+      .update(user.password)
+      .digest('hex');
+    return this.http
+      .post(this.user, user, { headers: this.headers })
+      .pipe(
+        map(res => {
+          return res;
+        }),
+        catchError(e => {
+          if (e.status === 401) {
+            return throwError(e.error.message);
+          } else {
+            return throwError(e);
+          }
+        })
+      );
+  }
+
+  getUsers(): Observable<any> {
+    return this.http
+      .get(this.user + 's', { headers: this.headers })
+      .pipe(
+        map(res => {
+          return res;
+        }),
+        catchError(e => {
+          if (e.status === 401) {
+            this.router.navigate(['../']);
+            return throwError(e.error.message);
+          }
+        })
+      );
+  }
+
+  addPrivilege(privilege): Observable<any> {
+    return this.http
+      .put(this.user + '/privilege', privilege, { headers: this.headers })
+      .pipe(
+        map(res => {
+          return res;
+        }),
+        catchError(e => {
+          if (e.status === 401) {
             return throwError(e.error.message);
           }
         })

@@ -14,6 +14,7 @@ export class ExportComponent implements OnInit {
   buttonStatus: Boolean = false;
   startDate: Date;
   selectedData: any;
+  loading: Boolean = false;
 
   // Children
   @ViewChild(DataSelectComponent) dataSelect: DataSelectComponent;
@@ -35,12 +36,14 @@ export class ExportComponent implements OnInit {
     const ids = this.selectedData.data.map(el => {
       return el._id;
     });
+    this.loading = true;
     this.dataService.exportData(
       ids,
       this.selectedData.type,
       this.dataSelect.getStartDate(),
       this.dataSelect.getEndDate()).subscribe(res => {
       console.log(res);
+      this.loading = false;
     });
   }
 }

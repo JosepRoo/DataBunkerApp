@@ -37,10 +37,10 @@
           <mat-icon style="margin-left: 7px;">cloud_download</mat-icon>
           <span *ngIf="!showFiller && !mobileQuery.matches" class="inline-block menu-item">Exportar</span>
         </a>
-        <!-- <a *ngIf="user?.email.split('@')[1] == 'data-bunker.com'" mat-list-item routerLink="/app/users" [routerLinkActive]="['active']">
+        <a *ngIf="user?.email.split('@')[1] == 'data-bunker.com'" mat-list-item routerLink="/app/users" [routerLinkActive]="['active']">
           <mat-icon style="margin-left: 7px;">account_box</mat-icon>
           <span *ngIf="!showFiller && !mobileQuery.matches" class="inline-block menu-item">Usuarios</span>
-        </a> -->
+        </a>
         <a *ngIf="user?.email.split('@')[1] == 'data-bunker.com'" mat-list-item routerLink="/app/new-user" [routerLinkActive]="['active']">
           <mat-icon style="margin-left: 7px;">person_add</mat-icon>
           <span *ngIf="!showFiller && !mobileQuery.matches" class="inline-block menu-item">Nuevo Usuario</span>
@@ -69,17 +69,10 @@
           <mat-icon style="color: gray;">menu</mat-icon>
         </span>
         <span class="main-spacer"></span>
-        <div class="row">
-          <div class="col-12" style="line-height:5px !important;">
-            <h5>{{user?.balance | currency}}</h5>
-            <span *ngIf="user?.user_type == 'pre'" class="subtitle">SALDO PREPAGO</span>
-            <span *ngIf="user?.user_type == 'pos'" class="subtitle">SALDO POSPAGO</span>
-          </div>
-        </div>
         <!-- <mat-icon class="main-icon top-menu-icon">person_pin</mat-icon>
         <mat-icon class="main-icon top-menu-icon">notifications</mat-icon>
         <mat-icon class="main-icon top-menu-icon">settings</mat-icon> -->
-        <mat-icon class="main-icon top-menu-icon" style="margin-right:20px;">power_settings_new</mat-icon>
+        <mat-icon (click)="logOut()" class="main-icon top-menu-icon" style="margin-right:20px; cursor: pointer;">power_settings_new</mat-icon>
       </mat-toolbar>
 
       <div class="container-fluid" style="padding-bottom: 80px;">

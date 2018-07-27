@@ -10,6 +10,7 @@ import { ExportComponent } from './export/export.component';
 import { AlertComponent } from './alert/alert.component';
 import { UsersComponent } from './users/users.component';
 import { NewUserComponent } from './new-user/new-user.component';
+import { ProductComponent } from './product/product.component';
 
 const routes: Routes = [
   {
@@ -22,6 +23,7 @@ const routes: Routes = [
       { path: 'alerts', component: AlertComponent },
       { path: 'users', component: UsersComponent },
       { path: 'new-user', component: NewUserComponent },
+      { path: 'product/:id', component: ProductComponent },
       { path: '**', component: DashboardComponent }
     ]
   },
