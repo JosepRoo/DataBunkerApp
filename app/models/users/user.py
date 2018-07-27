@@ -15,7 +15,7 @@ from app.models.users.errors import FavoriteAlreadyAdded, FavoriteNotFound
 
 
 class User(BaseModel):
-    def __init__(self, email, name, channel_id, password=None, _id=None, enterprise_id=None,
+    def __init__(self, email, name, channel_id=None, password=None, _id=None, enterprise_id=None,
                  privileges=dict(), favorites=None):
         BaseModel.__init__(self, _id)
         self.email = email
