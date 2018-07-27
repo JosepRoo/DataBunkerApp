@@ -25,8 +25,7 @@ class UserStatus(Resource):
             data = UserStatus.parser.parse_args()
             email = data['email']
             password = data['password']
-            if UserModel.login_valid(email, password):
-                return Response(True, "Inicio de Sesion exitoso").json(), 200
+            return UserModel.login_valid(email, password).json(), 200
         except UserError as e:
             return Response(message=e.message).json(), 401
 
@@ -67,6 +66,11 @@ class User(Resource):
     parser.add_argument('name',
                         type=str,
                         required=False,
+                        help="This field cannot be blank."
+                        )
+    parser.add_argument('channel_id',
+                        type=str,
+                        required=True,
                         help="This field cannot be blank."
                         )
 

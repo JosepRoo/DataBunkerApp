@@ -15,11 +15,13 @@ from app.models.users.errors import FavoriteAlreadyAdded, FavoriteNotFound
 
 
 class User(BaseModel):
-    def __init__(self, email, name, password=None, _id=None, enterprise_id=None, privileges=dict(), favorites=None):
+    def __init__(self, email, name, channel_id, password=None, _id=None, enterprise_id=None,
+                 privileges=dict(), favorites=None):
         BaseModel.__init__(self, _id)
         self.email = email
         self.password = password
         self.name = name
+        self.channel_id = channel_id
         self.privileges = Privilege(privileges)
         self.enterprise_id = enterprise_id
         self.favorites = favorites if favorites else []
@@ -41,7 +43,7 @@ class User(BaseModel):
         user = User.get_by_email(email)
         if user is not None and Utils.check_hashed_password(password, user.password) and Utils.email_is_valid(email):
             User.login(email, user._id)
-            return True
+            return user
         raise UserErrors.InvalidLogin("Email o Contraseña incorrectos")
 
     @classmethod
