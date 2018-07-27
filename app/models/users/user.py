@@ -52,7 +52,7 @@ class User(BaseModel):
             new_user = cls(**kwargs)
             new_user.password = Utils.hash_password(new_user.password)
             new_user.save_to_mongo(COLLECTION)
-            User.login(new_user.email, new_user._id)
+            # User.login(new_user.email, new_user._id)
             return new_user
         raise UserErrors.UserAlreadyRegisteredError("El Usuario ya existe")
 
