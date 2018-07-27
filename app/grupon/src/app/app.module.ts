@@ -24,7 +24,9 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MAT_DATE_LOCALE } from '@angular/material';
 import { MatExpansionModule } from '@angular/material/expansion';
-
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
 // Charts
 // import { AmChartsModule } from '@amcharts/amcharts3-angular';
 import { ChartsModule } from 'ng2-charts';
@@ -52,6 +54,7 @@ import { AlertComponent } from './alert/alert.component';
 import { UsersComponent } from './users/users.component';
 import { NewUserComponent, UserAddedComponent } from './new-user/new-user.component';
 import { ProductComponent } from './product/product.component';
+import { CompareComponent } from './compare/compare.component';
 
 @NgModule({
   declarations: [
@@ -72,7 +75,8 @@ import { ProductComponent } from './product/product.component';
     UsersComponent,
     NewUserComponent,
     UserAddedComponent,
-    ProductComponent
+    ProductComponent,
+    CompareComponent
   ],
   imports: [
     // angular dependencies
@@ -87,6 +91,7 @@ import { ProductComponent } from './product/product.component';
     MomentModule,
     // material modules
     MatCardModule,
+    MatPaginatorModule,
     MatInputModule,
     MatFormFieldModule,
     MatButtonModule,
@@ -100,6 +105,8 @@ import { ProductComponent } from './product/product.component';
     MatDatepickerModule,
     MatNativeDateModule,
     MatExpansionModule,
+    MatTableModule,
+    MatSortModule,
     // charts modules
     ChartsModule
   ],

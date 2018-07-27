@@ -14,6 +14,7 @@ import { DatePipe } from '../../../node_modules/@angular/common';
 export class DataService {
   // base refs
   private elementsUrl: string = environment.url + '/elements';
+  private compareUrl: string = environment.url + '/comparator_table';
   private subElementsUrl: string = environment.url + '/subelements';
   private valueUrl: string = environment.url + '/elementvalue';
   private favoriteUrl: string = environment.url + '/user/favorites';
@@ -47,18 +48,20 @@ export class DataService {
   ) {}
 
   getProduct(product_id): Observable<any> {
-    return this.http.get(this.productValue + '/' + product_id, { headers: this.headers }).pipe(
-      map(res => {
-        return res;
-      }),
-      catchError(e => {
-        if (e.status === 401) {
-          return throwError(e.error.message);
-        } else {
-          return throwError(e.error.message);
-        }
-      })
-    );
+    return this.http
+      .get(this.productValue + '/' + product_id, { headers: this.headers })
+      .pipe(
+        map(res => {
+          return res;
+        }),
+        catchError(e => {
+          if (e.status === 401) {
+            return throwError(e.error.message);
+          } else {
+            return throwError(e.error.message);
+          }
+        })
+      );
   }
 
   getChannels(): Observable<any> {
@@ -177,6 +180,24 @@ export class DataService {
       );
   }
 
+  getCompare(): Observable<any> {
+    return this.http
+      .get(this.compareUrl, { headers: this.headers })
+      .pipe(
+        map(res => {
+          return res;
+        }),
+        catchError(e => {
+          if (e.status === 401) {
+            this.router.navigate(['../']);
+            return throwError(e.error.message);
+          } else {
+            return throwError(e.error.message);
+          }
+        })
+      );
+  }
+
   removeFavorite(productId): Observable<any> {
     const data = {
       product_id: productId
@@ -200,7 +221,7 @@ export class DataService {
       );
   }
 
-  exportData(idArray, type, starDate, endDate): Observable<any> {
+  exportData(idArray, type, starDate, endDate) {
     let url;
     switch (type) {
       case 'channels':
@@ -223,27 +244,13 @@ export class DataService {
       const element = idArray[index];
       ids = ids + '&&' + element;
     }
-    return this.http
-      .get(
-        url +
-          '/' +
-          ids +
-          '/' +
-          this.datePipe.transform(starDate, 'yyyy-MM-dd') +
-          '/' +
-          this.datePipe.transform(endDate, 'yyyy-MM-dd'),
-        { headers: this.headers }
-      )
-      .pipe(
-        map(res => {
-          return res;
-        }),
-        catchError(e => {
-          if (e.status === 401) {
-            this.router.navigate(['../']);
-            return throwError(e.error.message);
-          }
-        })
-      );
+    const usrFile = url +
+      '/' +
+      ids +
+      '/' +
+      this.datePipe.transform(starDate, 'yyyy-MM-dd') +
+      '/' +
+      this.datePipe.transform(endDate, 'yyyy-MM-dd');
+    window.open(usrFile);
   }
 }

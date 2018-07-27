@@ -134,4 +134,19 @@ export class UserService {
         })
       );
   }
+
+  deleteUser(email): Observable<any> {
+    return this.http
+      .delete(this.user + '/' + email, { headers: this.headers })
+      .pipe(
+        map(res => {
+          return res;
+        }),
+        catchError(e => {
+          if (e.status === 401) {
+            return throwError(e.error.message);
+          }
+        })
+      );
+  }
 }

@@ -41,9 +41,7 @@ export class ExportComponent implements OnInit {
       ids,
       this.selectedData.type,
       this.dataSelect.getStartDate(),
-      this.dataSelect.getEndDate()).subscribe(res => {
-      console.log(res);
-      this.loading = false;
-    });
+      this.dataSelect.getEndDate());
+    this.loading = false;
   }
 }
