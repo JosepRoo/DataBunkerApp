@@ -97,7 +97,7 @@ class Product(Element):
                 emails_html += f"<img src={image} alt='Producto' />"
             emails_html += """<p>Entra a estos enlaces para revisar el detalle de tus productos:</p>"""
             for product in emails[email]:
-                emails_html += f"""<p>comparador.data-bunker.com.mx/#/app/product/{product.get('_id')}</p>"""
+                emails_html += f"""<p>comparador.data-bunker.com.mx/opt/#/app/product/{product.get('_id')}</p>"""
 
             alert_email.text(emails_text)
             alert_email.html(emails_html)
