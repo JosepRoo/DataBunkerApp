@@ -22,7 +22,7 @@ def create_app(config_name):
     # Register our blueprints
     from .default import default as default_blueprint, groupon
     app.register_blueprint(default_blueprint)
-    app.register_blueprint(groupon, url_prefix="/groupon")
+    app.register_blueprint(groupon, url_prefix="/opt")
 
     api.add_resource(UserStatus, '/userstatus')
     api.add_resource(User, '/user/<string:email>', '/user')
