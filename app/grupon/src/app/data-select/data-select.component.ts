@@ -5,6 +5,7 @@ import { Component, OnInit, Output, Input } from '@angular/core';
 import { DataService } from './../services/data.service';
 import { EventEmitter } from '@angular/core';
 import { ELEMENT_PROBE_PROVIDERS } from '../../../node_modules/@angular/platform-browser/src/dom/debug/ng_probe';
+import { NgModel } from '@angular/forms';
 
 @Component({
   selector: 'app-data-select',
@@ -30,6 +31,8 @@ export class DataSelectComponent implements OnInit {
   endDate: Date;
   today: Date;
 
+  channelsBackup: Array<any>;
+
   // Outputs
   @Output() status: EventEmitter<any> = new EventEmitter();
   @Output() productsSelected: EventEmitter<any> = new EventEmitter();
@@ -46,6 +49,7 @@ export class DataSelectComponent implements OnInit {
     this.endDate = new Date();
     this.today = new Date();
     this.dataService.getChannels().subscribe(res => {
+      this.channelsBackup = res;
       this.channels = res;
       this.loading = false;
     });
@@ -58,19 +62,62 @@ export class DataSelectComponent implements OnInit {
     console.log(this.selectedData);
   }
 
+  compareObjects(o1: any, o2: any): boolean {
+    return o1._id === o2._id;
+  }
+
+  equals(objOne, objTwo) {
+    if (typeof objOne !== 'undefined' && typeof objTwo !== 'undefined') {
+      return objOne._id === objTwo._id;
+    }
+  }
+
+  filterChannels(val) {
+    this.channels = this.channelsBackup.filter(
+      unit => unit.name.toUpperCase().indexOf(val.toUpperCase()) > -1
+    );
+  }
+
+  filterCategories(val) {
+    this.selectedData.channels.forEach(channel => {
+      channel.categories = channel.categoriesBackup.filter(
+        unit => unit.name.toUpperCase().indexOf(val.toUpperCase()) > -1
+      );
+    });
+  }
+
+  filterBrands(val) {
+    this.selectedData.categories.forEach(category => {
+      category.brands = category.brandsBackup.filter(
+        unit => unit.name.toUpperCase().indexOf(val.toUpperCase()) > -1
+      );
+    });
+  }
+
+  filterProducts(val) {
+    this.selectedData.brands.forEach(brand => {
+      brand.products = brand.productsBackup.filter(
+        unit => unit.name.toUpperCase().indexOf(val.toUpperCase()) > -1
+      );
+    });
+  }
+
   channelChanged() {
     for (let index = 0; index < this.selectedData.channels.length; index++) {
       const channel = this.selectedData.channels[index];
-      if (channel.categories == null) {
-        this.dataService.getCategories(channel._id).subscribe(res => {
-          res.map(category => {
-            category.channel = channel.name;
-            category.channel_id = channel._id;
+      if (channel !== -1) {
+        if (channel.categories == null) {
+          this.dataService.getCategories(channel._id).subscribe(res => {
+            res.map(category => {
+              category.channel = channel.name;
+              category.channel_id = channel._id;
+            });
+            channel.categories = res;
+            channel.categoriesBackup = res;
           });
-          channel.categories = res;
-        });
+        }
       }
-    }
+      }
     if (this.selectedData.channels.length && !this.loading) {
       this.status.emit(true);
     } else {
@@ -88,6 +135,7 @@ export class DataSelectComponent implements OnInit {
             brand.channel_id = category.channel_id;
           });
           category.brands = res;
+          category.brandsBackup = res;
         });
       }
     }
@@ -102,6 +150,7 @@ export class DataSelectComponent implements OnInit {
             product.channel = brand.channel;
           });
           brand.products = res;
+          brand.productsBackup = res;
         });
       }
     }

@@ -27,6 +27,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 // Charts
 // import { AmChartsModule } from '@amcharts/amcharts3-angular';
 import { ChartsModule } from 'ng2-charts';
@@ -101,6 +102,7 @@ import { CompareComponent } from './compare/compare.component';
     MatToolbarModule,
     MatIconModule,
     MatSelectModule,
+    MatCheckboxModule,
     MatAutocompleteModule,
     MatDatepickerModule,
     MatNativeDateModule,
