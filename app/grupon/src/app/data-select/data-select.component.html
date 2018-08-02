@@ -41,6 +41,10 @@
         <div class="col-12 col-sm-6 col-md-3">
           <mat-form-field>
             <mat-select (selectionChange)="channelChanged()" placeholder="Canales" [(ngModel)]="selectedData.channels" multiple>
+              <input matInput (keyup)="filterChannels($event.target.value)"
+                      type="text"  
+                      autocomplete="off"
+                      placeholder="  Filtrar">
               <mat-option *ngFor="let channel of channels" [value]="channel">{{channel.name}}</mat-option>
             </mat-select>
           </mat-form-field>
@@ -48,6 +52,7 @@
         <div class="col-12 col-sm-6 col-md-3" *ngIf="selectedData.channels.length">
           <mat-form-field>
             <mat-select (selectionChange)="categoryChanged()" placeholder="Categorías" [(ngModel)]="selectedData.categories" multiple>
+              <input matInput (keyup)="filterCategories($event.target.value)" type="text" autocomplete="off" placeholder="  Filtrar">
               <mat-optgroup *ngFor="let channel of selectedData.channels" [label]="channel.name">
                 <mat-option *ngFor="let category of channel.categories" [value]="category">{{category.name}}</mat-option>
               </mat-optgroup>
@@ -57,6 +62,7 @@
         <div class="col-12 col-sm-6 col-md-3" *ngIf="selectedData.categories.length">
           <mat-form-field>
             <mat-select (selectionChange)="brandChanged()" placeholder="Marcas" [(ngModel)]="selectedData.brands" multiple>
+              <input matInput (keyup)="filterBrands($event.target.value)" type="text" autocomplete="off" placeholder="  Filtrar">
               <mat-optgroup *ngFor="let category of selectedData.categories" [label]="category.channel + ' - ' + category.name">
                 <mat-option *ngFor="let brand of category.brands" [value]="brand">{{brand.name}}</mat-option>
               </mat-optgroup>
@@ -66,6 +72,7 @@
         <div class="col-12 col-sm-6 col-md-3" *ngIf="selectedData.brands.length">
           <mat-form-field>
             <mat-select (selectionChange)="productChanged()" placeholder="Productos" [(ngModel)]="selectedData.products" multiple>
+              <input matInput (keyup)="filterProducts($event.target.value)" type="text" autocomplete="off" placeholder="  Filtrar">
               <mat-optgroup *ngFor="let brand of selectedData.brands" [label]="brand.channel + ' - ' + brand.name">
                 <mat-option *ngFor="let product of brand.products" [value]="product">{{product.name}}</mat-option>
               </mat-optgroup>
