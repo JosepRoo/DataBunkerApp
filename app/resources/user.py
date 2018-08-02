@@ -4,6 +4,7 @@ from flask_restful import Resource, reqparse
 from app.models.users.errors import UserError
 from app.common.response import Response
 from app.models.users.user import User as UserModel
+from app.models.channels.channels import Channel as ChannelModel
 from app.models.users.constants import COLLECTION
 
 
@@ -76,10 +77,16 @@ class User(Resource):
 
     def get(self, email=None):
         _id = session['_id'] if session.get('_id', None) else None
+        user_json = None
         if email:
-            return UserModel.get_by_email(email).json(exclude='password'), 200
+            user_json = UserModel.get_by_email(email).json(exclude='password')
         if _id:
-            return UserModel.get_by_id(_id, COLLECTION).json(exclude='password'), 200
+            user_json = UserModel.get_by_id(_id, COLLECTION).json(exclude='password')
+        if user_json.get('channel_id') is not None:
+            user_json['channel_name'] = ChannelModel.get_by_id(user_json.get('channel_id')).json(
+                exclude=('sub_elements', '_id')).get('name')
+            return user_json, 200
+
         return Response(message='Not Logged In or Data not given').json(), 400
 
     def put(self, email=None):
@@ -162,4 +169,4 @@ class UserList(Resource):
             return Response(message='Not Logged In or Data not given').json(), 401
         elif "data-bunker.com" not in session.get('email'):
             return Response(message='No cuentas con los privilegios para hacer esa peticion').json(), 401
-        return [user.json(exclude=('password','enterprise_id')) for user in UserModel.get_list()]
+        return [user.json(exclude=('password', 'enterprise_id')) for user in UserModel.get_list()]
