@@ -157,8 +157,8 @@ class Product(Element):
         last_date = datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(days=1)
 
         expressions = list()
-        expressions.append({'$match': {'_id': {"$in": allowed_products}}})
-        expressions.append({'$match': {field_name: {"$in": element_ids}}})
+        expressions.append({'$match': {'$or': [{'_id': {'$in': allowed_products}},
+                                               {field_name: {"$in": element_ids}}]}})
         expressions.append({'$lookup':
                             {
                                 'from': 'channels',
@@ -196,6 +196,9 @@ class Product(Element):
         expressions.append({'$project': {"sub_elements.created_date": 0}})
         expressions.append({"$sort": {"sub_elements.date": 1}})
         result = list(Database.aggregate('products', expressions))
+
+        if not result:
+            raise ElementNotFound("El reporte generó cero datos. Intente con otra fecha.")
 
         dates_range = [dt.strftime("%Y-%m-%d") for dt in
                        Utils.date_range(first_date, last_date - datetime.timedelta(days=1))]
