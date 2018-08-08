@@ -54,6 +54,7 @@ class User(BaseModel):
             new_user.password = Utils.hash_password(new_user.password)
             new_user.save_to_mongo(COLLECTION)
             # User.login(new_user.email, new_user._id)
+            new_user.add_privilege('channel', new_user.channel_id)
             return new_user
         raise UserErrors.UserAlreadyRegisteredError("El Usuario ya existe")
 
