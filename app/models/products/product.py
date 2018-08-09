@@ -151,8 +151,8 @@ class Product(Element):
         return cheaper_products
 
     @staticmethod
-    def build_products_report(element_ids, begin_date, end_date, field_name, _id):
-        allowed_products = Product.find_allowed_products(_id)
+    def build_products_report(element_ids, begin_date, end_date, field_name, user_id):
+        allowed_products = Product.find_allowed_products(user_id)
         first_date = datetime.datetime.strptime(begin_date, "%Y-%m-%d")
         last_date = datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(days=1)
 
