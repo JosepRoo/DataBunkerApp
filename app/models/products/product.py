@@ -236,7 +236,7 @@ class Product(Element):
                                          'last_price': {'$arrayElemAt': ['$sub_elements.value', -1]}}})
         expressions.append({'$group': {'_id': {'UPC': '$UPC', 'Nombre': '$Nombre'},
                                        'channels': {'$push': {'k': '$Canal', 'v': '$last_price'}}}})
-        print(list(Database.aggregate('products', expressions)))
+        return list(Database.aggregate('products', expressions))
         expressions.append({'$project': {'_id': 0,
                                          'UPC': '$_id.UPC',
                                          'Nombre': '$_id.Nombre',
