@@ -151,8 +151,8 @@ class Product(Element):
         return cheaper_products
 
     @staticmethod
-    def build_products_report(element_ids, begin_date, end_date, field_name):
-        allowed_products = Product.find_allowed_products()
+    def build_products_report(element_ids, begin_date, end_date, field_name, _id):
+        allowed_products = Product.find_allowed_products(_id)
         first_date = datetime.datetime.strptime(begin_date, "%Y-%m-%d")
         last_date = datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(days=1)
 
@@ -218,9 +218,9 @@ class Product(Element):
         return Utils.generate_report(result, f'ReporteProductos_{date}.xlsx', "Productos")
 
     @staticmethod
-    def build_upc_channels_report():
-        user = User.get_by_email(session.get('email'))
-        allowed_products = Product.find_allowed_products()
+    def build_upc_channels_report(email):
+        user = User.get_by_email(email)
+        allowed_products = Product.find_allowed_products(user._id)
         expressions = list()
         expressions.append({'$match': {'$or': [{'_id': {'$in': allowed_products}},
                                                {'greatGrandParentId': user.channel_id}]}})
@@ -236,7 +236,6 @@ class Product(Element):
                                          'last_price': {'$arrayElemAt': ['$sub_elements.value', -1]}}})
         expressions.append({'$group': {'_id': {'UPC': '$UPC', 'Nombre': '$Nombre'},
                                        'channels': {'$push': {'k': '$Canal', 'v': '$last_price'}}}})
-        return list(Database.aggregate('products', expressions))
         expressions.append({'$project': {'_id': 0,
                                          'UPC': '$_id.UPC',
                                          'Nombre': '$_id.Nombre',
@@ -254,9 +253,9 @@ class Product(Element):
         return result
 
     @staticmethod
-    def find_allowed_products():
+    def find_allowed_products(_id):
         user_products = []
-        user_id = session.get('_id')
+        user_id = _id
         expressions = list()
         # expressions.append({"$match": {"_id": '1bb9a07c379a42a19fba9cab12ba5cc8'}})
         expressions.append({"$match": {"_id": user_id}})
