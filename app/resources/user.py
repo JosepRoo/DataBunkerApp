@@ -59,11 +59,6 @@ class User(Resource):
                         required=False,
                         help="This field cannot be blank."
                         )
-    parser.add_argument('enterprise_id',
-                        type=str,
-                        required=False,
-                        help="This field cannot be blank."
-                        )
     parser.add_argument('name',
                         type=str,
                         required=False,

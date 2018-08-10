@@ -54,7 +54,7 @@ class User(BaseModel):
             new_user.password = Utils.hash_password(new_user.password)
             new_user.save_to_mongo(COLLECTION)
             # User.login(new_user.email, new_user._id)
-            new_user.add_privilege('channel', new_user.channel_id)
+            new_user.add_privilege('channel', {new_user.channel_id: 1})
             return new_user
         raise UserErrors.UserAlreadyRegisteredError("El Usuario ya existe")
 
@@ -138,15 +138,16 @@ class User(BaseModel):
     def json(self, exclude=None, date_to_string=True):
         if exclude:
             return {
-            attrib: [element.json(date_to_string=date_to_string) if not isinstance(element, str) else element for
-                     element in self.__getattribute__(attrib)]
-                    if type(self.__getattribute__(attrib)) is list else self.__getattribute__(attrib).json()
-                    if isinstance(self.__getattribute__(attrib), Privilege) else self.__getattribute__(attrib)
-                    for attrib in self.__dict__.keys() if attrib not in exclude}
-
-        return {
-        attrib: [element.json(date_to_string=date_to_string) if not isinstance(element, str) else element for element in
-                 self.__getattribute__(attrib)]
+                attrib: [element.json(date_to_string=date_to_string) if not isinstance(element, str) else element for
+                         element in self.__getattribute__(attrib)]
                 if type(self.__getattribute__(attrib)) is list else self.__getattribute__(attrib).json()
                 if isinstance(self.__getattribute__(attrib), Privilege) else self.__getattribute__(attrib)
-                for attrib in self.__dict__.keys()}
+                for attrib in self.__dict__.keys() if attrib not in exclude}
+
+        return {
+            attrib: [element.json(date_to_string=date_to_string) if not isinstance(element, str) else element for
+                     element in
+                     self.__getattribute__(attrib)]
+            if type(self.__getattribute__(attrib)) is list else self.__getattribute__(attrib).json()
+            if isinstance(self.__getattribute__(attrib), Privilege) else self.__getattribute__(attrib)
+            for attrib in self.__dict__.keys()}
