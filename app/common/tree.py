@@ -1,3 +1,5 @@
+from app.models.elements.errors import ElementNotFound
+
 __author__ = "Luis Ricardo Gutierrez Luna"
 
 import datetime
@@ -28,23 +30,23 @@ class Tree(dict):
         result = {
             "channels": {
                 "success": 0,
-                "failed": 0,
+                "failed": list(),
                 "messages": list()
             },
             "categories": {
                 "success": 0,
-                "failed": 0,
+                "failed": list(),
                 "messages": list()
             },
             "brands": {
                 "success": 0,
-                "failed": 0,
+                "failed": list(),
                 "messages": list()
             },
             "products": {
-                "success": 0,
-                "failed": 0,
-                "skipped": 0,
+                "success": list(),
+                "failed": list(),
+                "skipped": list(),
                 "messages": list()
             }
         }
@@ -57,8 +59,13 @@ class Tree(dict):
                                                  "sub_elements")
                 result['channels']['success'] += 1
             except Exception as e:
-                result['channels']['failed'] += 1
+                result['channels']['failed'].append({
+                    "name": channel,
+                    "categories_skipped": len(self[channel])
+                })
                 result['channels']['messages'].append(str(e))
+                continue
+
             for category in self[channel]:
                 try:
                     category_exists = Category.get_by_name_and_parent_id(category, channel_exists._id)
@@ -69,8 +76,12 @@ class Tree(dict):
                             "sub_elements")
                     result['categories']['success'] += 1
                 except Exception as e:
-                    result['categories']['failed'] += 1
+                    result['categories']['failed'].append({
+                        "name": category,
+                        "brands_skipped": len(self[channel][category])
+                    })
                     result['channels']['messages'].append(str(e))
+                    continue
                 for brand in self[channel][category]:
                     try:
                         brand_exists = Brand.get_by_name_and_parent_id(brand, category_exists._id)
@@ -80,17 +91,25 @@ class Tree(dict):
                                                        "sub_elements")
                         result['brands']['success'] += 1
                     except Exception as e:
-                        result['brands']['failed'] += 1
+                        result['brands']['failed'].append({
+                            "name": brand,
+                            "products_skipped": len(self[channel][category][brand])
+                        })
                         result['channels']['messages'].append(str(e))
+                        continue
                     for product in self[channel][category][brand]:
                         try:
                             log = self[channel][category][brand][product]
-                            log["value"] = float(log['value'].strip("$ \t"))
                             product_name, product_upc, product_image = product.split("||")
+                            if log.get('value') is None or log.get('date') is None:
+                                log['value'], log['date'] = 'err', 'err'
+                                raise ElementNotFound("bad config of log")
+
+                            log["value"] = float(log['value'].strip("$ \t"))
                             product_exists = Product.get_by_UPC(product_upc)
                             if not product_exists:
                                 product_exists = Product(UPC=product_upc, name=product_name,
-                                                         parentElementId=brand_exists._id, sub_elements=[log, ],
+                                                         parentElementId=brand_exists._id, sub_elements=[log],
                                                          image=product_image, grandParentId=category_exists._id,
                                                          greatGrandParentId=channel_exists._id)
                             elif not product_exists.is_duplicated_date(
@@ -99,13 +118,27 @@ class Tree(dict):
                                 if product_exists.image is None:
                                     product_exists.image = product_image
                             else:
-                                result['products']['skipped'] += 1
+                                result['products']['skipped'].append({
+                                    "upc": product_upc,
+                                    "log": log
+                                })
                                 continue
                             product_exists.update_mongo(
                                 Product.get_collection_by_name(product_exists.__class__.__name__))
-                            result['products']['success'] += 1
+                            result['products']['success'].append({
+                                "upc": product_upc,
+                                "log": log,
+                            })
                         except Exception as e:
-                            result['products']['failed'] += 1
+                            if log is None or log.get('values') is None or log.get('date') is None:
+                                log = dict()
+                                log['value'], log['date'] = 'err', 'err'
+                            if product_upc is None:
+                                product_upc = f'error + {product}'
+                            result['products']['failed'].append({
+                                "upc": product_upc,
+                                "log": log,
+                            })
                             result['channels']['messages'].append(str(e))
         return result
 
