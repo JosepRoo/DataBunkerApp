@@ -233,7 +233,9 @@ class Product(Element):
             }})
         expressions.append({'$project': {'_id': 0, 'UPC': 1, 'Nombre': '$name',
                                          'Canal': {'$arrayElemAt': ['$channel.name', 0]},
-                                         'last_price': {'$arrayElemAt': ['$sub_elements.value', -1]}}})
+                                         'last_price': {
+                                             '$cond': {'if': {'$eq': [{'$size': '$sub_elements'}, 0]}, 'then': 0.0,
+                                                       'else': {'$arrayElemAt': ['$sub_elements.value', -1]}}}}})
         expressions.append({'$group': {'_id': {'UPC': '$UPC', 'Nombre': '$Nombre'},
                                        'channels': {'$push': {'k': '$Canal', 'v': '$last_price'}}}})
         expressions.append({'$project': {'_id': 0,
@@ -266,17 +268,17 @@ class Product(Element):
             for channel in element:
                 if element[channel] == 1:
                     user_products.extend(
-                        [product.get('_id') for product in Database.find(COLLECTION, {'greatGrandParentId': channel})])
+                        [product.get('_id') for product in Database.find_ids(COLLECTION, {'greatGrandParentId': channel})])
                     continue
                 for category in element[channel]:
                     if element[channel][category] == 1:
                         user_products.extend(
-                            [product.get('_id') for product in Database.find(COLLECTION, {'grandParentId': category})])
+                            [product.get('_id') for product in Database.find_ids(COLLECTION, {'grandParentId': category})])
                         continue
                     for brand in element[channel][category]:
                         if element[channel][category][brand] == 1:
                             user_products.extend([product.get('_id') for product in
-                                                  Database.find(COLLECTION, {'parentElementId': brand})])
+                                                  Database.find_ids(COLLECTION, {'parentElementId': brand})])
                             continue
                         user_products.extend([product for product in element[channel][category][brand]])
         return user_products
