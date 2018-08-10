@@ -130,11 +130,9 @@ class Tree(dict):
                                 "log": log,
                             })
                         except Exception as e:
-                            if log is None or log.get('values') is None or log.get('date') is None:
+                            if log.get('values') is None or log.get('date') is None:
                                 log = dict()
                                 log['value'], log['date'] = 'err', 'err'
-                            if product_upc is None:
-                                product_upc = f'error + {product}'
                             result['products']['failed'].append({
                                 "upc": product_upc,
                                 "log": log,
