@@ -41,7 +41,7 @@
         <div class="col-12 col-sm-6 col-md-3">
           <mat-form-field>
             <mat-select (selectionChange)="channelChanged()" placeholder="Canales" [(ngModel)]="selectedData.channels" multiple>
-              <input matInput (keyup)="filterChannels($event.target.value)"
+              <input matInput (keydown)="filterChannels($event.target.value)"
                       type="text"  
                       autocomplete="off"
                       placeholder="  Filtrar">

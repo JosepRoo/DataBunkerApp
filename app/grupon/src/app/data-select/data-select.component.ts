@@ -49,6 +49,11 @@ export class DataSelectComponent implements OnInit {
     this.endDate = new Date();
     this.today = new Date();
     this.dataService.getChannels().subscribe(res => {
+      res.sort(function (a, b) {
+        const textA = a.name.toUpperCase();
+        const textB = b.name.toUpperCase();
+        return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+      });
       this.channelsBackup = res;
       this.channels = res;
       this.loading = false;
@@ -108,6 +113,11 @@ export class DataSelectComponent implements OnInit {
       if (channel !== -1) {
         if (channel.categories == null) {
           this.dataService.getCategories(channel._id).subscribe(res => {
+            res.sort(function (a, b) {
+              const textA = a.name.toUpperCase();
+              const textB = b.name.toUpperCase();
+              return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+            });
             res.map(category => {
               category.channel = channel.name;
               category.channel_id = channel._id;
@@ -130,6 +140,11 @@ export class DataSelectComponent implements OnInit {
       const category = this.selectedData.categories[index];
       if (category.brands == null) {
         this.dataService.getBrands(category._id).subscribe(res => {
+          res.sort(function (a, b) {
+            const textA = a.name.toUpperCase();
+            const textB = b.name.toUpperCase();
+            return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+          });
           res.map(brand => {
             brand.channel = category.channel;
             brand.channel_id = category.channel_id;
@@ -146,6 +161,11 @@ export class DataSelectComponent implements OnInit {
       const brand = this.selectedData.brands[index];
       if (brand.products == null) {
         this.dataService.getProducts(brand._id).subscribe(res => {
+          res.sort(function(a, b) {
+            const textA = a.name.toUpperCase();
+            const textB = b.name.toUpperCase();
+            return textA < textB ? -1 : textA > textB ? 1 : 0;
+          });
           res.map(product => {
             product.channel = brand.channel;
           });

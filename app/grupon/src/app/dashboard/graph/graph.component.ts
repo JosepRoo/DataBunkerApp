@@ -97,6 +97,7 @@ export class GraphComponent implements OnInit, OnChanges {
 
   refresh() {
     const lines = [];
+    console.log(this.selectedData);
     this.selectedData.forEach(product => {
       const data = {
         data: [],
