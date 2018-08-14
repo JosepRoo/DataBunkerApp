@@ -151,8 +151,8 @@ class Product(Element):
         return cheaper_products
 
     @staticmethod
-    def build_products_report(element_ids, begin_date, end_date, field_name):
-        allowed_products = Product.find_allowed_products()
+    def build_products_report(element_ids, begin_date, end_date, field_name, user_id):
+        allowed_products = Product.find_allowed_products(user_id)
         first_date = datetime.datetime.strptime(begin_date, "%Y-%m-%d")
         last_date = datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(days=1)
 
@@ -218,9 +218,9 @@ class Product(Element):
         return Utils.generate_report(result, f'ReporteProductos_{date}.xlsx', "Productos")
 
     @staticmethod
-    def build_upc_channels_report():
-        user = User.get_by_email(session.get('email'))
-        allowed_products = Product.find_allowed_products()
+    def build_upc_channels_report(email):
+        user = User.get_by_email(email)
+        allowed_products = Product.find_allowed_products(user._id)
         expressions = list()
         expressions.append({'$match': {'$or': [{'_id': {'$in': allowed_products}},
                                                {'greatGrandParentId': user.channel_id}]}})
@@ -233,7 +233,9 @@ class Product(Element):
             }})
         expressions.append({'$project': {'_id': 0, 'UPC': 1, 'Nombre': '$name',
                                          'Canal': {'$arrayElemAt': ['$channel.name', 0]},
-                                         'last_price': {'$arrayElemAt': ['$sub_elements.value', -1]}}})
+                                         'last_price': {
+                                             '$cond': {'if': {'$eq': [{'$size': '$sub_elements'}, 0]}, 'then': 0.0,
+                                                       'else': {'$arrayElemAt': ['$sub_elements.value', -1]}}}}})
         expressions.append({'$group': {'_id': {'UPC': '$UPC', 'Nombre': '$Nombre'},
                                        'channels': {'$push': {'k': '$Canal', 'v': '$last_price'}}}})
         expressions.append({'$project': {'_id': 0,
@@ -253,9 +255,9 @@ class Product(Element):
         return result
 
     @staticmethod
-    def find_allowed_products():
+    def find_allowed_products(_id):
         user_products = []
-        user_id = session.get('_id')
+        user_id = _id
         expressions = list()
         # expressions.append({"$match": {"_id": '1bb9a07c379a42a19fba9cab12ba5cc8'}})
         expressions.append({"$match": {"_id": user_id}})
@@ -266,17 +268,17 @@ class Product(Element):
             for channel in element:
                 if element[channel] == 1:
                     user_products.extend(
-                        [product.get('_id') for product in Database.find(COLLECTION, {'greatGrandParentId': channel})])
+                        [product.get('_id') for product in Database.find_ids(COLLECTION, {'greatGrandParentId': channel})])
                     continue
                 for category in element[channel]:
                     if element[channel][category] == 1:
                         user_products.extend(
-                            [product.get('_id') for product in Database.find(COLLECTION, {'grandParentId': category})])
+                            [product.get('_id') for product in Database.find_ids(COLLECTION, {'grandParentId': category})])
                         continue
                     for brand in element[channel][category]:
                         if element[channel][category][brand] == 1:
                             user_products.extend([product.get('_id') for product in
-                                                  Database.find(COLLECTION, {'parentElementId': brand})])
+                                                  Database.find_ids(COLLECTION, {'parentElementId': brand})])
                             continue
                         user_products.extend([product for product in element[channel][category][brand]])
         return user_products

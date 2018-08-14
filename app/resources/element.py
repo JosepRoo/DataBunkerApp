@@ -82,15 +82,16 @@ class BuildProductsReport(Resource):
         :return: XLSX report
         """
         try:
+            user_id = session.get('_id')
             ids = element_ids.split("&&")
             if element_type == "channel":
-                return Product.build_products_report(ids, start_date, end_date, "greatGrandParentId")
+                return Product.build_products_report(ids, start_date, end_date, "greatGrandParentId", user_id)
             elif element_type == "category":
-                return Product.build_products_report(ids, start_date, end_date, "grandParentId")
+                return Product.build_products_report(ids, start_date, end_date, "grandParentId", user_id)
             elif element_type == "brand":
-                return Product.build_products_report(ids, start_date, end_date, "parentElementId")
+                return Product.build_products_report(ids, start_date, end_date, "parentElementId", user_id)
             elif element_type == "product":
-                return Product.build_products_report(ids, start_date, end_date, "_id")
+                return Product.build_products_report(ids, start_date, end_date, "_id", user_id)
         except ElementErrors as e:
             return Response(message=e.message).json(), 404
         except PrivilegeErrors as e:
@@ -106,7 +107,7 @@ class BuildComparatorTable(Resource):
         :return: Comparator Table
         """
         try:
-            return Product.build_upc_channels_report(), 200
+            return Product.build_upc_channels_report(session.get('email')), 200
         except ElementErrors as e:
             return Response(message=e.message).json(), 404
         except PrivilegeErrors as e:
