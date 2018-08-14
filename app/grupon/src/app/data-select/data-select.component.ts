@@ -102,7 +102,7 @@ export class DataSelectComponent implements OnInit {
   filterProducts(val) {
     this.selectedData.brands.forEach(brand => {
       brand.products = brand.productsBackup.filter(
-        unit => unit.name.toUpperCase().indexOf(val.toUpperCase()) > -1
+        unit => unit.name.toUpperCase().indexOf(val.toUpperCase()) > -1 || unit.UPC.toUpperCase().indexOf(val.toUpperCase()) > -1
       );
     });
   }

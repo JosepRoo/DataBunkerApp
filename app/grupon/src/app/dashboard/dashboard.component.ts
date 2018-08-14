@@ -170,6 +170,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  emptyProducts(_access) {
+    this.selectedData = [];
+  }
+
   addFavorite(product) {
     this.dataService.addFavorite(product._id).subscribe(res => {
       this.snackBar.openFromComponent(ProductAddedComponent, {
