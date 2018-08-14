@@ -11,18 +11,26 @@ import {
   styleUrls: ['./graph.component.scss']
 })
 export class GraphComponent implements OnInit, OnChanges {
-  @Input() selectedData: any;
-  @Input() lineChartLabels: any;
+  @Input()
+  selectedData: any;
+  @Input()
+  lineChartLabels: any;
   lineChartData = [];
   lineChartOptions: any = {
     responsive: true,
     bezierCurve: false,
+    maintainAspectRatio: true,
     tooltips: {
       enabled: true,
       mode: 'single',
       callbacks: {
-        label: function (tooltipItems, data) {
-          return '$' + tooltipItems.yLabel;
+        label: function(tooltipItems, data) {
+          return (
+            '$' +
+            tooltipItems.yLabel +
+            ' - ' +
+            data.datasets[tooltipItems.datasetIndex].label
+          );
         }
       }
     },
@@ -66,21 +74,23 @@ export class GraphComponent implements OnInit, OnChanges {
           }
         }
       ],
-      yAxes: [{
-        ticks: {
-          callback: function (value) {
-            value += '';
-            const x = value.split('.');
-            let x1 = x[0];
-            const x2 = x.length > 1 ? '.' + x[1] : '';
-            const rgx = /(\d+)(\d{3})/;
-            while (rgx.test(x1)) {
-              x1 = x1.replace(rgx, '$1' + ',' + '$2');
+      yAxes: [
+        {
+          ticks: {
+            callback: function(value) {
+              value += '';
+              const x = value.split('.');
+              let x1 = x[0];
+              const x2 = x.length > 1 ? '.' + x[1] : '';
+              const rgx = /(\d+)(\d{3})/;
+              while (rgx.test(x1)) {
+                x1 = x1.replace(rgx, '$1' + ',' + '$2');
+              }
+              return '$' + x1 + x2;
             }
-            return '$' + x1 + x2;
           }
         }
-      }]
+      ]
     }
   };
   lineChartLegend: Boolean = true;
@@ -97,6 +107,7 @@ export class GraphComponent implements OnInit, OnChanges {
 
   refresh() {
     const lines = [];
+    console.log(this.selectedData);
     this.selectedData.forEach(product => {
       const data = {
         data: [],

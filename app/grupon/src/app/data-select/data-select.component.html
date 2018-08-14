@@ -41,7 +41,7 @@
         <div class="col-12 col-sm-6 col-md-3">
           <mat-form-field>
             <mat-select (selectionChange)="channelChanged()" placeholder="Canales" [(ngModel)]="selectedData.channels" multiple>
-              <input matInput (keyup)="filterChannels($event.target.value)"
+              <input matInput (keydown)="filterChannels($event.target.value)"
                       type="text"  
                       autocomplete="off"
                       placeholder="  Filtrar">
@@ -74,7 +74,7 @@
             <mat-select (selectionChange)="productChanged()" placeholder="Productos" [(ngModel)]="selectedData.products" multiple>
               <input matInput (keyup)="filterProducts($event.target.value)" type="text" autocomplete="off" placeholder="  Filtrar">
               <mat-optgroup *ngFor="let brand of selectedData.brands" [label]="brand.channel + ' - ' + brand.name">
-                <mat-option *ngFor="let product of brand.products" [value]="product">{{product.name}}</mat-option>
+                <mat-option *ngFor="let product of brand.products" [value]="product">{{product.name}} - {{product.UPC}}</mat-option>
               </mat-optgroup>
             </mat-select>
           </mat-form-field>
