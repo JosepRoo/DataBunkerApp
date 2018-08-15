@@ -80,7 +80,7 @@ class Tree(dict):
                         "name": category,
                         "brands_skipped": len(self[channel][category])
                     })
-                    result['channels']['messages'].append(str(e))
+                    result['categories']['messages'].append(str(e))
                     continue
                 for brand in self[channel][category]:
                     try:
@@ -95,7 +95,7 @@ class Tree(dict):
                             "name": brand,
                             "products_skipped": len(self[channel][category][brand])
                         })
-                        result['channels']['messages'].append(str(e))
+                        result['brand']['messages'].append(str(e))
                         continue
                     for product in self[channel][category][brand]:
                         try:
@@ -130,14 +130,15 @@ class Tree(dict):
                                 "log": log,
                             })
                         except Exception as e:
-                            if log.get('values') is None or log.get('date') is None:
+                            if log.get('value') is None or log.get('date') is None:
                                 log = dict()
                                 log['value'], log['date'] = 'err', 'err'
                             result['products']['failed'].append({
                                 "upc": product_upc,
                                 "log": log,
                             })
-                            result['channels']['messages'].append(str(e))
+                            result['products']['messages'].append(str(e))
+        result['products']['skipped_qty'] = result['products']['skipped']
         return result
 
     def split_into_categories(self):
