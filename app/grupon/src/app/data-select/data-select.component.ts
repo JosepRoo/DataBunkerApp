@@ -34,14 +34,20 @@ export class DataSelectComponent implements OnInit {
   channelsBackup: Array<any>;
 
   // Outputs
-  @Output() status: EventEmitter<any> = new EventEmitter();
-  @Output() productsSelected: EventEmitter<any> = new EventEmitter();
-  @Output() dateChanged: EventEmitter<any> = new EventEmitter();
+  @Output()
+  status: EventEmitter<any> = new EventEmitter();
+  @Output()
+  productsSelected: EventEmitter<any> = new EventEmitter();
+  @Output()
+  dateChanged: EventEmitter<any> = new EventEmitter();
 
   // Inputs
-  @Input() startDate: Date;
-  @Input() isDateDisabled: Boolean;
-  @Input() filterLabel: String;
+  @Input()
+  startDate: Date;
+  @Input()
+  isDateDisabled: Boolean;
+  @Input()
+  filterLabel: String;
 
   constructor(private dataService: DataService) {}
 
@@ -49,10 +55,10 @@ export class DataSelectComponent implements OnInit {
     this.endDate = new Date();
     this.today = new Date();
     this.dataService.getChannels().subscribe(res => {
-      res.sort(function (a, b) {
+      res.sort(function(a, b) {
         const textA = a.name.toUpperCase();
         const textB = b.name.toUpperCase();
-        return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+        return textA < textB ? -1 : textA > textB ? 1 : 0;
       });
       this.channelsBackup = res;
       this.channels = res;
@@ -61,6 +67,56 @@ export class DataSelectComponent implements OnInit {
     if (!this.filterLabel) {
       this.filterLabel = 'Filtros';
     }
+  }
+
+  getAllCategories() {
+    const categories = [];
+    this.selectedData.channels.forEach(channel => {
+      channel.categories.forEach(category => {
+        categories.push(category);
+      });
+    });
+    return categories;
+  }
+
+  getAllBrands() {
+    const brands = [];
+    this.selectedData.categories.forEach(category => {
+      category.brands.forEach(brand => {
+        brands.push(brand);
+      });
+    });
+    return brands;
+  }
+
+  getAllProducts() {
+    const products = [];
+    this.selectedData.brands.forEach(brand => {
+      brand.products.forEach(product => {
+        products.push(product);
+      });
+    });
+    return products;
+  }
+
+  selectAllChannels(select: NgModel, values, array) {
+    select.update.emit(values);
+    this.channelChanged();
+  }
+
+  selectAllCategories(select: NgModel, values, array) {
+    select.update.emit(values);
+    this.categoryChanged();
+  }
+
+  selectAllBrands(select: NgModel, values, array) {
+    select.update.emit(values);
+    this.brandChanged();
+  }
+
+  selectAllProducts(select: NgModel, values, array) {
+    select.update.emit(values);
+    this.productChanged();
   }
 
   printInfo() {
@@ -102,7 +158,9 @@ export class DataSelectComponent implements OnInit {
   filterProducts(val) {
     this.selectedData.brands.forEach(brand => {
       brand.products = brand.productsBackup.filter(
-        unit => unit.name.toUpperCase().indexOf(val.toUpperCase()) > -1 || unit.UPC.toUpperCase().indexOf(val.toUpperCase()) > -1
+        unit =>
+          unit.name.toUpperCase().indexOf(val.toUpperCase()) > -1 ||
+          unit.UPC.toUpperCase().indexOf(val.toUpperCase()) > -1
       );
     });
   }
@@ -113,10 +171,10 @@ export class DataSelectComponent implements OnInit {
       if (channel !== -1) {
         if (channel.categories == null) {
           this.dataService.getCategories(channel._id).subscribe(res => {
-            res.sort(function (a, b) {
+            res.sort(function(a, b) {
               const textA = a.name.toUpperCase();
               const textB = b.name.toUpperCase();
-              return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+              return textA < textB ? -1 : textA > textB ? 1 : 0;
             });
             res.map(category => {
               category.channel = channel.name;
@@ -127,7 +185,7 @@ export class DataSelectComponent implements OnInit {
           });
         }
       }
-      }
+    }
     if (this.selectedData.channels.length && !this.loading) {
       this.status.emit(true);
     } else {
@@ -140,10 +198,10 @@ export class DataSelectComponent implements OnInit {
       const category = this.selectedData.categories[index];
       if (category.brands == null) {
         this.dataService.getBrands(category._id).subscribe(res => {
-          res.sort(function (a, b) {
+          res.sort(function(a, b) {
             const textA = a.name.toUpperCase();
             const textB = b.name.toUpperCase();
-            return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+            return textA < textB ? -1 : textA > textB ? 1 : 0;
           });
           res.map(brand => {
             brand.channel = category.channel;
