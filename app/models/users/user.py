@@ -15,13 +15,13 @@ from app.models.users.errors import FavoriteAlreadyAdded, FavoriteNotFound
 
 class User(BaseModel):
     def __init__(self, email, name, channel_id=None, password=None, _id=None, enterprise_id=None,
-                 privileges=dict(), favorites=None):
+                 privileges=None, favorites=None):
         BaseModel.__init__(self, _id)
         self.email = email
         self.password = password
         self.name = name
         self.channel_id = channel_id
-        self.privileges = Privilege(privileges)
+        self.privileges = Privilege(privileges) if privileges is not None else Privilege(dict())
         self.enterprise_id = enterprise_id
         self.favorites = favorites if favorites else []
 
