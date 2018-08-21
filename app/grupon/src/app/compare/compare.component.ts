@@ -2,6 +2,7 @@ import { DataService } from './../services/data.service';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { MatPaginator, MatSort, MatTableDataSource } from '../../../node_modules/@angular/material';
 import * as XLSX from 'xlsx';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-compare',
@@ -13,23 +14,30 @@ export class CompareComponent implements OnInit {
     text: '',
     show: false
   };
+  user: any;
   loading: Boolean = false;
   displayedColumns: string[] = ['Nombre'];
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild('TABLE') table: ElementRef;
+  @ViewChild(MatPaginator)
+  paginator: MatPaginator;
+  @ViewChild(MatSort)
+  sort: MatSort;
+  @ViewChild('TABLE')
+  table: ElementRef;
   data: MatTableDataSource<any>;
 
-  constructor(private dataService: DataService) {}
+  constructor(
+    private dataService: DataService,
+    private userService: UserService
+  ) {}
 
   ngOnInit() {
     const self = this;
     this.loading = true;
     this.dataService.getCompare().subscribe(res => {
       this.loading = false;
-      this.data = new MatTableDataSource(res);
-      this.data.paginator = self.paginator;
-      this.data.sort = self.sort;
+      self.data = new MatTableDataSource(res);
+      self.data.sort = self.sort;
+      self.data.paginator = self.paginator;
       if (res.length) {
         const headers = Object.keys(res[0]);
         const nameIndex = headers.indexOf('Nombre');
@@ -40,18 +48,39 @@ export class CompareComponent implements OnInit {
         badLocated = headers[1];
         headers[1] = headers[upcIndex];
         headers[upcIndex] = badLocated;
+        const mainChannel = headers.indexOf(this.user.channel_name);
+        badLocated = headers[2];
+        headers[2] = headers[mainChannel];
+        headers[mainChannel] = badLocated;
         this.displayedColumns = headers;
-        console.log(this.table);
       }
+    });
+
+    this.userService.getUser().subscribe(res => {
+      this.user = res;
     });
   }
 
+  getDifference(product, price) {
+    const mainPrice = product[this.user.channel_name];
+    const difference = ((mainPrice - price) * 100) / mainPrice;
+    if (mainPrice === 0) {
+      return mainPrice;
+    }
+    if (difference && difference !== 0) {
+      return difference;
+    } else {
+      return 0;
+    }
+  }
+
   exportAsExcel() {
-    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(this.table.nativeElement);
+    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(
+      this.table.nativeElement
+    );
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Productos');
     XLSX.writeFile(wb, 'Comparador.xlsx');
-
   }
 
   applyFilter(filterValue: string) {
