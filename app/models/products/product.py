@@ -247,7 +247,7 @@ class Product(Element):
         expressions.append({'$sort': {'UPC': 1}})
         expressions.append({'$sort': {'Nombre': 1}})
         result = list(Database.aggregate('products', expressions))
-        channel_names = [x.get('name') for x in list(Database.find('channels', {}))]
+        channel_names = [x.get('name') for x in list(Database.find('channels',{'_id': {'$in': [privilege for privilege in user.privileges.json()]}}))]
         for i in range(len(result)):
             for name in channel_names:
                 if name not in result[i].keys():
