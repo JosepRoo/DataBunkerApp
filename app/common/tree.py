@@ -1,3 +1,4 @@
+from app.models.users.user import User
 from app.models.elements.errors import ElementNotFound
 
 __author__ = "Luis Ricardo Gutierrez Luna"
@@ -50,6 +51,7 @@ class Tree(dict):
                 "messages": list()
             }
         }
+        admin = User.get_by_email("admin@data-bunker.com")
         for channel in self.keys():
             channel_exists = Channel.get_by_name(channel)
             try:
@@ -57,6 +59,7 @@ class Tree(dict):
                     channel_exists = Channel(channel)
                     channel_exists.save_to_mongo(Channel.get_collection_by_name(channel_exists.__class__.__name__),
                                                  "sub_elements")
+                    admin.add_privilege("channel", channel_exists._id)
                 result['channels']['success'] += 1
             except Exception as e:
                 result['channels']['failed'].append({
@@ -106,7 +109,7 @@ class Tree(dict):
                                 raise ElementNotFound("bad config of log")
 
                             log["value"] = float(log['value'].strip("$ \t"))
-                            product_exists = Product.get_by_UPC(product_upc)
+                            product_exists = Product.get_by_UPC(product_upc, channel_exists._id)
                             if not product_exists:
                                 product_exists = Product(UPC=product_upc, name=product_name,
                                                          parentElementId=brand_exists._id, sub_elements=[log],
@@ -150,3 +153,14 @@ class Tree(dict):
                 categories_list.append(temp)
 
         return categories_list
+
+    def split_into_brands(self):
+        brands_list = list()
+        for channel in self:
+            for category in self.get(channel):
+                for brand in self.get(channel).get(category):
+                    temp = Tree()
+                    temp[channel][category][brand] = self[channel][category][brand]
+                    brands_list.append(temp)
+
+        return brands_list

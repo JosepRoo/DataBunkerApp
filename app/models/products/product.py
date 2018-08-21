@@ -27,8 +27,8 @@ class Product(Element):
         self.sub_elements = [Log(**sub_element) for sub_element in sub_elements]
 
     @classmethod
-    def get_by_UPC(cls, upc):
-        product = Database.find_one(COLLECTION, {'UPC': upc})
+    def get_by_UPC(cls, upc, channel_id):
+        product = Database.find_one(COLLECTION, {'UPC': upc, "greatGrandParentId": channel_id})
         if product:
             return cls(**product)
 
@@ -160,26 +160,26 @@ class Product(Element):
         expressions.append({'$match': {'$or': [{'_id': {'$in': allowed_products}},
                                                {field_name: {"$in": element_ids}}]}})
         expressions.append({'$lookup':
-                            {
-                                'from': 'channels',
-                                'localField': 'greatGrandParentId',
-                                'foreignField': '_id',
-                                'as': 'channel'
-                            }})
+            {
+                'from': 'channels',
+                'localField': 'greatGrandParentId',
+                'foreignField': '_id',
+                'as': 'channel'
+            }})
         expressions.append({'$lookup':
-                            {
-                                'from': 'categories',
-                                'localField': 'grandParentId',
-                                'foreignField': '_id',
-                                'as': 'category'
-                            }})
+            {
+                'from': 'categories',
+                'localField': 'grandParentId',
+                'foreignField': '_id',
+                'as': 'category'
+            }})
         expressions.append({'$lookup':
-                            {
-                                'from': 'brands',
-                                'localField': 'parentElementId',
-                                'foreignField': '_id',
-                                'as': 'brand'
-                            }})
+            {
+                'from': 'brands',
+                'localField': 'parentElementId',
+                'foreignField': '_id',
+                'as': 'brand'
+            }})
         expressions.append({'$project':
                                 {"_id": 0, 'UPC': 1,
                                  'Canal': {'$arrayElemAt': ['$channel.name', 0]},
@@ -187,12 +187,12 @@ class Product(Element):
                                  'Marca': {'$arrayElemAt': ['$brand.name', 0]},
                                  'Nombre': '$name',
                                  'sub_elements':
-                                    {"$filter":
-                                         {"input": "$sub_elements", "as": "sub_elements", "cond":
-                                             {"$and": [
-                                                 {"$gte": ["$$sub_elements.date", first_date]},
-                                                 {"$lte": ["$$sub_elements.date", last_date]}
-                                             ]}}}}})
+                                     {"$filter":
+                                          {"input": "$sub_elements", "as": "sub_elements", "cond":
+                                              {"$and": [
+                                                  {"$gte": ["$$sub_elements.date", first_date]},
+                                                  {"$lte": ["$$sub_elements.date", last_date]}
+                                              ]}}}}})
         expressions.append({'$project': {"sub_elements.created_date": 0}})
         expressions.append({"$sort": {"sub_elements.date": 1}})
         result = list(Database.aggregate('products', expressions))
@@ -268,12 +268,14 @@ class Product(Element):
             for channel in element:
                 if element[channel] == 1:
                     user_products.extend(
-                        [product.get('_id') for product in Database.find_ids(COLLECTION, {'greatGrandParentId': channel})])
+                        [product.get('_id') for product in
+                         Database.find_ids(COLLECTION, {'greatGrandParentId': channel})])
                     continue
                 for category in element[channel]:
                     if element[channel][category] == 1:
                         user_products.extend(
-                            [product.get('_id') for product in Database.find_ids(COLLECTION, {'grandParentId': category})])
+                            [product.get('_id') for product in
+                             Database.find_ids(COLLECTION, {'grandParentId': category})])
                         continue
                     for brand in element[channel][category]:
                         if element[channel][category][brand] == 1:
