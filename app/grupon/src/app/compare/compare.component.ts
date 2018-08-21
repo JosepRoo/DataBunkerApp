@@ -62,8 +62,11 @@ export class CompareComponent implements OnInit {
   }
 
   getDifference(product, price) {
+    if (price === 0) {
+      return 0;
+    }
     const mainPrice = product[this.user.channel_name];
-    const difference = ((mainPrice - price) * 100) / mainPrice;
+    const difference = ((mainPrice - price)) / mainPrice;
     if (mainPrice === 0) {
       return mainPrice;
     }
