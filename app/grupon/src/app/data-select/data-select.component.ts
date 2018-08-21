@@ -70,31 +70,25 @@ export class DataSelectComponent implements OnInit {
   }
 
   getAllCategories() {
-    const categories = [];
+    let categories = [];
     this.selectedData.channels.forEach(channel => {
-      channel.categories.forEach(category => {
-        categories.push(category);
-      });
+      categories = categories.concat(channel.categories);
     });
     return categories;
   }
 
   getAllBrands() {
-    const brands = [];
+    let brands = [];
     this.selectedData.categories.forEach(category => {
-      category.brands.forEach(brand => {
-        brands.push(brand);
-      });
+      brands = brands.concat(category.brands);
     });
     return brands;
   }
 
   getAllProducts() {
-    const products = [];
+    let products = [];
     this.selectedData.brands.forEach(brand => {
-      brand.products.forEach(product => {
-        products.push(product);
-      });
+      products = products.concat(brand.products);
     });
     return products;
   }
