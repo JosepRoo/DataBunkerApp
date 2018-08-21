@@ -21,7 +21,7 @@ class User(BaseModel):
         self.password = password
         self.name = name
         self.channel_id = channel_id
-        self.privileges = Privilege(privileges) if privileges is not None else dict()
+        self.privileges = Privilege(privileges) if privileges is not None else Privilege(dict())
         self.enterprise_id = enterprise_id
         self.favorites = favorites if favorites else []
 
