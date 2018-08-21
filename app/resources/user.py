@@ -74,11 +74,11 @@ class User(Resource):
         _id = session.get('_id')
         email = session.get('email') if email is None else email
         user_json = None
-        if email:
+        if email is not None:
             user_json = UserModel.get_by_email(email).json(exclude='password')
-        elif _id:
+        elif _id is not None:
             user_json = UserModel.get_by_id(_id, COLLECTION).json(exclude='password')
-        if user_json.get('channel_id') is not None:
+        if user_json is not None and user_json.get('channel_id') is not None:
             user_json['channel_name'] = ChannelModel.get_by_id(user_json.get('channel_id')).json(
                 exclude=('sub_elements', '_id')).get('name')
             return user_json, 200
