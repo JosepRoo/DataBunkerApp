@@ -1,4 +1,3 @@
-from app.models.users.user import User
 from app.models.elements.errors import ElementNotFound
 
 __author__ = "Luis Ricardo Gutierrez Luna"
@@ -27,6 +26,7 @@ class Tree(dict):
                 self[k] = data
 
     def save_to_mongo(self):
+        from app.models.users.user import User
         from app.models.products.product import Product
         result = {
             "channels": {
