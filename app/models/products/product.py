@@ -32,8 +32,8 @@ class Product(Element):
         if product:
             return cls(**product)
 
-    def is_duplicated_date(self, new_date):
-        if list(filter(lambda x: x.date == new_date, self.sub_elements)):
+    def is_duplicated_date(self, new_date:str):
+        if list(filter(lambda x: x.date.strftime("%Y-%m-%d") == new_date[:10], self.sub_elements)):
             return True
         return False
 
