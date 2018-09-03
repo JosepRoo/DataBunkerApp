@@ -48,6 +48,9 @@ export class DataSelectComponent implements OnInit {
   isDateDisabled: Boolean;
   @Input()
   filterLabel: String;
+  @Input()
+  limit: boolean;
+  mySelections: any[];
 
   constructor(private dataService: DataService) {}
 
@@ -157,6 +160,12 @@ export class DataSelectComponent implements OnInit {
           unit.UPC.toUpperCase().indexOf(val.toUpperCase()) > -1
       );
     });
+  }
+
+  channelChangedLimit(data) {
+    this.selectedData.channels = [];
+    this.selectedData.channels.push(data.value);
+    this.channelChanged();
   }
 
   channelChanged() {

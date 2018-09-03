@@ -40,7 +40,7 @@
       <div class="row">
         <div class="col-12 col-sm-6 col-md-3">
           <mat-form-field>
-            <mat-select (selectionChange)="channelChanged()" placeholder="Canales" [(ngModel)]="selectedData.channels" #channelSelect="ngModel" multiple>
+            <mat-select *ngIf="!limit" (selectionChange)="channelChanged()" placeholder="Canales" [(ngModel)]="selectedData.channels" #channelSelect="ngModel" multiple>
               <input matInput (keydown)="filterChannels($event.target.value)"
                       type="text"  
                       autocomplete="off"
@@ -48,6 +48,10 @@
               <button style="margin:10px;" mat-raised-button class="mat-primary fill text-sm" (click)="selectAllChannels(channelSelect, channels)">
                 Seleccionar todo
               </button>
+              <mat-option *ngFor="let channel of channels" [value]="channel">{{channel.name}}</mat-option>
+            </mat-select>
+            <mat-select *ngIf="limit" (selectionChange)="channelChangedLimit($event)" placeholder="Canales">
+              <input matInput (keydown)="filterChannels($event.target.value)" type="text" autocomplete="off" placeholder="  Filtrar">
               <mat-option *ngFor="let channel of channels" [value]="channel">{{channel.name}}</mat-option>
             </mat-select>
           </mat-form-field>
