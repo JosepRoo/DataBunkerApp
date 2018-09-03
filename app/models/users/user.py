@@ -1,3 +1,5 @@
+import datetime
+
 import requests
 from flask import session
 
@@ -62,6 +64,7 @@ class User(BaseModel):
     def login(user_email, user_id):
         session['email'] = user_email
         session['_id'] = user_id
+        session['time_created'] = datetime.datetime.now()
 
     @staticmethod
     def logout():

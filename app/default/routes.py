@@ -8,5 +8,4 @@ def home():
 
 @groupon.route('/')
 def home_groupon(folder=None):
-    print(folder)
     return groupon.send_static_file('index.html')

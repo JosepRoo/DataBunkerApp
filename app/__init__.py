@@ -1,5 +1,5 @@
 import datetime
-from flask import Flask, session, jsonify, request, url_for
+from flask import Flask, session, request
 from flask_compress import Compress
 from flask_restful import Api
 from werkzeug.utils import redirect
@@ -55,6 +55,14 @@ def create_app(config_name):
 
     @app.before_request
     def check_login():
+        now = datetime.datetime.now()
+        try:
+            first_active = session['time_created']
+            delta = now - first_active
+            if delta > datetime.timedelta(days=7):
+                session.clear()
+        except Exception:
+            pass
         apiCall = request.path.lstrip('/').split('/')[0]
         apiCalls = ['company', 'user', 'elements', 'subelements', 'elementvalue']
         if session.get('email') is None and session.get('_id') is None and apiCall in apiCalls:

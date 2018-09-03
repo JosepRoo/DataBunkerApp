@@ -95,9 +95,12 @@ class Element(BaseModel):
         return collection
 
     @classmethod
-    def get_by_name(cls, name):
+    def get_by_name(cls, name, parent_id=None):
         collection = Element.get_collection_by_name(cls.__name__)
-        element = Database.find_one(collection, {"name": name})
+        if parent_id is not None:
+            element = Database.find_one(collection, {"name": name})
+        else:
+            element = Database.find_one(collection, {"name": name, 'parentElementId': parent_id})
         if element:
             return cls(**element)
 
@@ -120,3 +123,6 @@ class Element(BaseModel):
         collction = Element.get_collection_by_name(element_type.title())
         parent = Database.find_one(collction, {"_id": _id})
         return parent["parentElementId"]
+
+    def __repr__(self):
+        return f"({self.__class__.__name__} id={self._id}, name={self.name})"

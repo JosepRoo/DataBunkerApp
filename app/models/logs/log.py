@@ -25,3 +25,6 @@ class Log:
                         for attrib in self.__dict__.keys() if attrib not in exclude}
             return {attrib: self.__getattribute__(attrib)
                     for attrib in self.__dict__.keys()}
+
+    def __repr__(self):
+        return f"{self.__class__.__name__} date={self.date}, value={self.value}"
