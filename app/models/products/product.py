@@ -282,4 +282,5 @@ class Product(Element):
                                                   Database.find_ids(COLLECTION, {'parentElementId': brand})])
                             continue
                         user_products.extend([product for product in element[channel][category][brand]])
+        print(len(user_products))
         return user_products
