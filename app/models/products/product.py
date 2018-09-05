@@ -215,10 +215,10 @@ class Product(Element):
         excel_path = f'{basedir}/app/reports/products/ReporteProductos_{date}.xlsx'
         return Utils.generate_report(result, f'ReporteProductos_{date}.xlsx', "Productos")
 
-    @staticmethod
-    def build_upc_channels_report(email):
+    @classmethod
+    def build_upc_channels_report(cls, email):
         user = User.get_by_email(email)
-        allowed_products = Product.find_allowed_products(user._id)
+        allowed_products = cls.find_allowed_products(user._id)
         expressions = list()
         expressions.append({'$match': {'$or': [{'_id': {'$in': allowed_products}},
                                                {'greatGrandParentId': user.channel_id}]}})
@@ -234,23 +234,26 @@ class Product(Element):
                                          'last_price': {
                                              '$cond': {'if': {'$eq': [{'$size': '$sub_elements'}, 0]}, 'then': 0.0,
                                                        'else': {'$arrayElemAt': ['$sub_elements.value', -1]}}}}})
-        expressions.append({'$group': {'_id': {'UPC': '$UPC', 'Nombre': '$Nombre'},
-                                       'channels': {'$push': {'k': '$Canal', 'v': '$last_price'}}}})
-        expressions.append({'$project': {'_id': 0,
-                                         'UPC': '$_id.UPC',
-                                         'Nombre': '$_id.Nombre',
-                                         'Canales': {'$arrayToObject': '$channels'}}})
-        expressions.append({'$addFields': {'Canales.UPC': '$UPC', 'Canales.Nombre': '$Nombre'}})
-        expressions.append({'$replaceRoot': {'newRoot': '$Canales'}})
+        # expressions.append({'$group': {'_id': {'UPC': '$UPC', 'Nombre': '$Nombre'},
+        #                                'channels': {'$push': {'k': '$Canal', 'v': '$last_price'}}}})
+        # expressions.append({'$project': {'_id': 0,
+        #                                  'UPC': '$_id.UPC',
+        #                                  'Nombre': '$_id.Nombre',
+        #                                  'Canales': {'$arrayToObject': '$channels'}}})
+        # expressions.append({'$addFields': {'Canales.UPC': '$UPC', 'Canales.Nombre': '$Nombre'}})
+        # expressions.append({'$replaceRoot': {'newRoot': '$Canales'}})
         expressions.append({'$sort': {'UPC': 1}})
-        expressions.append({'$sort': {'Nombre': 1}})
+        # expressions.append({'$sort': {'Nombre': 1}})
         result = list(Database.aggregate('products', expressions))
-        channel_names = [x.get('name') for x in list(
-            Database.find('channels', {'_id': {'$in': [privilege for privilege in user.privileges.json()]}}))]
-        for i in range(len(result)):
-            for name in channel_names:
-                if name not in result[i].keys():
-                    result[i][name] = 0
+        # channel_names = [x.get('name') for x in list(
+        #     Database.find('channels', {'_id': {'$in': [privilege for privilege in user.privileges.json()]}}))]
+        # res_dict = dict()
+        # for i in range(len(result)):
+        #     for name in channel_names:
+        #         if name not in result[i].keys():
+        #             result[i][name] = 0
+        #     if res_dict.get(result[i]['UPC']) is None:
+        #         res_dict.get(result[i]['UPC']) = {}
         return result
 
     @staticmethod
