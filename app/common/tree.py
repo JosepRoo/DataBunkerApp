@@ -115,8 +115,7 @@ class Tree(dict):
                                                          parentElementId=brand_exists._id, sub_elements=[log],
                                                          image=product_image, grandParentId=category_exists._id,
                                                          greatGrandParentId=channel_exists._id)
-                            elif not product_exists.is_duplicated_date(
-                                    datetime.datetime.strptime(log['date'], "%Y-%m-%d %H:%M")):
+                            elif not product_exists.is_duplicated_date(log['date']):
                                 product_exists.sub_elements.append(Log(**log))
                                 if product_exists.image is None:
                                     product_exists.image = product_image
