@@ -234,26 +234,24 @@ class Product(Element):
                                          'last_price': {
                                              '$cond': {'if': {'$eq': [{'$size': '$sub_elements'}, 0]}, 'then': 0.0,
                                                        'else': {'$arrayElemAt': ['$sub_elements.value', -1]}}}}})
-        # expressions.append({'$group': {'_id': {'UPC': '$UPC', 'Nombre': '$Nombre'},
-        #                                'channels': {'$push': {'k': '$Canal', 'v': '$last_price'}}}})
-        # expressions.append({'$project': {'_id': 0,
-        #                                  'UPC': '$_id.UPC',
-        #                                  'Nombre': '$_id.Nombre',
-        #                                  'Canales': {'$arrayToObject': '$channels'}}})
-        # expressions.append({'$addFields': {'Canales.UPC': '$UPC', 'Canales.Nombre': '$Nombre'}})
-        # expressions.append({'$replaceRoot': {'newRoot': '$Canales'}})
+        expressions.append({'$group': {'_id': {'UPC': '$UPC'},
+                                       'channels': {'$push': {'k': '$Canal', 'v': '$last_price'}},
+                                       'Nombre': {'$first': '$Nombre'}}})
+        expressions.append({'$project': {'_id': 0,
+                                         'UPC': '$_id.UPC',
+                                         'Nombre': '$Nombre',
+                                         'Canales': {'$arrayToObject': '$channels'}}})
+        expressions.append({'$addFields': {'Canales.UPC': '$UPC', 'Canales.Nombre': '$Nombre'}})
+        expressions.append({'$replaceRoot': {'newRoot': '$Canales'}})
         expressions.append({'$sort': {'UPC': 1}})
-        # expressions.append({'$sort': {'Nombre': 1}})
+        expressions.append({'$sort': {'Nombre': 1}})
         result = list(Database.aggregate('products', expressions))
-        # channel_names = [x.get('name') for x in list(
-        #     Database.find('channels', {'_id': {'$in': [privilege for privilege in user.privileges.json()]}}))]
-        # res_dict = dict()
-        # for i in range(len(result)):
-        #     for name in channel_names:
-        #         if name not in result[i].keys():
-        #             result[i][name] = 0
-        #     if res_dict.get(result[i]['UPC']) is None:
-        #         res_dict.get(result[i]['UPC']) = {}
+        channel_names = [x.get('name') for x in list(
+            Database.find('channels', {'_id': {'$in': [privilege for privilege in user.privileges.json()]}}))]
+        for i in range(len(result)):
+            for name in channel_names:
+                if name not in result[i].keys():
+                    result[i][name] = 0
         return result
 
     @staticmethod
