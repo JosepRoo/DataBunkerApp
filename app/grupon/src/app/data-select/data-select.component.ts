@@ -116,6 +116,26 @@ export class DataSelectComponent implements OnInit {
     this.productChanged();
   }
 
+  deselectAllChannels(select: NgModel, values, array) {
+    select.update.emit([]);
+    this.channelChanged();
+  }
+
+  deselectAllCategories(select: NgModel, values, array) {
+    select.update.emit([]);
+    this.categoryChanged();
+  }
+
+  deselectAllBrands(select: NgModel, values, array) {
+    select.update.emit([]);
+    this.brandChanged();
+  }
+
+  deselectAllProducts(select: NgModel, values, array) {
+    select.update.emit([]);
+    this.productChanged();
+  }
+
   printInfo() {
     console.log(this.selectedData);
   }

@@ -48,6 +48,9 @@
               <button style="margin:10px;" mat-raised-button class="mat-primary fill text-sm" (click)="selectAllChannels(channelSelect, channels)">
                 Seleccionar todo
               </button>
+              <button style="margin:10px;" mat-raised-button class="mat-primary fill text-sm" (click)="deselectAllChannels(channelSelect, channels)">
+                DesSeleccionar todo
+              </button>
               <mat-option *ngFor="let channel of channels" [value]="channel">{{channel.name}}</mat-option>
             </mat-select>
             <mat-select *ngIf="limit" (selectionChange)="channelChangedLimit($event)" placeholder="Canales">
@@ -63,6 +66,9 @@
               <button style="margin:10px;" mat-raised-button class="mat-primary fill text-sm" (click)="selectAllCategories(categorySelect, getAllCategories())">
                 Seleccionar todo
               </button>
+              <button style="margin:10px;" mat-raised-button class="mat-primary fill text-sm" (click)="deselectAllCategories(categorySelect, getAllCategories())">
+                DesSeleccionar todo
+              </button>
               <mat-optgroup *ngFor="let channel of selectedData.channels" [label]="channel.name">
                 <mat-option *ngFor="let category of channel.categories" [value]="category">{{category.name}}</mat-option>
               </mat-optgroup>
@@ -76,6 +82,9 @@
               <button style="margin:10px;" mat-raised-button class="mat-primary fill text-sm" (click)="selectAllBrands(brandSelect, getAllBrands())">
                 Seleccionar todo
               </button>
+              <button style="margin:10px;" mat-raised-button class="mat-primary fill text-sm" (click)="deselectAllBrands(brandSelect, getAllBrands())">
+                DesSeleccionar todo
+              </button>
               <mat-optgroup *ngFor="let category of selectedData.categories" [label]="category.channel + ' - ' + category.name">
                 <mat-option *ngFor="let brand of category.brands" [value]="brand">{{brand.name}}</mat-option>
               </mat-optgroup>
@@ -88,6 +97,9 @@
               <input matInput (keyup)="filterProducts($event.target.value)" type="text" autocomplete="off" placeholder="  Filtrar">
               <button style="margin:10px;" mat-raised-button class="mat-primary fill text-sm" (click)="selectAllProducts(productSelect, getAllProducts())">
                 Seleccionar todo
+              </button>
+              <button style="margin:10px;" mat-raised-button class="mat-primary fill text-sm" (click)="deselectAllProducts(productSelect, getAllProducts())">
+                DesSeleccionar todo
               </button>
               <mat-optgroup *ngFor="let brand of selectedData.brands" [label]="brand.channel + ' - ' + brand.name">
                 <mat-option *ngFor="let product of brand.products" [value]="product">{{product.name}} - {{product.UPC}}</mat-option>
