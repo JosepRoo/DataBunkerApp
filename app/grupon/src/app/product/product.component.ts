@@ -39,8 +39,8 @@ export class ProductComponent implements OnInit {
               }
             });
             res.values.sort(function (a, b) {
-              a = new Date(a._id);
-              b = new Date(b.d_id);
+              a = a._id;
+              b = b._id;
               return a > b ? -1 : a < b ? 1 : 0;
             });
             res.values = res.values.filter(el =>
@@ -49,7 +49,6 @@ export class ProductComponent implements OnInit {
             this.product = res;
             this.product.channel = '';
             this.selectedData.push(this.product);
-            console.log(this.product);
             this.product.values.forEach(element => {
               const day = new Date(element._id);
               this.lineChartLabels.push(day);
