@@ -49,7 +49,7 @@
                 Seleccionar todo
               </button>
               <button style="margin:10px;" mat-raised-button class="mat-primary fill text-sm" (click)="deselectAllChannels(channelSelect, channels)">
-                DesSeleccionar todo
+                Deseleccionar todo
               </button>
               <mat-option *ngFor="let channel of channels" [value]="channel">{{channel.name}}</mat-option>
             </mat-select>
@@ -67,7 +67,7 @@
                 Seleccionar todo
               </button>
               <button style="margin:10px;" mat-raised-button class="mat-primary fill text-sm" (click)="deselectAllCategories(categorySelect, getAllCategories())">
-                DesSeleccionar todo
+                Deseleccionar todo
               </button>
               <mat-optgroup *ngFor="let channel of selectedData.channels" [label]="channel.name">
                 <mat-option *ngFor="let category of channel.categories" [value]="category">{{category.name}}</mat-option>
@@ -83,7 +83,7 @@
                 Seleccionar todo
               </button>
               <button style="margin:10px;" mat-raised-button class="mat-primary fill text-sm" (click)="deselectAllBrands(brandSelect, getAllBrands())">
-                DesSeleccionar todo
+                Deseleccionar todo
               </button>
               <mat-optgroup *ngFor="let category of selectedData.categories" [label]="category.channel + ' - ' + category.name">
                 <mat-option *ngFor="let brand of category.brands" [value]="brand">{{brand.name}}</mat-option>
@@ -99,7 +99,7 @@
                 Seleccionar todo
               </button>
               <button style="margin:10px;" mat-raised-button class="mat-primary fill text-sm" (click)="deselectAllProducts(productSelect, getAllProducts())">
-                DesSeleccionar todo
+                Deseleccionar todo
               </button>
               <mat-optgroup *ngFor="let brand of selectedData.brands" [label]="brand.channel + ' - ' + brand.name">
                 <mat-option *ngFor="let product of brand.products" [value]="product">{{product.name}} - {{product.UPC}}</mat-option>

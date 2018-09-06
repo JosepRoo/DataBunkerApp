@@ -24,6 +24,11 @@ export class GraphComponent implements OnInit, OnChanges {
       enabled: true,
       mode: 'single',
       callbacks: {
+        title: function(_tooltipItems) {
+          const date = new Date(_tooltipItems[0].xLabel);
+          const str = date.toString().split(' ');
+          return str[0] + ' ' + str[1] + ' ' + str[2];
+        },
         label: function(tooltipItems, data) {
           return (
             '$' +
@@ -107,7 +112,6 @@ export class GraphComponent implements OnInit, OnChanges {
 
   refresh() {
     const lines = [];
-    console.log(this.selectedData);
     this.selectedData.forEach(product => {
       const data = {
         data: [],

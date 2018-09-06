@@ -1,5 +1,6 @@
 import { Router } from '@angular/router';
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-products-list',
@@ -16,13 +17,30 @@ export class ProductsListComponent implements OnInit, OnChanges {
   @Output()
   removeAll: EventEmitter<any> = new EventEmitter();
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private userService: UserService) {}
+  public favorites = [];
 
   ngOnInit() {}
 
-  ngOnChanges() {}
+  ngOnChanges() {
+    this.userService.getFavorites().subscribe(res => {
+      this.favorites = res;
+    });
+  }
 
   selectProductDetails(id) {
     this.router.navigate(['/app/product/' + id]);
+  }
+
+  findFavorite(productId) {
+    return !this.favorites.filter(product => {
+      return product._id === productId;
+    }).length;
+  }
+
+  changed() {
+    this.userService.getFavorites().subscribe(res => {
+      this.favorites = res;
+    });
   }
 }

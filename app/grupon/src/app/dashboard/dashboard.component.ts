@@ -71,7 +71,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         return new Date(el);
       });
       // console.log(this.lineChartLabels);
-      console.log(this.selectedData);
     }
   }
 

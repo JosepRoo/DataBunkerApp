@@ -26,6 +26,12 @@ export class AlertComponent implements OnInit {
   loadFavorites() {
     this.loading = true;
     this.userService.getFavorites().subscribe(res => {
+      res.map(product => {
+        this.dataService.getProduct(product._id).subscribe(_res => {
+          product.prices = _res.sub_elements;
+          console.log(product);
+        });
+      });
       this.favorites = res;
       this.loading = false;
     });
