@@ -8,8 +8,8 @@ from bs4 import BeautifulSoup
 import datetime
 import math
 import time
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+from selenium.webdriver import Firefox
+from selenium.webdriver.firefox.options import Options
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -20,9 +20,9 @@ class Walmart(BaseUpload):
     URL = 'https://super.walmart.com.mx/mapa-del-sitio'
     BASE = 'https://super.walmart.com.mx'
     now = datetime.datetime.now()
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    driver = './chromedriver_win32/chromedriver.exe'
+    options = Options()
+    options.add_argument("-headless")
+    executable_path = './geckodriver-v0.22.0-win64/geckodriver.exe'
     channel_name = 'Wal-Mart'
 
     @classmethod
@@ -107,13 +107,13 @@ class Walmart(BaseUpload):
 
     @classmethod
     def build_tree(cls):
-        browser = webdriver.Chrome(cls.driver, chrome_options=cls.chrome_options)
+        browser = Firefox(executable_path=cls.executable_path, firefox_options=cls.options)
         browser.set_page_load_timeout(20)
-        browser_cats = webdriver.Chrome(cls.driver, chrome_options=cls.chrome_options)
+        browser_cats = Firefox(executable_path=cls.executable_path, firefox_options=cls.options)
         browser_cats.set_page_load_timeout(20)
-        browser_sub_cats = webdriver.Chrome(cls.driver, chrome_options=cls.chrome_options)
+        browser_sub_cats = Firefox(executable_path=cls.executable_path, firefox_options=cls.options)
         browser_sub_cats.set_page_load_timeout(20)
-        browser_products = webdriver.Chrome(cls.driver, chrome_options=cls.chrome_options)
+        browser_products = Firefox(executable_path=cls.executable_path, firefox_options=cls.options)
         browser.get(cls.URL)
         links = browser.find_elements_by_class_name("_5I021sOIh5qArdWFNJNOL")
         products_inserted = 0
@@ -121,15 +121,13 @@ class Walmart(BaseUpload):
         channel = cls.get_channel(cls.channel_name)
         for link in links:
             url = link.get_attribute("href")
-            inserted, updated = cls.browse_categories(url, browser_cats, browser_sub_cats, browser_products, cls.now, channel)
+            inserted, updated = cls.browse_categories(url, browser_cats, browser_sub_cats, browser_products, cls.now,
+                                                      channel)
             products_inserted += inserted
             products_updated += updated
+            break
         browser_cats.close()
         browser_products.close()
         browser_sub_cats.close()
         browser.quit()
         return {"inserted": products_inserted, "updated": products_updated}
-
-
-
-
