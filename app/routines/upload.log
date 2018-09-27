@@ -1,0 +1,248 @@
+20-Sep-18 12:42:22 - ********************* Start *********************
+20-Sep-18 12:42:22 - Starting Walmart
+20-Sep-18 12:42:22 - Productos Insertados: 10
+20-Sep-18 12:42:22 - Productos Actualizados: 100
+20-Sep-18 12:42:22 - Exception occurred
+Traceback (most recent call last):
+  File "C:/Users/pauli/Documents/SitSolutions/DataBunkerApp/app/routines/upload_categories.py", line 21, in <module>
+    raise Exception
+Exception
+20-Sep-18 12:42:22 - Productos Insertados: 10
+20-Sep-18 12:42:22 - Productos Actualizados: 100
+20-Sep-18 12:42:22 - Exception occurred
+Traceback (most recent call last):
+  File "C:/Users/pauli/Documents/SitSolutions/DataBunkerApp/app/routines/upload_categories.py", line 21, in <module>
+    raise Exception
+Exception
+20-Sep-18 12:42:22 - Productos Insertados: 10
+20-Sep-18 12:42:22 - Productos Actualizados: 100
+20-Sep-18 12:42:22 - Exception occurred
+Traceback (most recent call last):
+  File "C:/Users/pauli/Documents/SitSolutions/DataBunkerApp/app/routines/upload_categories.py", line 21, in <module>
+    raise Exception
+Exception
+20-Sep-18 12:42:22 - Skipping Walmart
+Traceback (most recent call last):
+  File "C:/Users/pauli/Documents/SitSolutions/DataBunkerApp/app/routines/upload_categories.py", line 21, in <module>
+    raise Exception
+Exception
+20-Sep-18 12:42:22 - Ending Walmart
+20-Sep-18 12:42:22 - Starting ATT
+20-Sep-18 12:42:22 - Productos Insertados: 10
+20-Sep-18 12:42:22 - Productos Actualizados: 100
+20-Sep-18 12:42:22 - Exception occurred
+Traceback (most recent call last):
+  File "C:/Users/pauli/Documents/SitSolutions/DataBunkerApp/app/routines/upload_categories.py", line 21, in <module>
+    raise Exception
+Exception
+20-Sep-18 12:42:22 - Productos Insertados: 10
+20-Sep-18 12:42:22 - Productos Actualizados: 100
+20-Sep-18 12:42:22 - Exception occurred
+Traceback (most recent call last):
+  File "C:/Users/pauli/Documents/SitSolutions/DataBunkerApp/app/routines/upload_categories.py", line 21, in <module>
+    raise Exception
+Exception
+20-Sep-18 12:42:22 - Productos Insertados: 10
+20-Sep-18 12:42:22 - Productos Actualizados: 100
+20-Sep-18 12:42:22 - Exception occurred
+Traceback (most recent call last):
+  File "C:/Users/pauli/Documents/SitSolutions/DataBunkerApp/app/routines/upload_categories.py", line 21, in <module>
+    raise Exception
+Exception
+20-Sep-18 12:42:22 - Skipping ATT
+Traceback (most recent call last):
+  File "C:/Users/pauli/Documents/SitSolutions/DataBunkerApp/app/routines/upload_categories.py", line 21, in <module>
+    raise Exception
+Exception
+20-Sep-18 12:42:22 - Ending ATT
+20-Sep-18 12:42:22 - *********************   End   *********************
+24-Sep-18 11:49:39 - ********************* Start *********************
+24-Sep-18 11:49:39 - Starting Walmart
+24-Sep-18 11:49:39 - Exception occurred
+Traceback (most recent call last):
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\selenium\webdriver\common\service.py", line 76, in start
+    stdin=PIPE)
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\Lib\subprocess.py", line 709, in __init__
+    restore_signals, start_new_session)
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\Lib\subprocess.py", line 997, in _execute_child
+    startupinfo)
+FileNotFoundError: [WinError 2] The system cannot find the file specified
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:/Users/pauli/Documents/SitSolutions/DataBunkerApp/app/routines/upload_categories.py", line 17, in <module>
+    res = channel.build_tree()
+  File "C:\Users\pauli\Documents\SitSolutions\DataBunkerApp\app\models\uploads\channels\walmart.py", line 110, in build_tree
+    browser = webdriver.Chrome(cls.driver, chrome_options=cls.chrome_options)
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\selenium\webdriver\chrome\webdriver.py", line 68, in __init__
+    self.service.start()
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\selenium\webdriver\common\service.py", line 83, in start
+    os.path.basename(self.path), self.start_error_message)
+selenium.common.exceptions.WebDriverException: Message: 'chromedriver.exe' executable needs to be in PATH. Please see https://sites.google.com/a/chromium.org/chromedriver/home
+
+24-Sep-18 11:49:39 - Exception occurred
+Traceback (most recent call last):
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\selenium\webdriver\common\service.py", line 76, in start
+    stdin=PIPE)
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\Lib\subprocess.py", line 709, in __init__
+    restore_signals, start_new_session)
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\Lib\subprocess.py", line 997, in _execute_child
+    startupinfo)
+FileNotFoundError: [WinError 2] The system cannot find the file specified
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:/Users/pauli/Documents/SitSolutions/DataBunkerApp/app/routines/upload_categories.py", line 17, in <module>
+    res = channel.build_tree()
+  File "C:\Users\pauli\Documents\SitSolutions\DataBunkerApp\app\models\uploads\channels\walmart.py", line 110, in build_tree
+    browser = webdriver.Chrome(cls.driver, chrome_options=cls.chrome_options)
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\selenium\webdriver\chrome\webdriver.py", line 68, in __init__
+    self.service.start()
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\selenium\webdriver\common\service.py", line 83, in start
+    os.path.basename(self.path), self.start_error_message)
+selenium.common.exceptions.WebDriverException: Message: 'chromedriver.exe' executable needs to be in PATH. Please see https://sites.google.com/a/chromium.org/chromedriver/home
+
+24-Sep-18 11:49:39 - Exception occurred
+Traceback (most recent call last):
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\selenium\webdriver\common\service.py", line 76, in start
+    stdin=PIPE)
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\Lib\subprocess.py", line 709, in __init__
+    restore_signals, start_new_session)
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\Lib\subprocess.py", line 997, in _execute_child
+    startupinfo)
+FileNotFoundError: [WinError 2] The system cannot find the file specified
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:/Users/pauli/Documents/SitSolutions/DataBunkerApp/app/routines/upload_categories.py", line 17, in <module>
+    res = channel.build_tree()
+  File "C:\Users\pauli\Documents\SitSolutions\DataBunkerApp\app\models\uploads\channels\walmart.py", line 110, in build_tree
+    browser = webdriver.Chrome(cls.driver, chrome_options=cls.chrome_options)
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\selenium\webdriver\chrome\webdriver.py", line 68, in __init__
+    self.service.start()
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\selenium\webdriver\common\service.py", line 83, in start
+    os.path.basename(self.path), self.start_error_message)
+selenium.common.exceptions.WebDriverException: Message: 'chromedriver.exe' executable needs to be in PATH. Please see https://sites.google.com/a/chromium.org/chromedriver/home
+
+24-Sep-18 11:49:39 - Skipping Walmart
+Traceback (most recent call last):
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\selenium\webdriver\common\service.py", line 76, in start
+    stdin=PIPE)
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\Lib\subprocess.py", line 709, in __init__
+    restore_signals, start_new_session)
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\Lib\subprocess.py", line 997, in _execute_child
+    startupinfo)
+FileNotFoundError: [WinError 2] The system cannot find the file specified
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:/Users/pauli/Documents/SitSolutions/DataBunkerApp/app/routines/upload_categories.py", line 17, in <module>
+    res = channel.build_tree()
+  File "C:\Users\pauli\Documents\SitSolutions\DataBunkerApp\app\models\uploads\channels\walmart.py", line 110, in build_tree
+    browser = webdriver.Chrome(cls.driver, chrome_options=cls.chrome_options)
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\selenium\webdriver\chrome\webdriver.py", line 68, in __init__
+    self.service.start()
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\selenium\webdriver\common\service.py", line 83, in start
+    os.path.basename(self.path), self.start_error_message)
+selenium.common.exceptions.WebDriverException: Message: 'chromedriver.exe' executable needs to be in PATH. Please see https://sites.google.com/a/chromium.org/chromedriver/home
+
+24-Sep-18 11:49:39 - Ending Walmart
+24-Sep-18 11:49:39 - Starting ATT
+24-Sep-18 11:49:42 - Exception occurred
+Traceback (most recent call last):
+  File "C:/Users/pauli/Documents/SitSolutions/DataBunkerApp/app/routines/upload_categories.py", line 17, in <module>
+    res = channel.build_tree()
+  File "C:\Users\pauli\Documents\SitSolutions\DataBunkerApp\app\models\uploads\channels\att.py", line 24, in build_tree
+    channel = cls.get_channel(cls.channel_name)
+  File "C:\Users\pauli\Documents\SitSolutions\DataBunkerApp\app\models\uploads\base_upload.py", line 19, in get_channel
+    return Channel.get_by_name(channel_name)
+  File "C:\Users\pauli\Documents\SitSolutions\DataBunkerApp\app\models\elements\element.py", line 103, in get_by_name
+    element = Database.find_one(collection, {"name": name, 'parentElementId': parent_id})
+  File "C:\Users\pauli\Documents\SitSolutions\DataBunkerApp\app\common\database.py", line 35, in find_one
+    return Database.DATABASE[collection].find_one(query)
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\pymongo\collection.py", line 1225, in find_one
+    for result in cursor.limit(-1):
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\pymongo\cursor.py", line 1169, in next
+    if len(self.__data) or self._refresh():
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\pymongo\cursor.py", line 1085, in _refresh
+    self.__send_message(q)
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\pymongo\cursor.py", line 975, in __send_message
+    helpers._check_command_response(first)
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\pymongo\helpers.py", line 145, in _check_command_response
+    raise OperationFailure(msg % errmsg, code, response)
+pymongo.errors.OperationFailure: there are no users authenticated
+24-Sep-18 11:49:42 - Exception occurred
+Traceback (most recent call last):
+  File "C:/Users/pauli/Documents/SitSolutions/DataBunkerApp/app/routines/upload_categories.py", line 17, in <module>
+    res = channel.build_tree()
+  File "C:\Users\pauli\Documents\SitSolutions\DataBunkerApp\app\models\uploads\channels\att.py", line 24, in build_tree
+    channel = cls.get_channel(cls.channel_name)
+  File "C:\Users\pauli\Documents\SitSolutions\DataBunkerApp\app\models\uploads\base_upload.py", line 19, in get_channel
+    return Channel.get_by_name(channel_name)
+  File "C:\Users\pauli\Documents\SitSolutions\DataBunkerApp\app\models\elements\element.py", line 103, in get_by_name
+    element = Database.find_one(collection, {"name": name, 'parentElementId': parent_id})
+  File "C:\Users\pauli\Documents\SitSolutions\DataBunkerApp\app\common\database.py", line 35, in find_one
+    return Database.DATABASE[collection].find_one(query)
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\pymongo\collection.py", line 1225, in find_one
+    for result in cursor.limit(-1):
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\pymongo\cursor.py", line 1169, in next
+    if len(self.__data) or self._refresh():
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\pymongo\cursor.py", line 1085, in _refresh
+    self.__send_message(q)
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\pymongo\cursor.py", line 975, in __send_message
+    helpers._check_command_response(first)
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\pymongo\helpers.py", line 145, in _check_command_response
+    raise OperationFailure(msg % errmsg, code, response)
+pymongo.errors.OperationFailure: there are no users authenticated
+24-Sep-18 11:49:43 - Exception occurred
+Traceback (most recent call last):
+  File "C:/Users/pauli/Documents/SitSolutions/DataBunkerApp/app/routines/upload_categories.py", line 17, in <module>
+    res = channel.build_tree()
+  File "C:\Users\pauli\Documents\SitSolutions\DataBunkerApp\app\models\uploads\channels\att.py", line 24, in build_tree
+    channel = cls.get_channel(cls.channel_name)
+  File "C:\Users\pauli\Documents\SitSolutions\DataBunkerApp\app\models\uploads\base_upload.py", line 19, in get_channel
+    return Channel.get_by_name(channel_name)
+  File "C:\Users\pauli\Documents\SitSolutions\DataBunkerApp\app\models\elements\element.py", line 103, in get_by_name
+    element = Database.find_one(collection, {"name": name, 'parentElementId': parent_id})
+  File "C:\Users\pauli\Documents\SitSolutions\DataBunkerApp\app\common\database.py", line 35, in find_one
+    return Database.DATABASE[collection].find_one(query)
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\pymongo\collection.py", line 1225, in find_one
+    for result in cursor.limit(-1):
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\pymongo\cursor.py", line 1169, in next
+    if len(self.__data) or self._refresh():
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\pymongo\cursor.py", line 1085, in _refresh
+    self.__send_message(q)
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\pymongo\cursor.py", line 975, in __send_message
+    helpers._check_command_response(first)
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\pymongo\helpers.py", line 145, in _check_command_response
+    raise OperationFailure(msg % errmsg, code, response)
+pymongo.errors.OperationFailure: there are no users authenticated
+24-Sep-18 11:49:43 - Skipping ATT
+Traceback (most recent call last):
+  File "C:/Users/pauli/Documents/SitSolutions/DataBunkerApp/app/routines/upload_categories.py", line 17, in <module>
+    res = channel.build_tree()
+  File "C:\Users\pauli\Documents\SitSolutions\DataBunkerApp\app\models\uploads\channels\att.py", line 24, in build_tree
+    channel = cls.get_channel(cls.channel_name)
+  File "C:\Users\pauli\Documents\SitSolutions\DataBunkerApp\app\models\uploads\base_upload.py", line 19, in get_channel
+    return Channel.get_by_name(channel_name)
+  File "C:\Users\pauli\Documents\SitSolutions\DataBunkerApp\app\models\elements\element.py", line 103, in get_by_name
+    element = Database.find_one(collection, {"name": name, 'parentElementId': parent_id})
+  File "C:\Users\pauli\Documents\SitSolutions\DataBunkerApp\app\common\database.py", line 35, in find_one
+    return Database.DATABASE[collection].find_one(query)
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\pymongo\collection.py", line 1225, in find_one
+    for result in cursor.limit(-1):
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\pymongo\cursor.py", line 1169, in next
+    if len(self.__data) or self._refresh():
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\pymongo\cursor.py", line 1085, in _refresh
+    self.__send_message(q)
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\pymongo\cursor.py", line 975, in __send_message
+    helpers._check_command_response(first)
+  File "C:\Users\pauli\AppData\Local\Programs\Python\Python36\lib\site-packages\pymongo\helpers.py", line 145, in _check_command_response
+    raise OperationFailure(msg % errmsg, code, response)
+pymongo.errors.OperationFailure: there are no users authenticated
+24-Sep-18 11:49:43 - Ending ATT
+24-Sep-18 11:49:43 - *********************   End   *********************
