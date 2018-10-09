@@ -37,11 +37,11 @@
           <mat-icon style="margin-left: 7px;">cloud_download</mat-icon>
           <span *ngIf="!showFiller && !mobileQuery.matches" class="inline-block menu-item">Exportar</span>
         </a>
-        <a *ngIf="user?.email.split('@')[1] == 'data-bunker.com'" mat-list-item routerLink="/app/users" [routerLinkActive]="['active']">
+        <a *ngIf="user?.email.split('@')[1] == 'data-bunker.com' || user?.email.split('@')[1] == 'data-bunker.com.mx'" mat-list-item routerLink="/app/users" [routerLinkActive]="['active']">
           <mat-icon style="margin-left: 7px;">account_box</mat-icon>
           <span *ngIf="!showFiller && !mobileQuery.matches" class="inline-block menu-item">Usuarios</span>
         </a>
-        <a *ngIf="user?.email.split('@')[1] == 'data-bunker.com'" mat-list-item routerLink="/app/new-user" [routerLinkActive]="['active']">
+        <a *ngIf="user?.email.split('@')[1] == 'data-bunker.com' || user?.email.split('@')[1] == 'data-bunker.com.mx' " mat-list-item routerLink="/app/new-user" [routerLinkActive]="['active']">
           <mat-icon style="margin-left: 7px;">person_add</mat-icon>
           <span *ngIf="!showFiller && !mobileQuery.matches" class="inline-block menu-item">Nuevo Usuario</span>
         </a>
