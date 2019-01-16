@@ -1,14 +1,18 @@
 import datetime
+from dataclasses import dataclass
 
-from app import Database
-from app.models.products.constants import COLLECTION
-from app.models.elements.element import Element
+from app.common.database import Database
+from app.models.elements.subelements.brands.constants import COLLECTION
+from app.models.elements.subelements.products.constants import COLLECTION as PRODUCTS_COLLECTION
+from app.models.elements.subelements.subelement import SubElement
 
 
-class Brand(Element):
-    def __init__(self, name, parentElementId, sub_elements=None, _id=None):
-        Element.__init__(self, name, sub_elements, _id)
-        self.parentElementId = parentElementId
+@dataclass(init=False)
+class Brand(SubElement):
+    meta = {'collection': COLLECTION}
+    # def __init__(self, name, parentElementId, sub_elements=None, _id=None):
+    #     Element.__init__(self, name, sub_elements, _id)
+    #     self.parentElementId = parentElementId
 
     @staticmethod
     def get_average(element_id, begin_date, end_date):
@@ -27,8 +31,7 @@ class Brand(Element):
                                        'average': {'$avg': '$sub_elements.value'}}})
         expressions.append({'$sort': {'_id': 1}})
 
-        result = list(Database.aggregate(COLLECTION, expressions))
+        result = list(Database.aggregate(PRODUCTS_COLLECTION, expressions))
         for element in result:
             element["_id"] = element["_id"].strftime("%Y/%m/%d")
         return result
-

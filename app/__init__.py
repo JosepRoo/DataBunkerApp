@@ -1,12 +1,10 @@
 import datetime
 from flask import Flask, session, request
-from flask_compress import Compress
 from flask_restful import Api
 from werkzeug.utils import redirect
 
 from app.common.database import Database
 from app.common.response import Response
-from app.resources.company import Company
 from app.resources.element import Element, SubElement, ElementValue, BuildProductsReport, BuildComparatorTable
 from app.resources.privilege import Privilege
 from app.resources.uploadData import UploadData
@@ -18,7 +16,6 @@ def create_app(config_name):
     app = Flask(__name__)
     api = Api(app)
     app.config.from_object(config[config_name])
-    Compress(app)
     # Register our blueprints
     from .default import default as default_blueprint, groupon
     app.register_blueprint(default_blueprint)
@@ -27,7 +24,6 @@ def create_app(config_name):
     api.add_resource(UserStatus, '/userstatus')
     api.add_resource(User, '/user/<string:email>', '/user')
     api.add_resource(UserList, '/users')
-    api.add_resource(Company, '/company', '/company/<string:_id>')
     api.add_resource(Element, '/elements/<string:element_type>', '/elements/<string:element_type>/<string:element_id>')
     api.add_resource(SubElement, '/subelements/<string:element_type>/<string:element_id>')
     api.add_resource(ElementValue,
@@ -63,10 +59,10 @@ def create_app(config_name):
                 session.clear()
         except Exception:
             pass
-        apiCall = request.path.lstrip('/').split('/')[0]
-        apiCalls = ['company', 'user', 'elements', 'subelements', 'elementvalue']
-        if session.get('email') is None and session.get('_id') is None and apiCall in apiCalls:
-            if apiCall != 'user' and request.method != 'POST':
+        api_call = request.path.lstrip('/').split('/')[0]
+        api_calls = ['company', 'user', 'elements', 'subelements', 'elementvalue']
+        if session.get('email') is None and session.get('_id') is None and api_call in api_calls:
+            if api_call != 'user' and request.method != 'POST':
                 return redirect('/#/screen')
 
     return app

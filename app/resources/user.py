@@ -4,7 +4,7 @@ from flask_restful import Resource, reqparse
 from app.models.users.errors import UserError
 from app.common.response import Response
 from app.models.users.user import User as UserModel
-from app.models.channels.channels import Channel as ChannelModel
+from app.models.elements.channels.channel import Channel as ChannelModel
 from app.models.users.constants import COLLECTION
 
 
@@ -73,14 +73,16 @@ class User(Resource):
     def get(self, email=None):
         _id = session.get('_id')
         email = session.get('email') if email is None else email
-        user_json = None
+        user = None
         if email is not None:
-            user_json = UserModel.get_by_email(email).json(exclude='password')
+            user = UserModel.get_by_email(email)
         elif _id is not None:
-            user_json = UserModel.get_by_id(_id, COLLECTION).json(exclude='password')
-        if user_json is not None and user_json.get('channel_id') is not None:
-            user_json['channel_name'] = ChannelModel.get_by_id(user_json.get('channel_id')).json(
+            user = UserModel.get_by_id(_id)
+        if user is not None and user.channel_id is not None:
+            channel_name = ChannelModel.get_by_id(user.channel_id).json(
                 exclude=('sub_elements', '_id')).get('name')
+            user_json = user.json(exclude={'password'})
+            user_json['channel_name'] = channel_name
             return user_json, 200
 
         return Response(message='Not Logged In or Data not given').json(), 400
@@ -91,8 +93,8 @@ class User(Resource):
         user = UserModel.get_by_email(email)
         if data.get('privileges', None):
             user.privileges = data['privileges']
-        user.update_user()
-        return user.json(exclude='password')
+        user.save()
+        return user.json(exclude={'password'})
 
     def post(self, email=None):
         data = User.parser.parse_args()
@@ -110,7 +112,7 @@ class User(Resource):
         elif _id:
             user = UserModel.get_by_id(_id, COLLECTION)
         if user:
-            user.delete_user()
+            user.delete()
             return Response(success=True, message='User deleted').json(), 200
         return Response(message='Data not given').json(), 400
 
@@ -165,4 +167,4 @@ class UserList(Resource):
             return Response(message='Not Logged In or Data not given').json(), 401
         elif "data-bunker.com" not in session.get('email'):
             return Response(message='No cuentas con los privilegios para hacer esa peticion').json(), 401
-        return [user.json(exclude=('password', 'enterprise_id')) for user in UserModel.get_list()]
+        return [user.json(exclude=('password', 'enterprise_id')) for user in UserModel.objects()]

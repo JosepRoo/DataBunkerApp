@@ -1,7 +1,6 @@
 from app import Database
-from app.models.brands.constants import COLLECTION as BRAND_COLLECTION
-from app.models.categories.category import Category
-from app.models.products.product import COLLECTION as PRODUCT_COLLECTION
+from app.models.elements.subelements.brands.constants import COLLECTION as BRAND_COLLECTION
+from app.models.elements.subelements.products.product import COLLECTION as PRODUCT_COLLECTION
 from app.models.uploads.base_upload import BaseUpload
 
 from bs4 import BeautifulSoup

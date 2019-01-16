@@ -1,30 +1,33 @@
+from __future__ import annotations
+from dataclasses import dataclass
+
 from flask import session
-
+from mongoengine import *
 from app.common.database import Database
-from app.models.basemodel import BaseModel
+from app.models.baseModel import BaseModel
 from app.models.elements.errors import ElementNotFound
-from app.models.products.constants import COLLECTION as PRODUCT_COLLECTION
-from app.models.brands.constants import COLLECTION as BRAND_COLLECTION
-from app.models.categories.constants import COLLECTION as CATEGORY_COLLECTION
-from app.models.channels.constants import COLLECTION as CHANNEL_COLLECTION
-
+from app.models.elements.subelements.products.constants import COLLECTION as PRODUCT_COLLECTION
+from app.models.elements.subelements.brands.constants import COLLECTION as BRAND_COLLECTION
+from app.models.elements.subelements.categories.constants import COLLECTION as CATEGORY_COLLECTION
+from app.models.elements.channels.constants import COLLECTION as CHANNEL_COLLECTION
 
 # clase base de todos los elementos (canales,categorias,marcas,productos y logs)
+
+
+@dataclass(init=False)
 class Element(BaseModel):
-    def __init__(self, name, sub_elements=None, _id=None):
-        self.name = name
-        self.sub_elements = sub_elements if sub_elements else []
-        BaseModel.__init__(self, _id)
+    name: str = StringField(required=True)
+    sub_elements: list = ListField(default=lambda: list())
+    meta = {'allow_inheritance': True,
+            'abstract': True}
 
     @classmethod
-    def get_sub_elements(cls, _id, child_class):
-        from app.models.users.user import User
-        user = User.get_by_email(session['email'])
-        privileges = user.privileges.get_privilege(child_class.__name__ .lower(), _id)
+    def get_sub_elements(cls, _id: str, child_class: function, user):
+        privileges = user.privileges.get_privilege(child_class, _id)
         child_collection = Element.get_collection_by_name(cls.__name__, is_child=True)
         if privileges == "All":
             return [child_class(**sub_element) for sub_element in
-                Database.find(child_collection, {'parentElementId': _id})]
+                    Database.find(child_collection, {'parentElementId': _id})]
         return [child_class(**sub_element) for sub_element in
                 Database.find(child_collection, {'parentElementId': _id, "_id": {"$in": privileges}})]
 
@@ -108,13 +111,6 @@ class Element(BaseModel):
     def get_by_name_and_parent_id(cls, name, parent_element_id):
         collection = Element.get_collection_by_name(cls.__name__)
         element = Database.find_one(collection, {"name": name, "parentElementId": parent_element_id})
-        if element:
-            return cls(**element)
-
-    @classmethod
-    def get_by_id(cls, _id, collection=None):
-        collection = Element.get_collection_by_name(cls.__name__)
-        element = Database.find_one(collection, {"_id": _id})
         if element:
             return cls(**element)
 

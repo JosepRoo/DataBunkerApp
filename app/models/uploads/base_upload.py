@@ -1,9 +1,9 @@
 from app.models.basemodel import BaseModel
-from app.models.brands.brand import Brand
-from app.models.categories.category import Category
-from app.models.channels.channels import Channel
+from app.models.elements.subelements.brands.brand import Brand
+from app.models.elements.subelements.categories.category import Category
+from app.models.elements.channels import Channel
 from app.models.logs.log import Log
-from app.models.products.product import Product
+from app.models.elements.subelements.products.product import Product
 
 
 class BaseUpload(BaseModel):
