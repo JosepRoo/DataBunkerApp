@@ -1,3 +1,4 @@
+import uuid
 from dataclasses import dataclass
 from mongoengine import *
 
@@ -12,6 +13,7 @@ from app.models.privileges.errors import WrongElementType, WrongPrivilegeAssignm
 
 @dataclass(init=False)
 class Privilege(BaseEmbeddedDocument):
+    _id: StringField = StringField(primary_key=True, default=lambda: uuid.uuid4().hex)
     privilege_tree: Tree = DictField(required=True)
 
     # def __init__(self, privilege_tree=None):
@@ -93,6 +95,7 @@ class Privilege(BaseEmbeddedDocument):
         :return: returns the _id of the elements
         """
         # cargar todos los canales en los privilegios
+        print(element_type)
         if element_type is Channel:
             channels = list(self.privilege_tree.keys())
             if not channels:

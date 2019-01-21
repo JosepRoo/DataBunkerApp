@@ -26,8 +26,8 @@ class Element(Resource):
             if element_id:
                 return element_class.get_element(element_id).json(
                     ("sub_elements",)) if element_type != "product" else element_class.get_element(
-                    element_id).json("parentElementId")
-            return [element.json(("sub_elements",)) if element_type != "product" else element.json() for element in
+                    element_id).json(exclude={"parentElementId"})
+            return [element.json(exclude={"sub_elements"}) if element_type != "product" else element.json() for element in
                     element_class.get_elements()]
 
         except ElementErrors as e:
@@ -53,10 +53,12 @@ class SubElement(Resource):
             element_class = Brand
             child_class = Product
         try:
-            return [sub_element.json(("sub_elements",))
-                    if element_type != "product"
-                    else sub_element.json() for sub_element in
-                    element_class.get_sub_elements(element_id, child_class, user)]
+            if element_class != "Product":
+                exclude = {'sub_elements'}
+            else:
+                exclude = None
+            return [sub_element.json(exclude=exclude)
+                    for sub_element in element_class.get_sub_elements(element_id, child_class, user)]
 
         except ElementErrors as e:
             return Response(e.message), 404

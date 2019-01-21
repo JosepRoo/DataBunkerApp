@@ -9,7 +9,6 @@ from mongoengine import *
 
 @dataclass(init=False)
 class BaseEmbeddedDocument(EmbeddedDocument):
-    _id: StringField = StringField(primary_key=True, default=lambda: uuid.uuid4().hex)
     meta = {'allow_inheritance': True,
             'abstract': True}
 

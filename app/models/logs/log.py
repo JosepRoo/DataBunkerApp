@@ -5,7 +5,7 @@ from mongoengine import *
 from app.models.baseEmbeddedDocument import BaseEmbeddedDocument
 
 
-@dataclass
+@dataclass(init=False)
 class Log(BaseEmbeddedDocument):
     value: float = FloatField(required=True)
     date: datetime = DateTimeField(required=True)

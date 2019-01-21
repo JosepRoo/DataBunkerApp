@@ -5,6 +5,7 @@ from flask import session
 from dataclasses import dataclass
 from mongoengine import *
 
+from app.common.tree import Tree
 from app.models.baseModel import BaseModel
 from app.models.privileges.privilege import Privilege
 from app.models.recoveries.errors import UnableToRecoverPassword
@@ -16,6 +17,7 @@ from app.models.users.errors import FavoriteAlreadyAdded, FavoriteNotFound
 import app.models.users.errors as UserErrors
 
 
+# TODO cambiar privilegios a channels:[], categories:[]...
 @dataclass(init=False)
 class User(BaseModel):
     email: str = StringField(required=True)
@@ -23,7 +25,7 @@ class User(BaseModel):
     channel_id: str = StringField()
     password: str = StringField(required=True)
     enterprise_id: str = StringField()
-    privileges: dict = DictField()  # EmbeddedDocumentField(Privilege)
+    privileges: Privilege = EmbeddedDocumentField(Privilege, default={})  # EmbeddedDocumentField(Privilege)
     favorites: list = ListField(default=lambda: list())
     meta = {'collection': COLLECTION}
 
@@ -42,7 +44,8 @@ class User(BaseModel):
     def get_by_email(cls, email: str) -> User:
         user = cls.objects(email=email)
         if user:
-            return user[0]
+            user = user[0]
+            return user
 
     @staticmethod
     def login_valid(email, password):
