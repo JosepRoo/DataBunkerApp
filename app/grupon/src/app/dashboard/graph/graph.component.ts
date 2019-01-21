@@ -119,7 +119,7 @@ export class GraphComponent implements OnInit, OnChanges {
       const data = {
         data: [],
         fill: false,
-        label: product.channel + ' - ' + product.name
+        label: (product.channel ? (product.channel  + ' - ') : '') + product.name
       };
       this.lineChartLabels.forEach(day => {
         const price = product.values.find(value => {
@@ -154,7 +154,6 @@ export class GraphComponent implements OnInit, OnChanges {
     let height;
     if (this.selectedData) {
       height = this.selectedData.length * 40;
-      console.log(height);
     }
     if (height < 400) {
       return 400;
@@ -165,10 +164,10 @@ export class GraphComponent implements OnInit, OnChanges {
 
   // events
   public chartClicked(e: any): void {
-    console.log(e);
+    // console.log(e);
   }
 
   public chartHovered(e: any): void {
-    console.log(e);
+    // console.log(e);
   }
 }

@@ -58,23 +58,32 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.startDate.setMonth(this.startDate.getMonth() - 3);
     if (localStorage.getItem('selectedData')) {
       const data = JSON.parse(localStorage.getItem('selectedData'));
-      this.selectedData = data.map(el => {
-        el.values = el.values.map(_el => {
-          _el._id = new Date(_el._id);
-          return _el;
+      if (data) {
+        this.selectedData = data.map(el => {
+          el.values = el.values.map(_el => {
+            _el._id = new Date(_el._id);
+            return _el;
+          });
+          return el;
         });
-        return el;
-      });
+      }
     }
     if (localStorage.getItem('lineChartLabels')) {
       const labels = JSON.parse(localStorage.getItem('lineChartLabels'));
-      this.lineChartLabels = labels.map(el => {
-        return new Date(el);
-      });
+      if (labels) {
+        this.lineChartLabels = labels.map(el => {
+          return new Date(el);
+        });
+      }
       // console.log(this.lineChartLabels);
     }
     this.userService.getFavorites().subscribe(res => {
       this.selectedData = this.selectedData.concat(res);
+      this.selectedData = this.selectedData.filter((thing, index, self) =>
+        index === self.findIndex((t) => (
+          t._id === thing._id
+        ))
+      );
     });
   }
 
@@ -86,11 +95,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const data = this.dataSelect.getData().data;
     for (let index = 0; index < data.length; index++) {
       const product = data[index];
-      const find = this.selectedData.find(el => {
-        return el._id === product._id;
-      });
-      if (!find) {
-        this.selectedData.push(product);
+      if (this.selectedData) {
+        const find = this.selectedData.find(el => {
+          return el._id === product._id;
+        });
+        if (!find) {
+          this.selectedData.push(product);
+        }
       }
     }
     this.getProductsValues();
