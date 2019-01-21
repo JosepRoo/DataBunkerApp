@@ -3,6 +3,7 @@ import datetime
 import uuid
 from dataclasses import dataclass
 
+from mongoengine.base import BaseDict
 from mongoengine.base.datastructures import BaseList
 from mongoengine import *
 
@@ -42,7 +43,7 @@ class BaseEmbeddedDocument(EmbeddedDocument):
                 result[attrib] = attrib_value
             elif type(attrib_value) is datetime.datetime and date_to_string:
                 result[attrib] = attrib_value.strftime("%Y-%m-%d %H:%M")
-            elif type(attrib_value) not in [str, int, float, dict, set, list, bool]:
+            elif type(attrib_value) not in [str, int, float, dict, set, list, bool, BaseDict]:
                 result[attrib] = attrib_value.json(date_to_string=date_to_string, exclude=exclude)
             else:
                 result[attrib] = attrib_value

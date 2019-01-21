@@ -79,8 +79,9 @@ class User(Resource):
         elif _id is not None:
             user = UserModel.get_by_id(_id)
         if user is not None and user.channel_id is not None:
+            print(user.channel_id)
             channel_name = ChannelModel.get_by_id(user.channel_id).json(
-                exclude=('sub_elements', '_id')).get('name')
+                exclude={'sub_elements', '_id'}).get('name')
             user_json = user.json(exclude={'password'})
             user_json['channel_name'] = channel_name
             return user_json, 200
