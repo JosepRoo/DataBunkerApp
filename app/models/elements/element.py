@@ -40,9 +40,7 @@ class Element(BaseModel):
         collection = Element.get_collection_by_name(cls.__name__)
         from app.models.users.user import User
         user = User.get_by_email(session['email'])
-        print(user.privileges.__repr__())
         privileges = user.privileges.get_privilege(cls)
-        print(privileges)
         return [cls(**element) for element in Database.find(collection, {"_id": {"$in": privileges}})]
 
     @classmethod

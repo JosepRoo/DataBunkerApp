@@ -37,8 +37,8 @@ class Product(SubElement):
     @classmethod
     def get_by_UPC(cls, upc, channel_id):
         product = cls.objects(UPC=upc, greatGrandParentId=channel_id)
-        if product:
-            return cls(**product)
+        if len(product) >= 1:
+            return product[0]
 
     def is_duplicated_date(self, new_date: str):
         if list(filter(lambda x: x.date.strftime("%Y-%m-%d") == new_date[:10], self.sub_elements)):

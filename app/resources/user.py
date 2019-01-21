@@ -111,7 +111,7 @@ class User(Resource):
         if email:
             user = UserModel.get_by_email(email)
         elif _id:
-            user = UserModel.get_by_id(_id, COLLECTION)
+            user = UserModel.get_by_id(_id)
         if user:
             user.delete()
             return Response(success=True, message='User deleted').json(), 200
@@ -128,7 +128,7 @@ class UserFavorites(Resource):
     def get(self):
         _id = session['_id'] if session.get('_id', None) else None
         if _id:
-            user = UserModel.get_by_id(_id, COLLECTION)
+            user = UserModel.get_by_id(_id)
             favorites = user.get_favorites()
             return [product.json(["sub_elements", "parentElementId"]) for product in
                     favorites if product] if favorites else favorites, 200
@@ -139,7 +139,7 @@ class UserFavorites(Resource):
         _id = session['_id'] if session.get('_id', None) else None
         if _id:
             try:
-                user = UserModel.get_by_id(_id, COLLECTION)
+                user = UserModel.get_by_id(_id)
                 product = user.add_favorite(data['product_id'])
                 return Response(success=True,
                                 message="El producto {} fue agregado a favortios".format(product.name)).json(), 200
@@ -152,7 +152,7 @@ class UserFavorites(Resource):
         _id = session['_id'] if session.get('_id', None) else None
         if _id:
             try:
-                user = UserModel.get_by_id(_id, COLLECTION)
+                user = UserModel.get_by_id(_id)
                 product = user.remove_favorite(data['product_id'])
                 return Response(success=True,
                                 message="El producto {} fue elminado de favortios".format(product.name)).json(), 200

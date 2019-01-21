@@ -118,3 +118,7 @@ class Database:
     @staticmethod
     def update(collection, query, data):
         Database.DATABASE[collection].update(query, data, upsert=True)
+
+    @staticmethod
+    def insert_many(collection, data_list):
+        return Database.DATABASE[collection].insert_many(data_list)

@@ -28,7 +28,6 @@ class BaseEmbeddedDocument(EmbeddedDocument):
             if (exclude is not None and attrib in exclude) or attrib == '_cls':
                 continue
             attrib_value = self.__getattribute__(attrib)
-            # print(self.__class__.__name__, attrib, type(attrib_value))
             if type(attrib_value) is list or type(attrib_value) is BaseList:
                 result[attrib] = list()
                 for element in attrib_value:
@@ -43,10 +42,13 @@ class BaseEmbeddedDocument(EmbeddedDocument):
                 result[attrib] = attrib_value
             elif type(attrib_value) is datetime.datetime and date_to_string:
                 result[attrib] = attrib_value.strftime("%Y-%m-%d %H:%M")
-            elif type(attrib_value) not in [str, int, float, dict, set, list, bool, BaseDict]:
+            elif type(attrib_value) not in [str, int, float, dict, set, list, bool, BaseDict, datetime.datetime]:
                 result[attrib] = attrib_value.json(date_to_string=date_to_string, exclude=exclude)
             else:
-                result[attrib] = attrib_value
+                if type(attrib_value) is datetime.datetime and date_to_string:
+                    result[attrib].append(attrib_value.strftime("%Y-%m-%d %H:%M"))
+                else:
+                    result[attrib] = attrib_value
         # print(result)
         return result
 

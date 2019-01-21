@@ -3,4 +3,4 @@
 __pycache__
 venv/
 uwsgi.ini
-chromedriver_win32/
+geckodriver/

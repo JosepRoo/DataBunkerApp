@@ -7,6 +7,7 @@ from app.common.database import Database
 from app.common.response import Response
 from app.resources.element import Element, SubElement, ElementValue, BuildProductsReport, BuildComparatorTable
 from app.resources.privilege import Privilege
+from app.resources.routines import Routine
 from app.resources.uploadData import UploadData
 from app.resources.user import UserStatus, User, UserFavorites, UserList
 from config import config
@@ -35,6 +36,8 @@ def create_app(config_name):
     api.add_resource(BuildProductsReport, '/elements/<string:element_type>/report/<string:element_ids>/'
                                           '<string:start_date>/<string:end_date>')
     api.add_resource(BuildComparatorTable, '/comparator_table')
+
+    api.add_resource(Routine, '/routine/<string:routine>')
 
     @app.after_request
     def after_request(response):

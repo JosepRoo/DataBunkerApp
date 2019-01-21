@@ -1,6 +1,6 @@
 from app import Database
 from app.models.elements.subelements.brands.constants import COLLECTION as BRAND_COLLECTION
-from app.models.elements.subelements.categories import COLLECTION as CATEGORY_COLLECTION
+from app.models.elements.subelements.categories.constants import COLLECTION as CATEGORY_COLLECTION
 from app.models.elements.subelements.products.product import COLLECTION as PRODUCT_COLLECTION
 from app.models.uploads.base_upload import BaseUpload
 
@@ -22,7 +22,7 @@ class Walmart(BaseUpload):
     now = datetime.datetime.now()
     options = Options()
     options.headless = True
-    executable_path = './geckodriver-v0.22.0-win64/geckodriver.exe'
+    executable_path = './geckodriver/geckodriver'
     channel_name = 'Wal-Mart'
 
     @classmethod

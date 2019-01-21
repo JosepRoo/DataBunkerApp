@@ -1,22 +1,21 @@
-from app.models.basemodel import BaseModel
 from app.models.elements.subelements.brands.brand import Brand
 from app.models.elements.subelements.categories.category import Category
-from app.models.elements.channels import Channel
+from app.models.elements.channels.channel import Channel
 from app.models.logs.log import Log
 from app.models.elements.subelements.products.product import Product
 
 
-class BaseUpload(BaseModel):
+class BaseUpload:
     URL = ''
 
     @staticmethod
     def build_tree():
         pass
 
-
     @staticmethod
     def get_channel(channel_name):
         return Channel.get_by_name(channel_name)
+
     @staticmethod
     def upsert_category(channel_id, category_name):
         category = Category.get_by_name(category_name, channel_id)
@@ -42,10 +41,10 @@ class BaseUpload(BaseModel):
         updated = 0
         if product is None:
             kwargs['sub_elements'] = [kwargs['sub_elements']]
-            product = Product(product_upc, greatGrandParentId=channel_id, **kwargs)
+            product = Product(UPC=product_upc, greatGrandParentId=channel_id, **kwargs)
             insert = True
         elif not product.is_duplicated_date(kwargs['sub_elements']['date']):
             product.sub_elements.append(Log(**kwargs['sub_elements']))
-            product.update_mongo(product.get_collection())
+            product.save()
             updated = 1
         return product, insert, updated
