@@ -1,7 +1,8 @@
+from app.models.baseError import BaseError
 
-class UserError(Exception):
-    def __init__(self, message):
-        self.message = message
+
+class UserError(BaseError):
+    pass
 
 
 class UserNotExistsError(UserError):

@@ -1,13 +1,13 @@
 from app import Database
-from app.models.brands.constants import COLLECTION as BRAND_COLLECTION
-from app.models.categories.category import Category
-from app.models.products.product import COLLECTION as PRODUCT_COLLECTION
+from app.models.elements.subelements.brands.constants import COLLECTION as BRAND_COLLECTION
+from app.models.elements.subelements.products.product import COLLECTION as PRODUCT_COLLECTION
 from app.models.uploads.base_upload import BaseUpload
 
 from bs4 import BeautifulSoup
 import datetime
 import hashlib
 import requests
+import re
 
 
 class ATT(BaseUpload):
@@ -16,6 +16,7 @@ class ATT(BaseUpload):
 
     @classmethod
     def build_tree(cls):
+        pattern = r"\d{1,8}\.?\d\d"
         response = requests.get(cls.URL)
         replacers = ["\n", " ", "$", "Equipo", ","]
         soup = BeautifulSoup(response.text, "html.parser")
@@ -39,6 +40,7 @@ class ATT(BaseUpload):
                 brands_to_insert.append(brand.json(date_to_string=False))
             upc = hashlib.md5(product.encode('utf-8')).hexdigest()[:16]
             image = item.find("img")['src']
+            price = re.match(pattern, price).group()
             sub_elements = {'date': now, 'value': float(price)}
             product, upsert, updated = cls.upsert_product(upc, channel._id, image=image, sub_elements=sub_elements,
                                                           name=product, parentElementId=brand._id,

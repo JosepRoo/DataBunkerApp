@@ -1,7 +1,7 @@
 from app import Database
-from app.models.brands.constants import COLLECTION as BRAND_COLLECTION
-from app.models.categories.constants import COLLECTION as CATEGORY_COLLECTION
-from app.models.products.product import COLLECTION as PRODUCT_COLLECTION
+from app.models.elements.subelements.brands.constants import COLLECTION as BRAND_COLLECTION
+from app.models.elements.subelements.categories.constants import COLLECTION as CATEGORY_COLLECTION
+from app.models.elements.subelements.products.product import COLLECTION as PRODUCT_COLLECTION
 from app.models.uploads.base_upload import BaseUpload
 
 from bs4 import BeautifulSoup
@@ -21,8 +21,8 @@ class Walmart(BaseUpload):
     BASE = 'https://super.walmart.com.mx'
     now = datetime.datetime.now()
     options = Options()
-    options.add_argument("-headless")
-    executable_path = './geckodriver-v0.22.0-win64/geckodriver.exe'
+    options.headless = True
+    executable_path = './geckodriver/geckodriver'
     channel_name = 'Wal-Mart'
 
     @classmethod
@@ -107,13 +107,13 @@ class Walmart(BaseUpload):
 
     @classmethod
     def build_tree(cls):
-        browser = Firefox(executable_path=cls.executable_path, firefox_options=cls.options)
+        browser = Firefox(executable_path=cls.executable_path, options=cls.options)
         browser.set_page_load_timeout(20)
-        browser_cats = Firefox(executable_path=cls.executable_path, firefox_options=cls.options)
+        browser_cats = Firefox(executable_path=cls.executable_path, options=cls.options)
         browser_cats.set_page_load_timeout(20)
-        browser_sub_cats = Firefox(executable_path=cls.executable_path, firefox_options=cls.options)
+        browser_sub_cats = Firefox(executable_path=cls.executable_path, options=cls.options)
         browser_sub_cats.set_page_load_timeout(20)
-        browser_products = Firefox(executable_path=cls.executable_path, firefox_options=cls.options)
+        browser_products = Firefox(executable_path=cls.executable_path, options=cls.options)
         browser.get(cls.URL)
         links = browser.find_elements_by_class_name("_5I021sOIh5qArdWFNJNOL")
         products_inserted = 0

@@ -9,7 +9,7 @@ import os
 import xlsxwriter
 import pandas as pd
 
-#utility class used thorughout other classes to perform common functions that dont fit in any other class
+# utility class used thorughout other classes to perform common functions that dont fit in any other class
 class Utils(object):
 
     @staticmethod

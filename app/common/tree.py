@@ -2,11 +2,9 @@ from app.models.elements.errors import ElementNotFound
 
 __author__ = "Luis Ricardo Gutierrez Luna"
 
-import datetime
-
-from app.models.brands.brand import Brand
-from app.models.categories.category import Category
-from app.models.channels.channels import Channel
+from app.models.elements.subelements.brands.brand import Brand
+from app.models.elements.subelements.categories.category import Category
+from app.models.elements.channels.channel import Channel
 from app.models.logs.log import Log
 
 
@@ -27,7 +25,7 @@ class Tree(dict):
 
     def save_to_mongo(self):
         from app.models.users.user import User
-        from app.models.products.product import Product
+        from app.models.elements.subelements.products.product import Product
         result = {
             "channels": {
                 "success": 0,

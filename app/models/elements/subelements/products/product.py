@@ -1,36 +1,44 @@
-import datetime
+from datetime import datetime, timedelta
+from dataclasses import dataclass
+from mongoengine import *
 
-from flask import session
-
-from app import Database
+from app.common.database import Database
 from app.common.utils import Utils
 from app.models.elements.element import Element
 from app.models.elements.errors import ElementNotFound
+from app.models.elements.subelements.subelement import SubElement
 from app.models.emails.email import Email
 from app.models.emails.errors import EmailErrors, FailedToSendEmail
 from app.models.logs.log import Log
-from app.models.products.constants import COLLECTION
+from app.models.elements.subelements.products.constants import COLLECTION
 from app.models.users.constants import COLLECTION as USERS
-from app.models.users.user import User
 from config import basedir
 
 
-class Product(Element):
-    def __init__(self, UPC, name, parentElementId, sub_elements, image=None, _id=None, grandParentId=None,
-                 greatGrandParentId=None):
-        Element.__init__(self, name=name, _id=_id)
-        self.parentElementId = parentElementId
-        self.grandParentId = grandParentId
-        self.greatGrandParentId = greatGrandParentId
-        self.UPC = UPC
-        self.image = image
-        self.sub_elements = [Log(**sub_element) for sub_element in sub_elements]
+@dataclass(init=False)
+class Product(SubElement):
+    grandParentId: str = StringField(required=True)
+    greatGrandParentId: str = StringField(required=True)
+    UPC: str = StringField(required=True)
+    image: str = StringField()
+    sub_elements: list = ListField(EmbeddedDocumentField(Log), default=lambda: list())
+    meta = {'collection': COLLECTION}
+
+    # def __init__(self, UPC, name, parentElementId, sub_elements, image=None, _id=None, grandParentId=None,
+    #              greatGrandParentId=None):
+    #     Element.__init__(self, name=name, _id=_id)
+    #     self.parentElementId = parentElementId
+    #     self.grandParentId = grandParentId
+    #     self.greatGrandParentId = greatGrandParentId
+    #     self.UPC = UPC
+    #     self.image = image
+    #     self.sub_elements = [Log(**sub_element) for sub_element in sub_elements]
 
     @classmethod
     def get_by_UPC(cls, upc, channel_id):
-        product = Database.find_one(COLLECTION, {'UPC': upc, "greatGrandParentId": channel_id})
-        if product:
-            return cls(**product)
+        product = cls.objects(UPC=upc, greatGrandParentId=channel_id)
+        if len(product) >= 1:
+            return product[0]
 
     def is_duplicated_date(self, new_date: str):
         if list(filter(lambda x: x.date.strftime("%Y-%m-%d") == new_date[:10], self.sub_elements)):
@@ -39,9 +47,9 @@ class Product(Element):
 
     @staticmethod
     def get_average(element_id, begin_date, end_date):
-        first_date = datetime.datetime.strptime(begin_date, "%Y-%m-%d")
-        last_date = datetime.datetime.strptime(end_date, "%Y-%m-%d")
-        last_date = last_date + datetime.timedelta(days=1)
+        first_date = datetime.strptime(begin_date, "%Y-%m-%d")
+        last_date = datetime.strptime(end_date, "%Y-%m-%d")
+        last_date = last_date + timedelta(days=1)
         expressions = list()
         expressions.append({'$match': {'_id': element_id}})
         expressions.append({'$unwind': '$sub_elements'})
@@ -60,8 +68,7 @@ class Product(Element):
 
     @classmethod
     def get_element(cls, element_id):
-        collection = Element.get_collection_by_name(cls.__name__)
-        element = cls(**Database.find_one(collection, {"_id": element_id}))
+        element = cls.objects(_id=element_id)
         if element:
             if len(element.sub_elements) >= 2:
                 element.sub_elements = [element.sub_elements[-2], element.sub_elements[-1]]
@@ -153,8 +160,8 @@ class Product(Element):
     @staticmethod
     def build_products_report(element_ids, begin_date, end_date, field_name, user_id):
         allowed_products = Product.find_allowed_products(user_id, field_name, element_ids)
-        first_date = datetime.datetime.strptime(begin_date, "%Y-%m-%d")
-        last_date = datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(days=1)
+        first_date = datetime.strptime(begin_date, "%Y-%m-%d")
+        last_date = datetime.strptime(end_date, "%Y-%m-%d") + timedelta(days=1)
 
         expressions = list()
         expressions.append({'$match': {'_id': {'$in': allowed_products}}})
@@ -199,10 +206,10 @@ class Product(Element):
             raise ElementNotFound("El reporte generó cero datos. Intente con otra fecha.")
 
         dates_range = [dt.strftime("%Y-%m-%d") for dt in
-                       Utils.date_range(first_date, last_date - datetime.timedelta(days=1))]
+                       Utils.date_range(first_date, last_date - timedelta(days=1))]
 
         for i in range(len(result)):
-            log_dates = {datetime.datetime.strftime(log.get('date'), "%Y-%m-%d"): log.get('value') for log in
+            log_dates = {datetime.strftime(log.get('date'), "%Y-%m-%d"): log.get('value') for log in
                          result[i].get('sub_elements')}
             for date in dates_range:
                 if date not in log_dates:
@@ -211,12 +218,12 @@ class Product(Element):
                     result[i][date] = log_dates.get(date)
             del result[i]['sub_elements']
 
-        date = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-        excel_path = f'{basedir}/app/reports/products/ReporteProductos_{date}.xlsx'
+        date = datetime.now().strftime("%Y%m%d%H%M%S")
         return Utils.generate_report(result, f'ReporteProductos_{date}.xlsx', "Productos")
 
     @classmethod
     def build_upc_channels_report(cls, email):
+        from app.models.users.user import User
         user = User.get_by_email(email)
         allowed_products = cls.find_allowed_products(user._id)
         expressions = list()

@@ -1,13 +1,17 @@
 import datetime
+from dataclasses import dataclass
+from mongoengine import *
 
 from app import Database
-from app.models.products.constants import COLLECTION
-from app.models.elements.element import Element
+from app.models.elements.subelements.categories.constants import COLLECTION
+from app.models.elements.subelements.subelement import SubElement
+from app.models.elements.subelements.products.constants import COLLECTION as PRODUCTS_COLLECTION
 
 
-class Channel(Element):
-    def __init__(self, name, sub_elements=None, _id=None):
-        Element.__init__(self, name, sub_elements, _id)
+@dataclass(init=False)
+class Category(SubElement):
+    parentElementId: str = StringField(required=True)
+    meta = {'collection': COLLECTION}
 
     @staticmethod
     def get_average(element_id, begin_date, end_date):
@@ -15,7 +19,7 @@ class Channel(Element):
         last_date = datetime.datetime.strptime(end_date, "%Y-%m-%d")
         last_date = last_date + datetime.timedelta(days=1)
         expressions = list()
-        expressions.append({'$match': {'greatGrandParentId': element_id}})
+        expressions.append({'$match': {'grandParentId': element_id}})
         expressions.append({'$unwind': '$sub_elements'})
         expressions.append(
             {'$project': {'sub_elements.date': 1, 'sub_elements.value': 1,
@@ -26,8 +30,7 @@ class Channel(Element):
                                        'average': {'$avg': '$sub_elements.value'}}})
         expressions.append({'$sort': {'_id': 1}})
 
-        result = list(Database.aggregate(COLLECTION, expressions))
+        result = list(Database.aggregate(PRODUCTS_COLLECTION, expressions))
         for element in result:
             element["_id"] = element["_id"].strftime("%Y/%m/%d")
         return result
-

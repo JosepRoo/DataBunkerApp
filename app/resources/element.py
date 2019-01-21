@@ -1,13 +1,14 @@
 from flask import session
-from flask_restful import Resource, reqparse
+from flask_restful import Resource
 
 from app.common.response import Response
-from app.models.brands.brand import Brand
-from app.models.categories.category import Category
-from app.models.channels.channels import Channel
+from app.models.elements.subelements.brands.brand import Brand
+from app.models.elements.subelements.categories.category import Category
+from app.models.elements.channels.channel import Channel
 from app.models.elements.errors import ElementErrors
 from app.models.privileges.errors import PrivilegeErrors
-from app.models.products.product import Product
+from app.models.elements.subelements.products.product import Product
+from app.models.users.user import User as UserModel
 
 
 class Element(Resource):
@@ -25,8 +26,8 @@ class Element(Resource):
             if element_id:
                 return element_class.get_element(element_id).json(
                     ("sub_elements",)) if element_type != "product" else element_class.get_element(
-                    element_id).json("parentElementId")
-            return [element.json(("sub_elements",)) if element_type != "product" else element.json() for element in
+                    element_id).json(exclude={"parentElementId"})
+            return [element.json(exclude={"sub_elements"}) if element_type != "product" else element.json() for element in
                     element_class.get_elements()]
 
         except ElementErrors as e:
@@ -37,20 +38,27 @@ class Element(Resource):
 
 class SubElement(Resource):
     def get(self, element_type, element_id):
-        element_type_title = element_type.title()
+        user = UserModel.get_by_email(session['email'])
+        if user is None:
+            return Response('No has iniciado sesión '), 401
+        element_class = element_type.title()
         child_class = None
-        if element_type_title == "Channel":
-            child_class = globals()["Category"]
-        elif element_type_title == "Category":
-            child_class = globals()["Brand"]
-        elif element_type_title == "Brand":
-            child_class = globals()["Product"]
+        if element_class == "Channel":
+            element_class = Channel
+            child_class = Category
+        elif element_class == "Category":
+            element_class = Category
+            child_class = Brand
+        elif element_class == "Brand":
+            element_class = Brand
+            child_class = Product
         try:
-            element_class = globals()[element_type_title]
-            return [sub_element.json(("sub_elements",))
-                    if element_type != "product"
-                    else sub_element.json() for sub_element in
-                    element_class.get_sub_elements(element_id, child_class)]
+            if element_class != "Product":
+                exclude = {'sub_elements'}
+            else:
+                exclude = None
+            return [sub_element.json(exclude=exclude)
+                    for sub_element in element_class.get_sub_elements(element_id, child_class, user)]
 
         except ElementErrors as e:
             return Response(e.message), 404

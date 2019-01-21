@@ -1,14 +1,14 @@
 import datetime
+from dataclasses import dataclass
 
 from app import Database
-from app.models.products.constants import COLLECTION
+from app.models.elements.subelements.products.constants import COLLECTION
 from app.models.elements.element import Element
 
 
-class Category(Element):
-    def __init__(self, name, parentElementId, sub_elements=None, _id=None):
-        Element.__init__(self, name, sub_elements, _id)
-        self.parentElementId = parentElementId
+@dataclass(init=False)
+class Channel(Element):
+    meta = {'collection': COLLECTION}
 
     @staticmethod
     def get_average(element_id, begin_date, end_date):
@@ -16,7 +16,7 @@ class Category(Element):
         last_date = datetime.datetime.strptime(end_date, "%Y-%m-%d")
         last_date = last_date + datetime.timedelta(days=1)
         expressions = list()
-        expressions.append({'$match': {'grandParentId': element_id}})
+        expressions.append({'$match': {'greatGrandParentId': element_id}})
         expressions.append({'$unwind': '$sub_elements'})
         expressions.append(
             {'$project': {'sub_elements.date': 1, 'sub_elements.value': 1,

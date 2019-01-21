@@ -1,12 +1,23 @@
+import uuid
+from dataclasses import dataclass
+from mongoengine import *
+
 from app.common.tree import Tree
-from app.models.brands.brand import Brand
-from app.models.categories.category import Category
+from app.models.baseEmbeddedDocument import BaseEmbeddedDocument
+from app.models.elements.channels.channel import Channel
+from app.models.elements.subelements.brands.brand import Brand
+from app.models.elements.subelements.categories.category import Category
+from app.models.elements.subelements.products.product import Product
 from app.models.privileges.errors import WrongElementType, WrongPrivilegeAssignment, PrivilegeDoesNotExist
 
 
-class Privilege:
-    def __init__(self, privilege_tree=None):
-        self.privilege_tree = Tree(privilege_tree) if privilege_tree is not None else Tree()
+@dataclass(init=False)
+class Privilege(BaseEmbeddedDocument):
+    _id: StringField = StringField(primary_key=True, default=lambda: uuid.uuid4().hex)
+    privilege_tree: Tree = DictField(required=True)
+
+    # def __init__(self, privilege_tree=None):
+    #     self.privilege_tree = Tree(privilege_tree) if privilege_tree is not None else Tree()
 
     def add_privilege(self, element_type, element_to_add):
         """
@@ -76,7 +87,7 @@ class Privilege:
             raise PrivilegeDoesNotExist("No se puede borrar el privilegio ya que no existe en este usuario")
         return self.privilege_tree
 
-    def get_privilege(self, element_type, element_id=None):
+    def get_privilege(self, element_type: type, element_id=None):
         """
         Function to find if given an element_id it is on the user privileges
         :param element_type: parameter to know the type of element we are searching for
@@ -84,12 +95,13 @@ class Privilege:
         :return: returns the _id of the elements
         """
         # cargar todos los canales en los privilegios
-        if element_type == "channel":
+        print(element_type)
+        if element_type is Channel:
             channels = list(self.privilege_tree.keys())
             if not channels:
                 raise PrivilegeDoesNotExist("No se tiene el privilegio para ver este elemento")
             return channels
-        elif element_type == "category":
+        elif element_type is Category:
             # checar si el channel_id es padre de las categorias de los privilegios
             channel = self.privilege_tree.get(element_id)
             # si es int cargar todas las categorias del canal
@@ -101,7 +113,7 @@ class Privilege:
             # si es None lanzar excpecion
             else:
                 raise PrivilegeDoesNotExist("No se tiene el privilegio para ver este elemento")
-        elif element_type == "brand":
+        elif element_type is Brand:
             # obtener la categoria dado el category_id
             category = Category.get_by_id(element_id)
             # obtener el canal en los privilegios de la cateogria dada
@@ -125,7 +137,7 @@ class Privilege:
                     # si es None lanzar una excepcion
                     else:
                         raise PrivilegeDoesNotExist("No se tiene el privilegio para ver este elemento")
-        elif element_type == "product":
+        elif element_type is Product:
             brand = Brand.get_by_id(element_id)
             category = Category.get_by_id(brand.parentElementId)
             priv_channel = self.privilege_tree.get(category.parentElementId)
@@ -151,5 +163,3 @@ class Privilege:
                     else:
                         raise PrivilegeDoesNotExist("No se tiene el privilegio para ver este elemento")
 
-    def json(self):
-        return self.privilege_tree
