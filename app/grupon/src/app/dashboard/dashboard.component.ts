@@ -2,6 +2,7 @@ import { DataService } from './../services/data.service';
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { DataSelectComponent } from './../data-select/data-select.component';
 import { MatSnackBar } from '@angular/material';
+import { UserService } from '../services/user.service';
 
 declare global {
   interface Date {
@@ -50,7 +51,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   // Children
   @ViewChild(DataSelectComponent) dataSelect: DataSelectComponent;
 
-  constructor(private dataService: DataService, public snackBar: MatSnackBar) {}
+  constructor(private dataService: DataService, public snackBar: MatSnackBar, private userService: UserService) {}
 
   ngOnInit() {
     this.startDate = new Date();
@@ -72,6 +73,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
       });
       // console.log(this.lineChartLabels);
     }
+    this.userService.getFavorites().subscribe(res => {
+      this.selectedData = this.selectedData.concat(res);
+    });
   }
 
   switchButton(status) {
@@ -184,4 +188,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
       });
     });
   }
+
+  export() {
+    if (this.selectedData) {
+      const ids = this.selectedData.map(el => {
+        return el._id;
+      });
+      this.dataService.exportData(
+        ids,
+        'products',
+        this.dataSelect.getStartDate(),
+        this.dataSelect.getEndDate());
+      }
+    }
 }

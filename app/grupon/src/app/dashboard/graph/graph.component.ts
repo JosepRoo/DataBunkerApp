@@ -19,7 +19,10 @@ export class GraphComponent implements OnInit, OnChanges {
   lineChartOptions: any = {
     responsive: true,
     bezierCurve: false,
-    maintainAspectRatio: true,
+    legend: {
+        display: false
+    },
+    maintainAspectRatio: false,
     tooltips: {
       enabled: true,
       mode: 'single',
@@ -145,6 +148,19 @@ export class GraphComponent implements OnInit, OnChanges {
       lines.push(data);
     });
     this.lineChartData = lines;
+  }
+
+  public getHeight() {
+    let height;
+    if (this.selectedData) {
+      height = this.selectedData.length * 40;
+      console.log(height);
+    }
+    if (height < 400) {
+      return 400;
+    } else {
+      return height;
+    }
   }
 
   // events

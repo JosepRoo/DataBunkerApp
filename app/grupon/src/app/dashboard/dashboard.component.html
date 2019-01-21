@@ -18,7 +18,18 @@
 <br>
 
 <div class="row justify-content-center">
-  <div class="col-11 col-md-6">
+  <div class="col-11 col-sm-9 col-md-7">
+    <div *ngIf="selectedData.length">
+      <app-products-list (addFavorite)="addFavorite($event)" (removeAll)="emptyProducts($event)" (clickedProduct)="removeProduct($event)" [selectedData]="selectedData"></app-products-list>
+    </div>
+  </div>
+</div>
+
+<br>
+
+
+<div class="row justify-content-center">
+  <div class="col-11">
     <div *ngIf="chartLoading" style="margin-top: 50px;" class="row justify-content-center">
       <div class="col-12 col-sm-4 col-md-3 text-center">
         <mat-progress-spinner style="margin:0 auto;" mode="indeterminate" color="primary"></mat-progress-spinner>
@@ -29,15 +40,18 @@
     <div *ngIf="!chartLoading && selectedData.length">
       <mat-accordion displayMode="default" [multi]="true">
           <mat-expansion-panel [expanded]="'true'">
-            <mat-expansion-panel-header>Gráfica</mat-expansion-panel-header>
+            <mat-expansion-panel-header>Gráfica         
+            </mat-expansion-panel-header>
+            <div class="row justify-content-end">
+              <div class="col-12 col-sm-6 col-md-4">
+                  <button (click)="export()"  class="btn btn-block" mat-raised-button color="primary">
+                      <mat-icon> vertical_align_bottom </mat-icon> Descargar XLS</button>
+              </div>
+            </div>
+            <br>
             <app-graph [selectedData]="selectedData" [lineChartLabels]="lineChartLabels"></app-graph>
           </mat-expansion-panel>
       </mat-accordion>
-    </div>
-  </div>
-  <div class="col-11 col-md-5">
-    <div *ngIf="selectedData.length">
-      <app-products-list (addFavorite)="addFavorite($event)" (removeAll)="emptyProducts($event)" (clickedProduct)="removeProduct($event)" [selectedData]="selectedData"></app-products-list>
     </div>
   </div>
 </div>
