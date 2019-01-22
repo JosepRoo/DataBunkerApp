@@ -14,7 +14,7 @@ from app.models.privileges.errors import WrongElementType, WrongPrivilegeAssignm
 @dataclass(init=False)
 class Privilege(BaseEmbeddedDocument):
     _id: StringField = StringField(primary_key=True, default=lambda: uuid.uuid4().hex)
-    privilege_tree: Tree = DictField(required=True)
+    privilege_tree: Tree = DictField(required=True, default={})
 
     # def __init__(self, privilege_tree=None):
     #     self.privilege_tree = Tree(privilege_tree) if privilege_tree is not None else Tree()
@@ -162,4 +162,5 @@ class Privilege(BaseEmbeddedDocument):
                     # si es None lanzar una excepcion
                     else:
                         raise PrivilegeDoesNotExist("No se tiene el privilegio para ver este elemento")
+
 
