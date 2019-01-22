@@ -1,3 +1,5 @@
+import os
+
 from app import Database
 from app.models.elements.subelements.brands.constants import COLLECTION as BRAND_COLLECTION
 from app.models.elements.subelements.categories.constants import COLLECTION as CATEGORY_COLLECTION
@@ -15,10 +17,13 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+from config import basedir
+
 
 class Walmart(BaseUpload):
     URL = 'https://super.walmart.com.mx/mapa-del-sitio'
     BASE = 'https://super.walmart.com.mx'
+    LOG = log_path = os.path.join(basedir, 'geckodriver.log')
     now = datetime.datetime.now()
     options = Options()
     options.headless = True
@@ -107,13 +112,13 @@ class Walmart(BaseUpload):
 
     @classmethod
     def build_tree(cls):
-        browser = Firefox(executable_path=cls.executable_path, options=cls.options)
+        browser = Firefox(executable_path=cls.executable_path, options=cls.options, log_path=cls.LOG)
         browser.set_page_load_timeout(20)
-        browser_cats = Firefox(executable_path=cls.executable_path, options=cls.options)
+        browser_cats = Firefox(executable_path=cls.executable_path, options=cls.options, log_path=cls.LOG)
         browser_cats.set_page_load_timeout(20)
-        browser_sub_cats = Firefox(executable_path=cls.executable_path, options=cls.options)
+        browser_sub_cats = Firefox(executable_path=cls.executable_path, options=cls.options, log_path=cls.LOG)
         browser_sub_cats.set_page_load_timeout(20)
-        browser_products = Firefox(executable_path=cls.executable_path, options=cls.options)
+        browser_products = Firefox(executable_path=cls.executable_path, options=cls.options, log_path=cls.LOG)
         browser.get(cls.URL)
         links = browser.find_elements_by_class_name("_5I021sOIh5qArdWFNJNOL")
         products_inserted = 0
