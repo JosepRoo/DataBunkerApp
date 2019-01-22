@@ -14,7 +14,7 @@ class Routine(Resource):
         logging.basicConfig(filename='upload.log', filemode='a', format='%(asctime)s - %(message)s',
                             datefmt='%d-%b-%y %H:%M:%S')
         if routine in Routine.channels:
-            channel = Routine.channels.get(routine).build_tree()
+            channel = Routine.channels.get(routine)
         else:
             return "Channel not available: " + routine
         logging.info("********************* Start *********************")
