@@ -1,6 +1,6 @@
 import datetime
 from dataclasses import dataclass
-
+from mongoengine import *
 from app.common.database import Database
 from app.models.elements.subelements.brands.constants import COLLECTION
 from app.models.elements.subelements.products.constants import COLLECTION as PRODUCTS_COLLECTION
@@ -9,10 +9,9 @@ from app.models.elements.subelements.subelement import SubElement
 
 @dataclass(init=False)
 class Brand(SubElement):
+    parentElementId: str = ReferenceField("Category", required=True)
+    sub_elements: list = ListField(ReferenceField("Product"), default=lambda: list())
     meta = {'collection': COLLECTION}
-    # def __init__(self, name, parentElementId, sub_elements=None, _id=None):
-    #     Element.__init__(self, name, sub_elements, _id)
-    #     self.parentElementId = parentElementId
 
     @staticmethod
     def get_average(element_id, begin_date, end_date):

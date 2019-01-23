@@ -4,35 +4,27 @@ from mongoengine import *
 
 from app.common.database import Database
 from app.common.utils import Utils
-from app.models.elements.element import Element
+from app.models.elements.channels.channel import Channel
 from app.models.elements.errors import ElementNotFound
+from app.models.elements.subelements.brands.brand import Brand
+from app.models.elements.subelements.categories.category import Category
 from app.models.elements.subelements.subelement import SubElement
 from app.models.emails.email import Email
 from app.models.emails.errors import EmailErrors, FailedToSendEmail
 from app.models.logs.log import Log
 from app.models.elements.subelements.products.constants import COLLECTION
 from app.models.users.constants import COLLECTION as USERS
-from config import basedir
 
 
 @dataclass(init=False)
 class Product(SubElement):
-    grandParentId: str = StringField(required=True)
-    greatGrandParentId: str = StringField(required=True)
+    parentElementId: Brand = ReferenceField(Brand, required=True)
+    grandParentId: Category = ReferenceField(Category, required=True)
+    greatGrandParentId: Channel = ReferenceField(Channel, required=True)
     UPC: str = StringField(required=True)
     image: str = StringField()
     sub_elements: list = ListField(EmbeddedDocumentField(Log), default=lambda: list())
     meta = {'collection': COLLECTION}
-
-    # def __init__(self, UPC, name, parentElementId, sub_elements, image=None, _id=None, grandParentId=None,
-    #              greatGrandParentId=None):
-    #     Element.__init__(self, name=name, _id=_id)
-    #     self.parentElementId = parentElementId
-    #     self.grandParentId = grandParentId
-    #     self.greatGrandParentId = greatGrandParentId
-    #     self.UPC = UPC
-    #     self.image = image
-    #     self.sub_elements = [Log(**sub_element) for sub_element in sub_elements]
 
     @classmethod
     def get_by_UPC(cls, upc, channel_id):
@@ -87,7 +79,7 @@ class Product(SubElement):
             emails_text = "Nuestro sistema ha detectado que los siguientes productos han bajado de precio:\n"
             for product in emails[email]:
                 emails_text += f"\t{product.get('name')} cambió de ${product.get('yesterday')}" \
-                               f"a ${product.get('today')}\n"
+                    f"a ${product.get('today')}\n"
             emails_text += "\nEntra a estos enlaces para revisar el detalle de tus productos:\n"
             for product in emails[email]:
                 emails_text += f"\tcomparador.data-bunker.com.mx/elements/product/{product.get('_id')}\n"

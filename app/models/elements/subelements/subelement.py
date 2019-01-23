@@ -1,3 +1,4 @@
+from __future__ import annotations
 from dataclasses import dataclass
 
 from mongoengine import *
@@ -8,6 +9,6 @@ from app.models.elements.element import Element
 
 @dataclass(init=False)
 class SubElement(Element):
-    parentElementId: str = StringField(required=True)
+    parentElementId: str = ReferenceField(Element, required=True)
     meta = {'allow_inheritance': True,
             'abstract': True}

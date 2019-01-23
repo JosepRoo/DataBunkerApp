@@ -1,8 +1,10 @@
+from __future__ import annotations
 import datetime
 from dataclasses import dataclass
 from mongoengine import *
 
 from app import Database
+from app.models.elements.channels.channel import Channel
 from app.models.elements.subelements.categories.constants import COLLECTION
 from app.models.elements.subelements.subelement import SubElement
 from app.models.elements.subelements.products.constants import COLLECTION as PRODUCTS_COLLECTION
@@ -10,7 +12,8 @@ from app.models.elements.subelements.products.constants import COLLECTION as PRO
 
 @dataclass(init=False)
 class Category(SubElement):
-    parentElementId: str = StringField(required=True)
+    parentElementId: Channel = ReferenceField("Channel", required=True)
+    sub_elements: list = ListField(ReferenceField("Brand"), default=lambda: list())
     meta = {'collection': COLLECTION}
 
     @staticmethod

@@ -11,6 +11,7 @@ from app.models.elements.subelements.brands.constants import COLLECTION as BRAND
 from app.models.elements.subelements.categories.constants import COLLECTION as CATEGORY_COLLECTION
 from app.models.elements.channels.constants import COLLECTION as CHANNEL_COLLECTION
 
+
 # clase base de todos los elementos (canales,categorias,marcas,productos y logs)
 
 
