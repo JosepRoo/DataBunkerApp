@@ -134,3 +134,19 @@ class BuildComparatorTable(Resource):
             return Response(message=e.message).json(), 404
         except PrivilegeErrors as e:
             return Response(message=e.message).json(), 401
+
+
+class BuildComparatorTableExcel(Resource):
+    @staticmethod
+    def get():
+        """
+        Builds a table comparing the prices of different products that the current user has access to,
+        with other prices of other channels and returns an excel file
+        :return: Comparator Table
+        """
+        try:
+            return Product.build_upc_channels_report(session.get('email'), True)
+        except ElementErrors as e:
+            return Response(message=e.message).json(), 404
+        except PrivilegeErrors as e:
+            return Response(message=e.message).json(), 401

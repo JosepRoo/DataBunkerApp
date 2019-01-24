@@ -214,7 +214,7 @@ class Product(SubElement):
         return Utils.generate_report(result, f'ReporteProductos_{date}.xlsx', "Productos")
 
     @classmethod
-    def build_upc_channels_report(cls, email):
+    def build_upc_channels_report(cls, email, to_excel=False):
         from app.models.users.user import User
         user = User.get_by_email(email)
         allowed_products = cls.find_allowed_products(user)
@@ -247,10 +247,30 @@ class Product(SubElement):
         result = list(Database.aggregate('products', expressions))
         channel_names = [x.get('name') for x in list(
             Database.find('channels', {'_id': {'$in': user.privileges.channels}}))]
-        for i in result:
-            for name in channel_names:
-                if name not in i.keys():
-                    i[name] = 0
+
+        if not to_excel:
+            for i in result:
+                for name in channel_names:
+                    if name not in i.keys():
+                        i[name] = 0
+        else:
+            user_channel = Channel.get_by_id(user.channel_id)
+            percentages_dict = {channel + " %": 0 for channel in channel_names}
+            for i in result:
+                user_channel_value = float(i.get(user_channel.name, 0))
+                for name in channel_names:
+                    if name not in i.keys():
+                        i[name] = 0
+                        percentages_dict[name + " %"] = 0.0
+                    else:
+                        try:
+                            percentages_dict[name + " %"] = 100 * float(i[name]) / user_channel_value
+                        except ZeroDivisionError:
+                            percentages_dict[name + " %"] = 0.0
+
+                i.update(percentages_dict)
+            date = datetime.now().strftime("%Y%m%d%H%M%S")
+            return Utils.generate_report(result, f'ReporteComparador_{date}.xlsx', "Productos")
         return result
 
     # @staticmethod
