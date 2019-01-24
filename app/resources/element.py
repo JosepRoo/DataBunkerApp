@@ -1,3 +1,4 @@
+from __future__ import annotations
 from flask import session
 from flask_restful import Resource
 
@@ -24,11 +25,16 @@ class Element(Resource):
         try:
             element_class = globals()[element_type_title]
             if element_id:
-                return element_class.get_element(element_id).json(
-                    ("sub_elements",)) if element_type != "product" else element_class.get_element(
-                    element_id).json(exclude={"parentElementId"})
-            return [element.json(exclude={"sub_elements"}) if element_type != "product" else element.json() for element in
-                    element_class.get_elements()]
+                if element_type != "product":
+                    return element_class.get_element(element_id).json({"sub_elements"})
+                return element_class.get_element(element_id).json({"parentElementId"})
+            res = list()
+            for element in element_class.get_elements():
+                if element_type != "product":
+                    res.append(element.json(exclude={"sub_elements"}))
+                else:
+                    res.append(element.json())
+            return res
 
         except ElementErrors as e:
             return Response(message=e.message).json(), 404
@@ -63,7 +69,7 @@ class SubElement(Resource):
         except ElementErrors as e:
             return Response(e.message), 404
         except PrivilegeErrors as e:
-            return Response(message=e.message).json(), 401
+            return Response(message=e.message).json(), 403
 
 
 class ElementValue(Resource):
@@ -82,6 +88,12 @@ class ElementValue(Resource):
 
 
 class BuildProductsReport(Resource):
+    name_to_field = {
+        "channel": "greatGrandParentId",
+        "category": "grandParentId",
+        "brand": "parentElementId",
+        "product": "_id"
+    }
     @staticmethod
     def get(element_type, element_ids, start_date, end_date):
         """
@@ -92,14 +104,16 @@ class BuildProductsReport(Resource):
         try:
             user_id = session.get('_id')
             ids = element_ids.split("&&")
-            if element_type == "channel":
-                return Product.build_products_report(ids, start_date, end_date, "greatGrandParentId", user_id)
-            elif element_type == "category":
-                return Product.build_products_report(ids, start_date, end_date, "grandParentId", user_id)
-            elif element_type == "brand":
-                return Product.build_products_report(ids, start_date, end_date, "parentElementId", user_id)
-            elif element_type == "product":
-                return Product.build_products_report(ids, start_date, end_date, "_id", user_id)
+            user = UserModel.get_by_id(user_id)
+            params = {
+                "product_ids": ids,
+                "begin_date": start_date,
+                "end_date": end_date,
+                "user": user,
+                "field_name": BuildProductsReport.name_to_field[element_type]
+
+            }
+            return Product.build_products_report(**params)
         except ElementErrors as e:
             return Response(message=e.message).json(), 404
         except PrivilegeErrors as e:

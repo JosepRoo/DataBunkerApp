@@ -29,17 +29,6 @@ class User(BaseModel):
     favorites: list = ListField(default=lambda: list())
     meta = {'collection': COLLECTION}
 
-    # def __init__(self, email, name, channel_id=None, password=None, _id=None, enterprise_id=None,
-    #              privileges=None, favorites=None):
-    #     BaseModel.__init__(self, _id)
-    #     self.email = email
-    #     self.password = password
-    #     self.name = name
-    #     self.channel_id = channel_id
-    #     self.privileges = Privilege(privileges) if privileges is not None else Privilege(dict())
-    #     self.enterprise_id = enterprise_id
-    #     self.favorites = favorites if favorites else []
-
     @classmethod
     def get_by_email(cls, email: str) -> User:
         user = cls.objects(email=email)
@@ -127,28 +116,12 @@ class User(BaseModel):
         return favorites if favorites else []
 
     def add_privilege(self, element_type, element):
-        self.privileges.add_privilege(element_type, element)
+        self.privileges.add_remove_privilege(element_type, element)
         self.save()
         return self.privileges.json()
 
     def remove_privilege(self, element_type, element):
-        self.privileges.remove_privilege(element_type, element)
+        self.privileges.add_remove_privilege(element_type, element, False)
         self.save()
         return self.privileges.json()
 
-    # def json(self, exclude=None, date_to_string=True):
-    #     if exclude:
-    #         return {
-    #             attrib: [element.json(date_to_string=date_to_string) if not isinstance(element, str) else element for
-    #                      element in self.__getattribute__(attrib)]
-    #             if type(self.__getattribute__(attrib)) is list else self.__getattribute__(attrib).json()
-    #             if isinstance(self.__getattribute__(attrib), Privilege) else self.__getattribute__(attrib)
-    #             for attrib in self.__dict__.keys() if attrib not in exclude}
-    #
-    #     return {
-    #         attrib: [element.json(date_to_string=date_to_string) if not isinstance(element, str) else element for
-    #                  element in
-    #                  self.__getattribute__(attrib)]
-    #         if type(self.__getattribute__(attrib)) is list else self.__getattribute__(attrib).json()
-    #         if isinstance(self.__getattribute__(attrib), Privilege) else self.__getattribute__(attrib)
-    #         for attrib in self.__dict__.keys()}

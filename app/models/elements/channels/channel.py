@@ -3,14 +3,13 @@ from dataclasses import dataclass
 from mongoengine import *
 
 from app import Database
-from app.models.elements.subelements.categories.category import Category
 from app.models.elements.subelements.products.constants import COLLECTION
 from app.models.elements.element import Element
 
 
 @dataclass(init=False)
 class Channel(Element):
-    sub_elements: list = ListField(ReferenceField(Category), default=lambda: list())
+    sub_elements: list = ListField(ReferenceField("Category"), default=lambda: list())
     meta = {'collection': COLLECTION}
 
     @staticmethod

@@ -6,8 +6,10 @@ class PrivilegeErrors(Exception):
 class WrongElementType(PrivilegeErrors):
     pass
 
+
 class WrongPrivilegeAssignment(PrivilegeErrors):
     pass
+
 
 class PrivilegeDoesNotExist(PrivilegeErrors):
     pass

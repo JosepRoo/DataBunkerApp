@@ -150,8 +150,8 @@ class Product(SubElement):
         return cheaper_products
 
     @staticmethod
-    def build_products_report(element_ids, begin_date, end_date, field_name, user_id):
-        allowed_products = Product.find_allowed_products(user_id, field_name, element_ids)
+    def build_products_report(product_ids, begin_date, end_date, field_name, user):
+        allowed_products = Product.find_allowed_products(user, field_name, product_ids)
         first_date = datetime.strptime(begin_date, "%Y-%m-%d")
         last_date = datetime.strptime(end_date, "%Y-%m-%d") + timedelta(days=1)
 
@@ -217,7 +217,7 @@ class Product(SubElement):
     def build_upc_channels_report(cls, email):
         from app.models.users.user import User
         user = User.get_by_email(email)
-        allowed_products = cls.find_allowed_products(user._id)
+        allowed_products = cls.find_allowed_products(user)
         expressions = list()
         expressions.append({'$match': {'$or': [{'_id': {'$in': allowed_products}},
                                                {'greatGrandParentId': user.channel_id}]}})
@@ -246,63 +246,99 @@ class Product(SubElement):
         expressions.append({'$sort': {'Nombre': 1}})
         result = list(Database.aggregate('products', expressions))
         channel_names = [x.get('name') for x in list(
-            Database.find('channels', {'_id': {'$in': [privilege for privilege in user.privileges.json()]}}))]
-        for i in range(len(result)):
+            Database.find('channels', {'_id': {'$in': user.privileges.channels}}))]
+        for i in result:
             for name in channel_names:
-                if name not in result[i].keys():
-                    result[i][name] = 0
+                if name not in i.keys():
+                    i[name] = 0
         return result
 
+    # @staticmethod
+    # def find_allowed_products(user_id, element_level=None, elements_id=None):
+    #     user_products = list()
+    #     expressions = list()
+    #     expressions.append({"$match": {"_id": user_id}})
+    #     expressions.append({"$project": {"_id": 0, "privileges": "$privileges.privilege_tree"}})
+    #     expressions.append({"$replaceRoot": {"newRoot": "$privileges"}})
+    #     result = list(Database.aggregate(USERS, expressions))
+    #     print(element_level, elements_id)
+    #     for element in result:
+    #         for channel in element:
+    #             if element[channel] == 1:
+    #                 if element_level == 'greatGrandParentId' and channel not in elements_id:
+    #                     continue
+    #                 elif element_level in ['grandParentId', 'parentElement_id', '_id']:
+    #                     user_products.extend(
+    #                         [product.get('_id') for product in
+    #                          Database.find_ids(COLLECTION,
+    #                                            {'greatGrandParentId': channel, element_level: {'$in': elements_id}})])
+    #                     continue
+    #                 user_products.extend(
+    #                     [product.get('_id') for product in
+    #                      Database.find_ids(COLLECTION, {'greatGrandParentId': channel})])
+    #                 continue
+    #             for category in element[channel]:
+    #                 if element[channel][category] == 1:
+    #                     if element_level == 'grandParentId' and category not in elements_id:
+    #                         continue
+    #                     elif element_level in ['parentElement_id', '_id']:
+    #                         user_products.extend(
+    #                             [product.get('_id') for product in
+    #                              Database.find_ids(COLLECTION, {'grandParentId': category,
+    #                                                             element_level: {'$in': elements_id}})])
+    #                         continue
+    #                     user_products.extend(
+    #                         [product.get('_id') for product in
+    #                          Database.find_ids(COLLECTION, {'grandParentId': category})])
+    #                     continue
+    #                 for brand in element[channel][category]:
+    #                     if element[channel][category][brand] == 1:
+    #                         if element_level == 'parentElementId' and brand not in elements_id:
+    #                             continue
+    #                         elif element_level == '_id':
+    #                             user_products.extend(
+    #                                 [product.get('_id') for product in
+    #                                  Database.find_ids(COLLECTION, {'parentElementId': brand,
+    #                                                                 element_level: {'$in': elements_id}})])
+    #                             continue
+    #                         user_products.extend([product.get('_id') for product in
+    #                                               Database.find_ids(COLLECTION, {'parentElementId': brand})])
+    #                         continue
+    #                     user_products.extend([product for product in element[channel][category][brand]])
+    #     return user_products
+
     @staticmethod
-    def find_allowed_products(_id, element_level=None, elements_id=None):
-        user_products = list()
-        user_id = _id
-        expressions = list()
-        expressions.append({"$match": {"_id": user_id}})
-        expressions.append({"$project": {"_id": 0, "privileges": "$privileges"}})
-        expressions.append({"$replaceRoot": {"newRoot": "$privileges"}})
-        result = list(Database.aggregate(USERS, expressions))
-        for element in result:
-            for channel in element:
-                if element[channel] == 1:
-                    if element_level == 'greatGrandParentId' and channel not in elements_id:
-                        continue
-                    elif element_level in ['grandParentId', 'parentElement_id', '_id']:
-                        user_products.extend(
-                            [product.get('_id') for product in
-                             Database.find_ids(COLLECTION,
-                                               {'greatGrandParentId': channel, element_level: {'$in': elements_id}})])
-                        continue
-                    user_products.extend(
-                        [product.get('_id') for product in
-                         Database.find_ids(COLLECTION, {'greatGrandParentId': channel})])
-                    continue
-                for category in element[channel]:
-                    if element[channel][category] == 1:
-                        if element_level == 'grandParentId' and category not in elements_id:
-                            continue
-                        elif element_level in ['parentElement_id', '_id']:
-                            user_products.extend(
-                                [product.get('_id') for product in
-                                 Database.find_ids(COLLECTION, {'grandParentId': category,
-                                                                element_level: {'$in': elements_id}})])
-                            continue
-                        user_products.extend(
-                            [product.get('_id') for product in
-                             Database.find_ids(COLLECTION, {'grandParentId': category})])
-                        continue
-                    for brand in element[channel][category]:
-                        if element[channel][category][brand] == 1:
-                            if element_level == 'parentElementId' and brand not in elements_id:
-                                continue
-                            elif element_level == '_id':
-                                user_products.extend(
-                                    [product.get('_id') for product in
-                                     Database.find_ids(COLLECTION, {'parentElementId': brand,
-                                                                    element_level: {'$in': elements_id}})])
-                                continue
-                            user_products.extend([product.get('_id') for product in
-                                                  Database.find_ids(COLLECTION, {'parentElementId': brand})])
-                            continue
-                        user_products.extend([product for product in element[channel][category][brand]])
-        return user_products
+    def find_allowed_products(user: "User", element_level=None, elements_ids: list = None):
+        privs = user.privileges
+        pipe = {}
+        if element_level is None:
+            if privs.channels:
+                pipe['greatGrandParentId__in'] = privs.channels
+            if privs.categories:
+                pipe['grandParentId__in'] = privs.cateogries
+            if privs.brands:
+                pipe['parentElementId__in'] = privs.brands
+            if privs.products:
+                pipe['_id__in'] = privs.products
+            string = ""
+            for k, v in pipe.items():
+                string += f'Q({k}={v}) | '
+            products = Product.objects(eval(string[:-2]))
+        elif element_level == 'greatGrandParentId':
+            products = Product.objects(greatGrandParentId__in=list(set(elements_ids + privs.channels)))
+        elif element_level == 'grandParentId':
+            products = Product.objects(Q(greatGrandParentId__in=privs.channels, grandParentId__in=elements_ids) |
+                                       Q(grandParentId__in=list(set(elements_ids + privs.categories))))
+        elif element_level == 'parentElementId':
+            products = Product.objects(Q(greatGrandParentId__in=privs.channels, parentElementId__in=elements_ids) |
+                                       Q(grandParentId__in=privs.categories, parentElementId__in=elements_ids) |
+                                       Q(parentElementId__in=list(set(elements_ids + privs.brands))))
+
+        elif element_level == '_id':
+            products = Product.objects(Q(greatGrandParentId__in=privs.channels, _id__in=elements_ids) |
+                                       Q(grandParentId__in=privs.categories, _id__in=elements_ids) |
+                                       Q(parentElementId__in=privs.categories, _id__in=elements_ids) |
+                                       Q(_id__in=list(set(elements_ids + privs.brands))))
+        else:
+            return list()
+        return [prod._id for prod in products.only("_id")]
