@@ -122,23 +122,26 @@ export class GraphComponent implements OnInit, OnChanges {
         label: (product.channel ? (product.channel  + ' - ') : '') + product.name
       };
       this.lineChartLabels.forEach(day => {
-        const price = product.values.find(value => {
-          let day1 = value._id.toUTCString();
-          day1 = day1
-            .split(' ')
-            .slice(0, 4)
-            .join(' ');
-          let day2 = day.toUTCString();
-          day2 = day2
-            .split(' ')
-            .slice(0, 4)
-            .join(' ');
-          if (day1 === day2) {
-            return value;
-          } else {
-            return null;
-          }
-        });
+        let price;
+        if (product.values) {
+           price = product.values.find(value => {
+            let day1 = value._id.toUTCString();
+            day1 = day1
+              .split(' ')
+              .slice(0, 4)
+              .join(' ');
+            let day2 = day.toUTCString();
+            day2 = day2
+              .split(' ')
+              .slice(0, 4)
+              .join(' ');
+            if (day1 === day2) {
+              return value;
+            } else {
+              return null;
+            }
+          });
+        }
         if (price) {
           data.data.push(price.average);
         } else {

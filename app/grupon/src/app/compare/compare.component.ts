@@ -61,6 +61,10 @@ export class CompareComponent implements OnInit {
     });
   }
 
+  exportTable() {
+    this.dataService.exportTable();
+  }
+
   getDifference(product, price) {
     if (price === 0) {
       return 0;

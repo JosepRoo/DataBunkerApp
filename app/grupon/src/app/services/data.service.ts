@@ -221,6 +221,10 @@ export class DataService {
       );
   }
 
+  exportTable() {
+    window.open(this.compareUrl + '/excel');
+  }
+
   exportData(idArray, type, starDate, endDate) {
     let url;
     switch (type) {

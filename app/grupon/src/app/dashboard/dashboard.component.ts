@@ -60,10 +60,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
       const data = JSON.parse(localStorage.getItem('selectedData'));
       if (data) {
         this.selectedData = data.map(el => {
-          el.values = el.values.map(_el => {
-            _el._id = new Date(_el._id);
-            return _el;
-          });
+          if (el.values) {
+            el.values = el.values.map(_el => {
+              _el._id = new Date(_el._id);
+              return _el;
+            });
+          }
           return el;
         });
       }
