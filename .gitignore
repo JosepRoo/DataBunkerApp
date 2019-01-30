@@ -5,3 +5,5 @@ venv/
 uwsgi.ini
 geckodriver/*
 notebooks/*
+*.ipynb
+*.log
