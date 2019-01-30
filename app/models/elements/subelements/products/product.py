@@ -13,7 +13,6 @@ from app.models.emails.email import Email
 from app.models.emails.errors import EmailErrors, FailedToSendEmail
 from app.models.logs.log import Log
 from app.models.elements.subelements.products.constants import COLLECTION
-from app.models.users.constants import COLLECTION as USERS
 
 
 @dataclass(init=False)

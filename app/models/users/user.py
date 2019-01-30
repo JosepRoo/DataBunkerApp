@@ -25,7 +25,7 @@ class User(BaseModel):
     channel_id: str = StringField()
     password: str = StringField(required=True)
     enterprise_id: str = StringField()
-    privileges: Privilege = EmbeddedDocumentField(Privilege, default={})  # EmbeddedDocumentField(Privilege)
+    privileges: Privilege = EmbeddedDocumentField(Privilege, default=lambda: Privilege())  # EmbeddedDocumentField(Privilege)
     favorites: list = ListField(default=lambda: list())
     meta = {'collection': COLLECTION}
 
@@ -51,8 +51,7 @@ class User(BaseModel):
         if user is None:
             new_user = cls(**kwargs)
             new_user.password = Utils.hash_password(new_user.password)
-            new_user.save()
-            new_user.add_privilege('channel', {new_user.channel_id: 1})
+            new_user.add_privilege('channel', new_user.channel_id)
             return new_user
         raise UserErrors.UserAlreadyRegisteredError("El Usuario ya existe")
 
@@ -117,6 +116,7 @@ class User(BaseModel):
 
     def add_privilege(self, element_type, element):
         self.privileges.add_remove_privilege(element_type, element)
+        print(self.__repr__())
         self.save()
         return self.privileges.json()
 
