@@ -65,8 +65,9 @@ class Product(SubElement):
 
     @classmethod
     def get_element(cls, element_id):
-        element = cls.objects(_id=element_id)
+        element = list(cls.objects(_id=element_id))
         if element:
+            element = element[0]
             if len(element.sub_elements) >= 2:
                 element.sub_elements = [element.sub_elements[-2], element.sub_elements[-1]]
             else:
