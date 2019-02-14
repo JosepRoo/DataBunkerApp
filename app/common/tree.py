@@ -51,12 +51,11 @@ class Tree(dict):
         }
         admin = User.get_by_email("admin@data-bunker.com")
         for channel in self.keys():
-            channel_exists = Channel.get_by_name(channel)
+            channel_exists = Channel.objects(name=channel).first()
             try:
                 if not channel_exists:
-                    channel_exists = Channel(channel)
-                    channel_exists.save_to_mongo(Channel.get_collection_by_name(channel_exists.__class__.__name__),
-                                                 "sub_elements")
+                    channel_exists = Channel(name=channel)
+                    channel_exists.save()
                     admin.add_privilege("channel", channel_exists._id)
                 result['channels']['success'] += 1
             except Exception as e:
@@ -69,12 +68,10 @@ class Tree(dict):
 
             for category in self[channel]:
                 try:
-                    category_exists = Category.get_by_name_and_parent_id(category, channel_exists._id)
+                    category_exists = Category.objects(name=category, parentElementId=channel_exists._id).first()
                     if not category_exists:
-                        category_exists = Category(category, channel_exists._id)
-                        category_exists.save_to_mongo(
-                            Category.get_collection_by_name(category_exists.__class__.__name__),
-                            "sub_elements")
+                        category_exists = Category(name=category, parentElementId=channel_exists._id)
+                        category_exists.save()
                     result['categories']['success'] += 1
                 except Exception as e:
                     result['categories']['failed'].append({
@@ -85,11 +82,11 @@ class Tree(dict):
                     continue
                 for brand in self[channel][category]:
                     try:
-                        brand_exists = Brand.get_by_name_and_parent_id(brand, category_exists._id)
+                        brand_exists = Brand.objects(name=brand, parentElementId=category_exists._id).first()
                         if not brand_exists:
-                            brand_exists = Brand(brand, category_exists._id)
-                            brand_exists.save_to_mongo(Brand.get_collection_by_name(brand_exists.__class__.__name__),
-                                                       "sub_elements")
+                            brand_exists = Brand(name=brand, parentElementId=category_exists._id,
+                                                 grandParentId=channel_exists._id)
+                            brand_exists.save()
                         result['brands']['success'] += 1
                     except Exception as e:
                         result['brands']['failed'].append({
@@ -99,43 +96,44 @@ class Tree(dict):
                         result['brand']['messages'].append(str(e))
                         continue
                     for product in self[channel][category][brand]:
-                        try:
-                            log = self[channel][category][brand][product]
-                            product_name, product_upc, product_image = product.split("||")
-                            if log.get('value') is None or log.get('date') is None:
-                                log['value'], log['date'] = 'err', 'err'
-                                raise ElementNotFound("bad config of log")
+                        log = self[channel][category][brand][product]
+                        flds = ['name', 'upc', 'image', 'discount_price','item_characteristics', 'link',
+                                'sku_description', 'subcategory', 'subcategory2']
+                        values = product.split("||")
+                        dct = dict(zip(flds, values))
+                        product_upc = dct.get('UPC')
+                        if log.get('value') is None or log.get('date') is None:
+                            log['value'], log['date'] = 'err', 'err'
+                            raise ElementNotFound("bad config of log")
 
-                            log["value"] = float(log['value'].strip("$ \t"))
+                        log["value"] = float(str(log['value']).strip("$ \t"))
+                        try:
+
                             product_exists = Product.get_by_UPC(product_upc, channel_exists._id)
                             if not product_exists:
-                                product_exists = Product(UPC=product_upc, name=product_name,
-                                                         parentElementId=brand_exists._id, sub_elements=[log],
-                                                         image=product_image, grandParentId=category_exists._id,
-                                                         greatGrandParentId=channel_exists._id)
+                                product_exists = Product(sub_elements=[log],
+                                                         grandParentId=category_exists._id,
+                                                         greatGrandParentId=channel_exists._id,
+                                                         **dct)
                             elif not product_exists.is_duplicated_date(log['date']):
                                 product_exists.sub_elements.append(Log(**log))
                                 if product_exists.image is None:
-                                    product_exists.image = product_image
+                                    product_exists.image = dct.get('image')
                             else:
                                 result['products']['skipped'].append({
                                     "upc": product_upc,
                                     "log": log
                                 })
                                 continue
-                            product_exists.update_mongo(
-                                Product.get_collection_by_name(product_exists.__class__.__name__))
+                            product_exists.save()
                             result['products']['success'].append({
                                 "upc": product_upc,
                                 "log": log,
                             })
                         except Exception as e:
-                            if log.get('value') is None or log.get('date') is None:
-                                log = dict()
-                                log['value'], log['date'] = 'err', 'err'
                             result['products']['failed'].append({
                                 "upc": product_upc,
-                                "log": log,
+                                "log": ["err", "err"],
                             })
                             result['products']['messages'].append(str(e))
         result['products']['skipped_qty'] = result['products']['skipped']

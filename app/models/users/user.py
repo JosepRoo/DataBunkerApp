@@ -116,7 +116,6 @@ class User(BaseModel):
 
     def add_privilege(self, element_type, element):
         self.privileges.add_remove_privilege(element_type, element)
-        print(self.__repr__())
         self.save()
         return self.privileges.json()
 

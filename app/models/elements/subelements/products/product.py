@@ -22,6 +22,12 @@ class Product(SubElement):
     greatGrandParentId: Channel = ReferenceField(Channel, required=True)
     UPC: str = StringField(required=True)
     image: str = StringField()
+    discount_price: str = StringField()
+    item_characteristics: str = StringField()
+    link: str = StringField()
+    sku_description: str = StringField()
+    subcategory: str = StringField()
+    subcategory2: str = StringField()
     sub_elements: list = ListField(EmbeddedDocumentField(Log), default=lambda: list())
     meta = {'collection': COLLECTION}
 
