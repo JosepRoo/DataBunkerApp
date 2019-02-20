@@ -117,6 +117,7 @@ class Tree(dict):
                                 product_exists = Product(sub_elements=[log],
                                                          grandParentId=category_exists._id,
                                                          greatGrandParentId=channel_exists._id,
+                                                         parentElementID=brand_exists._id
                                                          **dct)
                             elif not product_exists.is_duplicated_date(log['date']):
                                 product_exists.sub_elements.append(Log(**log))
@@ -129,6 +130,7 @@ class Tree(dict):
                                 })
                                 continue
                             product_exists.save()
+                            log['date'] = log['date'].strftime("%Y-%m-%d %H:%M:%S")
                             result['products']['success'].append({
                                 "upc": product_upc,
                                 "log": log,
