@@ -1,3 +1,5 @@
+import datetime
+
 from app.models.elements.errors import ElementNotFound
 
 __author__ = "Luis Ricardo Gutierrez Luna"
@@ -107,6 +109,7 @@ class Tree(dict):
                             raise ElementNotFound("bad config of log")
 
                         log["value"] = float(str(log['value']).strip("$ \t"))
+                        log['date'] = datetime.datetime.now()
                         try:
 
                             product_exists = Product.get_by_UPC(product_upc, channel_exists._id)
