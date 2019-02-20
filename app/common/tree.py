@@ -97,7 +97,7 @@ class Tree(dict):
                         continue
                     for product in self[channel][category][brand]:
                         log = self[channel][category][brand][product]
-                        flds = ['name', 'upc', 'image', 'discount_price','item_characteristics', 'link',
+                        flds = ['name', 'UPC', 'image', 'discount_price','item_characteristics', 'link',
                                 'sku_description', 'subcategory', 'subcategory2']
                         values = product.split("||")
                         dct = dict(zip(flds, values))
