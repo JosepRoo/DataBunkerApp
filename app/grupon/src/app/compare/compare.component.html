@@ -22,18 +22,22 @@
     <div class="col-11" #TABLE> 
       <table style="width: 100% !important;" mat-table matSort [dataSource]="data" class="mat-elevation-z1">
         <ng-container *ngFor="let column of displayedColumns"  [matColumnDef]="column">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{column | slice:0:10}} </th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{column | slice:0:20}} </th>
           <span *ngIf="column === 'Nombre'">
             <td mat-cell *matCellDef="let product"> {{product[column] | slice:0:30}} </td>
           </span>
-          <span *ngIf="column !== 'Nombre' && column !== 'UPC'">
+          <span *ngIf="column !== 'Nombre' && column !== 'UPC' && column[0] !== '%'">
             <td  mat-cell *matCellDef="let product">
-              <span>{{product[column] | currency}}
-                <span style="color:red;" *ngIf="column !== user.channel_name && getDifference(product, product[column]) > 0">, {{getDifference(product, product[column]) | percent}}</span>
-                <span style="color:green;" *ngIf="column !== user.channel_name && getDifference(product, product[column]) <= 0">, {{getDifference(product, product[column]) | percent}}</span>
+              <span>{{product[column] | currency}}                
               </span>
             </td>
           </span> 
+          <span *ngIf="column !== 'Nombre' && column !== 'UPC' && column[0] == '%'">
+            <td mat-cell *matCellDef="let product">
+              <span style="color:red;" *ngIf="product[column] > 0"> {{product[column] | percent}}</span>
+              <span style="color:green;" *ngIf="product[column] <= 0"> {{product[column] | percent}}</span>
+            </td>            
+          </span>
           <span *ngIf="column === 'UPC'">
             <td mat-cell *matCellDef="let product"> {{product[column]}} </td>
           </span>
@@ -49,7 +53,7 @@
     <div class="col-11" style="margin-top: 15px">
       <div class="row justify-content-end">
         <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-          <button class="btn btn-block" mat-raised-button color="primary" (click)="exportTable()">Descargar como XLS</button>
+          <button class="btn btn-block" mat-raised-button color="primary" (click)="exportAsExcel()">Descargar como XLS</button>
         </div>
       </div>
     </div>

@@ -50,7 +50,11 @@ export class DataSelectComponent implements OnInit {
   filterLabel: String;
   @Input()
   limit: boolean;
+  @Input()
+  isExport: boolean;
   mySelections: any[];
+
+  errorRange = false;
 
   constructor(private dataService: DataService) {}
 
@@ -176,7 +180,8 @@ export class DataSelectComponent implements OnInit {
     this.selectedData.brands.forEach(brand => {
       brand.products = brand.productsBackup.filter(
         unit =>
-          unit.name.toUpperCase().indexOf(val.toUpperCase()) > -1
+          unit.name.toUpperCase().indexOf(val.toUpperCase()) > -1 ||
+          unit.UPC.toUpperCase().indexOf(val.toUpperCase()) > -1
       );
     });
   }
@@ -265,6 +270,9 @@ export class DataSelectComponent implements OnInit {
   }
 
   getData() {
+    if (this.errorRange) {
+      throw new Error();
+    }
     const data: any = {};
     if (this.selectedData.products.length) {
       data.type = 'products';
@@ -341,6 +349,19 @@ export class DataSelectComponent implements OnInit {
   }
 
   onDateChanged() {
+    if (this.isExport && this.monthDiff(this.startDate, this.endDate) >= 3) {
+      this.errorRange = true;
+    } else {
+      this.errorRange = false;
+    }
     this.dateChanged.emit(true);
   }
+
+  monthDiff(d1, d2) {
+    let months;
+    months = (d2.getFullYear() - d1.getFullYear()) * 12;
+    months -= d1.getMonth() + 1;
+    months += d2.getMonth();
+    return months <= 0 ? 0 : months;
+}
 }

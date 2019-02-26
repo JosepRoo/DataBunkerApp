@@ -30,6 +30,11 @@
           </mat-form-field>
         </div>
       </div>
+      <div class="row" *ngIf="errorRange">
+        <div class="col text-center">
+          <h6 style="color: red;">El rango de fecha no puede ser mayor a 3 meses.</h6>
+        </div>
+      </div>
     </mat-expansion-panel>
     <mat-expansion-panel [expanded]="'true'">
       <mat-expansion-panel-header>
@@ -61,12 +66,12 @@
         </div>
         <div class="col-12 col-sm-6 col-md-3" *ngIf="selectedData.channels.length">
           <mat-form-field>
-            <mat-select (selectionChange)="categoryChanged()" placeholder="Categorías" #categorySelect="ngModel" [(ngModel)]="selectedData.categories" multiple>
+            <mat-select (selectionChange)="categoryChanged()" placeholder="Categorías" #categorySelect="ngModel" [(ngModel)]="selectedData.categories" [multiple]="!isExport">
               <input matInput (keyup)="filterCategories($event.target.value)" type="text" autocomplete="off" placeholder="  Filtrar">    
-              <button style="margin:10px;" mat-raised-button class="mat-primary fill text-sm" (click)="selectAllCategories(categorySelect, getAllCategories())">
+              <button *ngIf="!isExport" style="margin:10px;" mat-raised-button class="mat-primary fill text-sm" (click)="selectAllCategories(categorySelect, getAllCategories())">
                 Seleccionar todo
               </button>
-              <button style="margin:10px;" mat-raised-button class="mat-primary fill text-sm" (click)="deselectAllCategories(categorySelect, getAllCategories())">
+              <button *ngIf="!isExport" style="margin:10px;" mat-raised-button class="mat-primary fill text-sm" (click)="deselectAllCategories(categorySelect, getAllCategories())">
                 Deseleccionar todo
               </button>
               <mat-optgroup *ngFor="let channel of selectedData.channels" [label]="channel.name">

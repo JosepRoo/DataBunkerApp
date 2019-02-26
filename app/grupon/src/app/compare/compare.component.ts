@@ -24,6 +24,7 @@ export class CompareComponent implements OnInit {
   @ViewChild('TABLE')
   table: ElementRef;
   data: MatTableDataSource<any>;
+  errorData = false;
 
   constructor(
     private dataService: DataService,
@@ -31,10 +32,29 @@ export class CompareComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.getData();
+    this.userService.getUser().subscribe(res => {
+      this.user = res;
+    });
+  }
+
+  exportTable() {
+    this.dataService.exportTable();
+  }
+
+  getData() {
     const self = this;
     this.loading = true;
     this.dataService.getCompare().subscribe(res => {
       this.loading = false;
+      this.errorData = false;
+      res.forEach(el => {
+        Object.keys(el).forEach(column => {
+          if (column !== 'Nombre' && column !== 'UPC') {
+            el['% - ' + column] = this.getDifference(el, el[column]);
+          }
+        });
+      });
       self.data = new MatTableDataSource(res);
       self.data.sort = self.sort;
       self.data.paginator = self.paginator;
@@ -54,15 +74,10 @@ export class CompareComponent implements OnInit {
         headers[mainChannel] = badLocated;
         this.displayedColumns = headers;
       }
+    }, error => {
+      this.loading = false;
+      this.errorData = true;
     });
-
-    this.userService.getUser().subscribe(res => {
-      this.user = res;
-    });
-  }
-
-  exportTable() {
-    this.dataService.exportTable();
   }
 
   getDifference(product, price) {
