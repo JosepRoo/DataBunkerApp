@@ -14,5 +14,6 @@ class UploadData(Resource):
             result['message'] = "La informacion se subio exitosamente"
             result['success'] = True
         except Exception as e:
-           return Response(message=f"Ocurrio un error al subir informacion, notificar al administrador:\n{str(e)}").json(), 500
+            return Response(
+                message=f"Ocurrio un error al subir informacion, notificar al administrador:\n{str(e)}").json(), 500
         return result, 200

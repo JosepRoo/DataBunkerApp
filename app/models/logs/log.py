@@ -9,7 +9,7 @@ from app.models.baseEmbeddedDocument import BaseEmbeddedDocument
 class Log(BaseEmbeddedDocument):
     value: float = FloatField(required=True)
     date: datetime = DateTimeField(required=True)
-    created_date: datetime = DateTimeField(default=lambda: datetime.now())
+    created_date: datetime = DateTimeField()
 
     def __eq__(self, other):
         return True if self.date == other.date else False

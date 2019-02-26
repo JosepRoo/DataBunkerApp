@@ -13,7 +13,6 @@ from app.models.emails.email import Email
 from app.models.emails.errors import EmailErrors, FailedToSendEmail
 from app.models.logs.log import Log
 from app.models.elements.subelements.products.constants import COLLECTION
-from app.models.users.constants import COLLECTION as USERS
 
 
 @dataclass(init=False)
@@ -23,6 +22,12 @@ class Product(SubElement):
     greatGrandParentId: Channel = ReferenceField(Channel, required=True)
     UPC: str = StringField(required=True)
     image: str = StringField()
+    discount_price: str = StringField()
+    item_characteristics: str = StringField()
+    link: str = StringField()
+    sku_description: str = StringField()
+    subcategory: str = StringField()
+    subcategory2: str = StringField()
     sub_elements: list = ListField(EmbeddedDocumentField(Log), default=lambda: list())
     meta = {'collection': COLLECTION}
 
@@ -60,8 +65,9 @@ class Product(SubElement):
 
     @classmethod
     def get_element(cls, element_id):
-        element = cls.objects(_id=element_id)
+        element = list(cls.objects(_id=element_id))
         if element:
+            element = element[0]
             if len(element.sub_elements) >= 2:
                 element.sub_elements = [element.sub_elements[-2], element.sub_elements[-1]]
             else:

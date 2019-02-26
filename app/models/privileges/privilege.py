@@ -36,11 +36,11 @@ class Privilege(BaseEmbeddedDocument):
             if element in priv_list:
                 raise WrongPrivilegeAssignment(
                     f"El elemento de tipo {element_type} con id {element_to_add} ya fue agregado")
-            priv_list.append(element)
+            priv_list.append(element_to_add)
         else:
             if element not in priv_list:
                 return self
-            priv_list.remove(element)
+            priv_list.remove(element_to_add)
         return self
 
     def get_privilege(self, element_type: type, parent_id=None):
