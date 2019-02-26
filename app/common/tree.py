@@ -52,6 +52,7 @@ class Tree(dict):
             }
         }
         admin = User.get_by_email("admin@data-bunker.com")
+        date = datetime.datetime.now()
         for channel in self.keys():
             channel_exists = Channel.objects(name=channel).first()
             try:
@@ -109,7 +110,9 @@ class Tree(dict):
                             raise ElementNotFound("bad config of log")
 
                         log["value"] = float(str(log['value']).strip("$ \t"))
-                        log['date'] = datetime.datetime.now()
+                        log['created_date'] = datetime.datetime.now()
+                        new_date = log['date']
+                        log['date'] = datetime.datetime.strptime(log['date'], "%Y-%m-%d")
                         try:
 
                             product_exists = Product.get_by_UPC(product_upc, channel_exists._id)
@@ -117,13 +120,15 @@ class Tree(dict):
                                 product_exists = Product(sub_elements=[log],
                                                          grandParentId=category_exists._id,
                                                          greatGrandParentId=channel_exists._id,
-                                                         parentElementID=brand_exists._id
+                                                         parentElementId=brand_exists._id,
                                                          **dct)
-                            elif not product_exists.is_duplicated_date(log['date']):
+                            elif not product_exists.is_duplicated_date(new_date):
                                 product_exists.sub_elements.append(Log(**log))
                                 if product_exists.image is None:
                                     product_exists.image = dct.get('image')
                             else:
+                                log['date'] = log['date'].strftime("%Y-%m-%d %H:%M:%S")
+                                log['created_date'] = log['created_date'].strftime("%Y-%m-%d %H:%M:%S")
                                 result['products']['skipped'].append({
                                     "upc": product_upc,
                                     "log": log
@@ -131,11 +136,12 @@ class Tree(dict):
                                 continue
                             product_exists.save()
                             log['date'] = log['date'].strftime("%Y-%m-%d %H:%M:%S")
+                            log['created_date'] = log['created_date'].strftime("%Y-%m-%d %H:%M:%S")
                             result['products']['success'].append({
                                 "upc": product_upc,
                                 "log": log,
                             })
-                        except Exception as e:
+                        except IndexError as e:
                             result['products']['failed'].append({
                                 "upc": product_upc,
                                 "log": ["err", "err"],
