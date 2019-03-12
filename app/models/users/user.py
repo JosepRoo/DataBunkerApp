@@ -5,6 +5,7 @@ from flask import session
 from dataclasses import dataclass
 from mongoengine import *
 
+from app import Database
 from app.common.tree import Tree
 from app.models.baseModel import BaseModel
 from app.models.privileges.privilege import Privilege
@@ -52,6 +53,7 @@ class User(BaseModel):
             new_user = cls(**kwargs)
             new_user.password = Utils.hash_password(new_user.password)
             new_user.add_privilege('channel', new_user.channel_id)
+            new_user.save()
             return new_user
         raise UserErrors.UserAlreadyRegisteredError("El Usuario ya existe")
 
@@ -116,7 +118,16 @@ class User(BaseModel):
 
     def add_privilege(self, element_type, element):
         self.privileges.add_remove_privilege(element_type, element)
-        self.save()
+        # self.save()
+        if 'channel' == element_type:
+            element_type = 'channels'
+        elif 'category' == element_type:
+            element_type = 'categories'
+        elif 'brand' == element_type:
+            element_type = 'brands'
+        else:
+            element_type = 'products'
+        Database.update("users", {"_id": self._id}, {"$push": {f"privileges.{element_type}": element}})
         return self.privileges.json()
 
     def remove_privilege(self, element_type, element):

@@ -30,7 +30,21 @@ class Privilege(Resource):
             return Response(message="No tienes los privilegios para modificar privilegios").json(), 401
         user = User.get_by_email(data['target_user_mail'])
         try:
-            return user.add_privilege(data['element_type'], list(data['element'].keys())[0]), 200
+            element = None
+            for channel, categories in data['element'].items():
+                if categories == 1:
+                    element = channel
+                else:
+                    for category, brands in categories.items():
+                        if brands == 1:
+                            element = category
+                        else:
+                            for brand, products, in brands.items():
+                                if products == 1:
+                                    element = brand
+                                else:
+                                    element = products.keys()[0]
+            return user.add_privilege(data['element_type'], element), 200
         except PrivilegeErrors as e:
             return Response(message=e.message).json(), 400
 
