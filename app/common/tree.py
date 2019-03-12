@@ -52,6 +52,7 @@ class Tree(dict):
             }
         }
         admin = User.get_by_email("admin@data-bunker.com")
+        add_channels = list()
         date = datetime.datetime.now()
         for channel in self.keys():
             channel_exists = Channel.objects(name=channel).first()
@@ -59,7 +60,7 @@ class Tree(dict):
                 if not channel_exists:
                     channel_exists = Channel(name=channel)
                     channel_exists.save()
-                    admin.add_privilege("channel", channel_exists._id)
+                    add_channels.append(channel_exists)
                 result['channels']['success'] += 1
             except Exception as e:
                 result['channels']['failed'].append({
@@ -148,6 +149,8 @@ class Tree(dict):
                             })
                             result['products']['messages'].append(str(e))
         result['products']['skipped_qty'] = result['products']['skipped']
+        for channel in add_channels:
+            admin.add_privilege("channel", channel._id)
         return result
 
     def split_into_categories(self):

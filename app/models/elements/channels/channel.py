@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from mongoengine import *
 
 from app import Database
-from app.models.elements.subelements.products.constants import COLLECTION
+from app.models.elements.channels.constants import COLLECTION
 from app.models.elements.element import Element
 
 
