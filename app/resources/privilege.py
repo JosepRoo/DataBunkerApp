@@ -30,7 +30,7 @@ class Privilege(Resource):
             return Response(message="No tienes los privilegios para modificar privilegios").json(), 401
         user = User.get_by_email(data['target_user_mail'])
         try:
-            return user.add_privilege(data['element_type'], data['element']), 200
+            return user.add_privilege(data['element_type'], list(data['element'].key())[0]), 200
         except PrivilegeErrors as e:
             return Response(message=e.message).json(), 400
 
