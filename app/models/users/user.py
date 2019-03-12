@@ -52,8 +52,9 @@ class User(BaseModel):
         if user is None:
             new_user = cls(**kwargs)
             new_user.password = Utils.hash_password(new_user.password)
-            new_user.add_privilege('channel', new_user.channel_id)
             new_user.save()
+            new_user.add_privilege('channel', new_user.channel_id)
+            print(new_user.privileges.__repr__())
             return new_user
         raise UserErrors.UserAlreadyRegisteredError("El Usuario ya existe")
 
