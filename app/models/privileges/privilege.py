@@ -51,29 +51,62 @@ class Privilege(BaseEmbeddedDocument):
         :return: returns the _id of the elements
         """
         if element_type is Channel:
-            if not self.channels:
+            channels = list()
+            if self.channels:
+                channels += self.channels
+            if self.categories:
+                cats_parents = list({cat.parenElementId._id for cat in Category.objects(_id__in=self.categories)})
+                channels += [ch._id for ch in Channel.objects(_id__in=cats_parents)]
+            if self.brands:
+                brand_parents = list({br.grandParentId._id for br in Brand.objects(_id__in=self.brands)})
+                channels += [ch._id for ch in Channel.objects(_id__in=brand_parents)]
+            if self.products:
+                pr_parents = list({pr.greatGrandParentId._id for pr in Product.objects(_id__in=self.products)})
+                channels += [ch._id for ch in Channel.objects(_id__in=pr_parents)]
+            if not channels:
                 raise PrivilegeDoesNotExist("No se tiene el privilegio para ver este elemento")
-            return self.channels
+            channels = list(set(channels))
+            return channels
         if element_type is Category:
+            categories = list()
             if parent_id in self.channels:
                 return "All"
-            if not self.categories:
+            if self.categories:
+                categories += [cat._id for cat in Category.objects(_id__in=self.categories, parentElementId=parent_id)]
+            if self.brands:
+                brand_parents = list({br.parentElementId._id for br in Brand.objects(_id__in=self.brands)})
+                categories += [cat._id for cat in Category.objects(_id__in=brand_parents, parentElementId=parent_id)]
+            if self.products:
+                pr_parents = list({pr.grandParentId._id for pr in Product.objects(_id__in=self.products)})
+                categories += [cat._id for cat in Category.objects(_id__in=pr_parents, parentElementId=parent_id)]
+            if not categories:
                 raise PrivilegeDoesNotExist("No se tiene el privilegio para ver este elemento")
-            return self.categories
+            categories = list(set(categories))
+            return categories
         if element_type is Brand:
             category = Category.get_by_id(parent_id)
             channel_id = category.parentElementId._id
+            brands = list()
             if channel_id in self.channels or category._id in self.categories:
                 return "All"
-            if not self.brands:
+            if self.brands:
+                brands += [br._id for br in Brand.objects(_id__in=self.brands, parentElementId=parent_id)]
+            if self.products:
+                pr_parents = list({pr.ParentElementId._id for pr in Product.objects(id__in=self.products)})
+                brands += [br._id for br in Brand.objects(_id__in=pr_parents, parentElementId=parent_id)]
+            if not brands:
                 raise PrivilegeDoesNotExist("No se tiene el privilegio para ver este elemento")
-            return self.brands
+            brands = list(set(brands))
+            return brands
         if element_type is Product:
             brand = Brand.get_by_id(parent_id)
             category_id = brand.parentElementId._id
             channel_id = brand.grandParentId._id
+            products = list()
             if brand._id in self.brands or category_id in self.categories or channel_id in self.channels:
                 return "All"
-            if not self.products:
+            if self.products:
+                products += [pr._id for pr in Product.objects(id__in=self.products, parentElementId=parent_id)]
+            if not products:
                 raise PrivilegeDoesNotExist("No se tiene el privilegio para ver este elemento")
-            return self.products
+            return products
